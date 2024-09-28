@@ -55,6 +55,7 @@ public class TestInscripcion {
 		assertEquals("102-en fase 2 (Abierta)",carreras.get(1)[0]);
 		assertEquals("103-en fase 1 (Abierta)",carreras.get(2)[0]);
 		assertEquals("104-antes inscripcion ",carreras.get(3)[0]);
+		System.out.println();
 	}
 
 	/**
