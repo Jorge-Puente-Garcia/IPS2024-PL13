@@ -39,6 +39,7 @@ public class CarrerasModel {
 	 * resultado de la ejecucion de una query sql
 	 */
 	public List<Object[]> getListaCarrerasArray(Date fechaInscripcion) {
+		
 		validateNotNull(fechaInscripcion,MSG_FECHA_INSCRIPCION_NO_NULA);
 		//concatena los campos deseados en una unica columna pues el objetivo es devolver una lista de strings
 		String sql="SELECT id || '-' || descr || ' ' || abierta as item from (" + SQL_LISTA_CARRERAS + ")";
