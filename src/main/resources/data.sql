@@ -1,14 +1,7 @@
---Datos para carga inicial de la base de datos
-
---Para giis.demo.tkrun:
+--Inicialización de todas las tablas necesarias para empezar a trabajar
 delete from carreras;
-insert into carreras(id,inicio,fin,fecha,descr) values 
-	(100,'2016-10-05','2016-10-25','2016-11-09','finalizada'),
-	(101,'2016-10-05','2016-10-25','2016-11-10','en fase 3'),
-	(102,'2016-11-05','2016-11-09','2016-11-20','en fase 2'),
-	(103,'2016-11-10','2016-11-15','2016-11-21','en fase 1'),
-	(104,'2016-11-11','2016-11-15','2016-11-22','antes inscripcion');
-	
+delete from Producto;
+delete from Almacenero;
 	
 INSERT INTO Producto (referencia, datosBasicos) VALUES
 	('REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento'),
@@ -23,13 +16,20 @@ INSERT INTO Producto (referencia, datosBasicos) VALUES
 	('REF010', 'Cafetera de cápsulas con función automática y depósito de agua de 1 litro');
 	
 INSERT INTO Cliente (dni, nombre, apellidos) VALUES
-('12345678A', 'Carlos', 'González Pérez'),
-('23456789B', 'María', 'Fernández López'),
-('34567890C', 'Luis', 'Martínez Gómez'),
-('45678901D', 'Ana', 'Rodríguez García'),
-('56789012E', 'Jorge', 'Sánchez Romero'),
-('67890123F', 'Lucía', 'Jiménez Torres'),
-('78901234G', 'Pablo', 'Hernández Díaz'),
-('89012345H', 'Elena', 'Muñoz Moreno'),
-('90123456I', 'David', 'Ruiz Ortiz'),
-('01234567J', 'Laura', 'Ramírez Gil');
+	('12345678A', 'Carlos', 'González Pérez'),
+	('23456789B', 'María', 'Fernández López'),
+	('34567890C', 'Luis', 'Martínez Gómez'),
+	('45678901D', 'Ana', 'Rodríguez García'),
+	('56789012E', 'Jorge', 'Sánchez Romero'),
+	('67890123F', 'Lucía', 'Jiménez Torres'),
+	('78901234G', 'Pablo', 'Hernández Díaz'),
+	('89012345H', 'Elena', 'Muñoz Moreno'),
+	('90123456I', 'David', 'Ruiz Ortiz'),
+	('01234567J', 'Laura', 'Ramírez Gil');
+
+INSERT INTO Almacenero (nombre, apellido) VALUES 
+	('Juan', 'Pérez'),
+	('María', 'González'),
+	('Carlos', 'Sánchez'),
+	('Laura', 'Martínez'),
+	('Ana', 'López');
