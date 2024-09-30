@@ -3,7 +3,7 @@ import org.junit.*;
 import static org.junit.Assert.assertEquals;
 
 import giis.demo.tkrun.*;
-import giis.demo.util.*;
+import giis.util.*;
 
 import java.util.List;
 

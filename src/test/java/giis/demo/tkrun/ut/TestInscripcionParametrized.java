@@ -7,7 +7,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 import giis.demo.tkrun.*;
-import giis.demo.util.*;
+import giis.util.*;
 
 import java.util.Arrays;
 import java.util.Collection;

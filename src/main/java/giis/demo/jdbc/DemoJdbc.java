@@ -16,7 +16,7 @@ import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import giis.demo.util.UnexpectedException;
+import giis.util.UnexpectedException;
 
 /**
  * Ejemplos de acceso a una base de datos con conexion JDBC y base de datos Sqlite

@@ -33,3 +33,32 @@ INSERT INTO Almacenero (nombre, apellido) VALUES
 	('Carlos', 'Sánchez'),
 	('Laura', 'Martínez'),
 	('Ana', 'López');
+	
+INSERT INTO Pedido (cliente_id, fecha, total, estado, orden_trabajo_id) VALUES 
+	( 1, '2024-09-15', 150, 'Pendiente de recogida', 1),
+	( 2, '2024-09-18', 299.99, 'Recogida', 2),
+	( 3, '2024-09-20', 75.00, 'Pendiente de recogida', 3),
+	( 4, '2024-09-22', 499.99, 'Recogida', 4),
+	( 5, '2024-09-25', 250.75, 'Pendiente de recogida', 5);
+	
+
+INSERT INTO PedidoProducto (id, pedido_id, producto_id, cantidad, precio) VALUES 
+	(1, 1, 1, 2, 15.50),
+	(2, 1, 2, 1, 25.00),
+	(3, 2, 1, 3, 15.50),
+	(4, 2, 3, 1, 30.00),
+	(5, 3, 4, 5, 12.00),
+	(6, 3, 2, 2, 25.00),
+	(7, 4, 5, 1, 100.00),
+	(8, 5, 1, 2, 15.50),
+	(9, 5, 3, 3, 30.00);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
