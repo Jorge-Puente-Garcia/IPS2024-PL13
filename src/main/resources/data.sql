@@ -1,7 +1,8 @@
 --Inicialización de todas las tablas necesarias para empezar a trabajar
-delete from carreras;
 delete from Producto;
 delete from Almacenero;
+delete from Pedido;
+delete from PedidoProducto;
 	
 INSERT INTO Producto (referencia, datosBasicos) VALUES
 	('REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento'),
