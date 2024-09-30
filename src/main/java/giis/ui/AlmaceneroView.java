@@ -111,7 +111,9 @@ public class AlmaceneroView {
 		if (pnVisualizaciónOrdenesDeTrabajo == null) {
 			pnVisualizaciónOrdenesDeTrabajo = new JPanel();
 			pnVisualizaciónOrdenesDeTrabajo.setBackground(Color.LIGHT_GRAY);
-			pnVisualizaciónOrdenesDeTrabajo.setLayout(new BoxLayout(pnVisualizaciónOrdenesDeTrabajo, BoxLayout.Y_AXIS));
+			FlowLayout fl_pnVisualizaciónOrdenesDeTrabajo = new FlowLayout(FlowLayout.CENTER, 5, 5);
+			fl_pnVisualizaciónOrdenesDeTrabajo.setAlignOnBaseline(true);
+			pnVisualizaciónOrdenesDeTrabajo.setLayout(fl_pnVisualizaciónOrdenesDeTrabajo);
 		}
 		return pnVisualizaciónOrdenesDeTrabajo;
 	}
