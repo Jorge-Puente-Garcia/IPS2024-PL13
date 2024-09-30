@@ -13,6 +13,8 @@ import javax.swing.JScrollPane;
 import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
 import java.awt.Color;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 
 public class AlmaceneroView {
 
@@ -22,7 +24,7 @@ public class AlmaceneroView {
 	private JPanel pnOrdenesDeTrabajo;
 	private JButton btnVolverAPaginaPrincipal;
 	private JScrollPane scrollPane;
-	private JPanel pnVisualizaciónOrdenesDeTrabajo;
+	private JTable table;
 
 	/**
 	 * Launch the application.
@@ -103,18 +105,18 @@ public class AlmaceneroView {
 		if (scrollPane == null) {
 			scrollPane = new JScrollPane();
 			scrollPane.setBounds(10, 54, 664, 427);
-			scrollPane.setViewportView(getPanel_2());
+			scrollPane.setViewportView(getTable());
 		}
 		return scrollPane;
 	}
-	private JPanel getPanel_2() {
-		if (pnVisualizaciónOrdenesDeTrabajo == null) {
-			pnVisualizaciónOrdenesDeTrabajo = new JPanel();
-			pnVisualizaciónOrdenesDeTrabajo.setBackground(Color.LIGHT_GRAY);
-			FlowLayout fl_pnVisualizaciónOrdenesDeTrabajo = new FlowLayout(FlowLayout.CENTER, 5, 5);
-			fl_pnVisualizaciónOrdenesDeTrabajo.setAlignOnBaseline(true);
-			pnVisualizaciónOrdenesDeTrabajo.setLayout(fl_pnVisualizaciónOrdenesDeTrabajo);
+	private JTable getTable() {
+		if (table == null) {
+			table = new JTable();
+			table.setName("tabPedidosNoRecogidos");
+			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			table.setDefaultEditor(Object.class, null); //readonly
+			JScrollPane tablePanel = new JScrollPane(table);
 		}
-		return pnVisualizaciónOrdenesDeTrabajo;
+		return table;
 	}
 }
