@@ -1,7 +1,8 @@
 package giis.demo.tkrun.ut;
 import junit.framework.*;
 import giis.demo.tkrun.*;
-import giis.demo.util.*;
+import giis.util.*;
+
 import java.util.*;
 
 /**

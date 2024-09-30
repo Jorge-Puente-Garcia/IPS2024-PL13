@@ -1,9 +1,10 @@
 package giis.demo.tkrun;
 
 import java.util.*;
-import giis.demo.util.Util;
-import giis.demo.util.ApplicationException;
-import giis.demo.util.Database;
+
+import giis.util.ApplicationException;
+import giis.util.Database;
+import giis.util.Util;
 /**
  * Acceso a los datos de carreras e inscripciones, 
  * utilizado como modelo para el ejemplo de swing y para las pruebas unitarias y de interfaz de usuario.

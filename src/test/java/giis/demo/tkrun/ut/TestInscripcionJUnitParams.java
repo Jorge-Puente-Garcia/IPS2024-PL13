@@ -8,7 +8,7 @@ import junitparams.Parameters;
 import junitparams.JUnitParamsRunner;
 
 import giis.demo.tkrun.*;
-import giis.demo.util.*;
+import giis.util.*;
 
 import java.util.Date;
 

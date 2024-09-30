@@ -14,7 +14,7 @@ import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
 import java.awt.Color;
 
-public class interfazAlmacenero {
+public class AlmaceneroView {
 
 	private JFrame frameTerminalPortatil;
 	private JPanel pnPaginaPrincipal;
@@ -31,7 +31,7 @@ public class interfazAlmacenero {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					interfazAlmacenero window = new interfazAlmacenero();
+					AlmaceneroView window = new AlmaceneroView();
 					window.frameTerminalPortatil.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -43,8 +43,11 @@ public class interfazAlmacenero {
 	/**
 	 * Create the application.
 	 */
-	public interfazAlmacenero() {
+	public AlmaceneroView() {
 		initialize();
+	}
+	public JFrame getFrameTerminalPortatil() {
+		return frameTerminalPortatil;
 	}
 
 	/**
