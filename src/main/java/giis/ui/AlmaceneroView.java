@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import java.awt.FlowLayout;
-import javax.swing.BoxLayout;
 import java.awt.Color;
 
 public class AlmaceneroView {
