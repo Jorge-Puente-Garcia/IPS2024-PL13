@@ -1,34 +1,57 @@
 package giis.model;
 
-public class PedidoDto {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+public class Pedido {
+
+	protected enum Estado{
+		PendienteDeRecogida, Recogido
+	}
+	
 	/*
 	 * fecha DATE NOT NULL,
 	 *  total DECIMAL(10, 2) NOT NULL,
 	 *  estado TEXT NOT NULL, orden_trabajo_id INTEGER,
 	 */
-	public String fecha;
-	public int tamaño;
-	public String estado;
+	private String fecha;
+	private int total;
+	private String estado;
+	private List<ProductosPedido> productosPedido;
 	
-	public PedidoDto(String fecha, int tamano, String estado) {
+	public Pedido(String fecha, int total, String estado, HashMap<String, Object[]> productosCarrito) {
 		this.fecha = fecha;
-		this.tamaño = tamano;
+		this.total = total;
 		this.estado = estado;
+		this.productosPedido = añadirLosProductos(productosCarrito);
 	}
-	public PedidoDto() {}
+	
+	public Pedido() {}
 
+	private List<ProductosPedido> añadirLosProductos(HashMap<String, Object[]> productosCarrito){
+		List<ProductosPedido> aux = new ArrayList<ProductosPedido>();
+		for (Map.Entry<String, Object[]> entry : productosCarrito.entrySet()) {
+			String referencia = entry.getKey().toString();
+			int cantidad = Integer.parseInt(entry.getValue()[0].toString());
+			
+			aux.add(new ProductosPedido(referencia, cantidad));
+		}
+		return aux;
+	}
+	
 	public String getFecha() {
 		return fecha;
 	}
 
-	public int getTamano() {
-		return tamaño;
+	public int getTotal() {
+		return total;
 	}
 
 	@Override
 	public String toString() {
-		return "Pedido [fecha=" + fecha + ", Tamano=" + tamaño + ", estado=" + estado + "]";
+		return "Pedido [fecha=" + fecha + ", Tamano=" + total + ", estado=" + estado + "]";
 	}
 
 	public String getEstado() {
@@ -40,7 +63,7 @@ public class PedidoDto {
 		this.fecha = fecha;
 	}
 	public void setTamano(int precio) {
-		this.tamaño = precio;
+		this.total = precio;
 	}
 	public void setEstado(String estado) {
 		this.estado = estado;

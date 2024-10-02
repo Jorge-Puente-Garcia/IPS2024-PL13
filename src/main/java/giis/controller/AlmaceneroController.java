@@ -3,7 +3,7 @@ package giis.controller;
 import java.util.List;
 
 import giis.model.AlmaceneroModel;
-import giis.model.PedidoDto;
+import giis.model.Pedido;
 import giis.ui.AlmaceneroView;
 
 public class AlmaceneroController {
@@ -25,7 +25,7 @@ public class AlmaceneroController {
 			e.printStackTrace();
 		}
 	}
-	public List<PedidoDto> getPedidosPendientesRecogida(){
+	public List<Pedido> getPedidosPendientesRecogida(){
 		return model.getPedidosPendientesRecogida();
 	}
 }
