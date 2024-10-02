@@ -27,9 +27,6 @@ public class TiendaModel {
 			
 			listaProductos.add(dto);
 		}
-		for(ProductosDto d:listaProductos) {
-			System.out.println(d);
-		}
 		return listaProductos;
 	}
 }
