@@ -1,4 +1,4 @@
-package giis.model;
+package giis.model.Tienda;
 
 import java.util.HashMap;
 import java.util.List;

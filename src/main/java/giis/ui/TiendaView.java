@@ -6,8 +6,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import giis.controller.TiendaController;
-
-import giis.model.ProductosDto;
+import giis.model.Tienda.ProductosDto;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

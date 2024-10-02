@@ -1,4 +1,4 @@
-package giis.model;
+package giis.model.Tienda;
 
 public class ProductosPedido {
 

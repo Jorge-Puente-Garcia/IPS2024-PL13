@@ -1,11 +1,9 @@
-package giis.model;
+package giis.model.Tienda;
 
 public class ProductosDto {
 
 	private String referencia;
 	private String datosbasicos;
-	
-	
 	
 	public String getReferencia() {
 		return referencia;

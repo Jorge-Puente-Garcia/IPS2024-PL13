@@ -1,4 +1,4 @@
-package giis.model;
+package giis.model.Tienda;
 
 import java.util.ArrayList;
 import java.util.List;

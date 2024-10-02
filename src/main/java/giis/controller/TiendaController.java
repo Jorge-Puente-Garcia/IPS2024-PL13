@@ -3,9 +3,9 @@ package giis.controller;
 import java.util.HashMap;
 import java.util.List;
 
-import giis.model.Carrito;
-import giis.model.ProductosDto;
-import giis.model.TiendaModel;
+import giis.model.Tienda.Carrito;
+import giis.model.Tienda.ProductosDto;
+import giis.model.Tienda.TiendaModel;
 import giis.ui.TiendaView;
 import giis.util.Database;
 
