@@ -8,6 +8,7 @@ drop table Almacenero;
 drop table OrdenTrabajo;
 drop table OrdenTrabajoProducto;
 drop table Incidencia;
+drop table Localizacion;
 
 CREATE TABLE Producto (id int PRIMARY KEY, referencia TEXT NOT NULL, datosBasicos TEXT NOT NULL); 
 CREATE TABLE Cliente (id TEXT PRIMARY KEY,dni TEXT NOT NULL, nombre TEXT NOT NULL, apellidos TEXT NOT NULL, UNIQUE(dni));
@@ -19,6 +20,8 @@ CREATE TABLE Almacenero (id INTEGER PRIMARY KEY, nombre TEXT NOT NULL, apellido 
 CREATE TABLE OrdenTrabajo (id INTEGER PRIMARY KEY, fecha_creacion DATE NOT NULL, estado TEXT NOT NULL, almacenero_id INTEGER NOT NULL, incidencia TEXT, FOREIGN KEY (almacenero_id) REFERENCES Almacenero(id));
 CREATE TABLE OrdenTrabajoProducto (id INTEGER PRIMARY KEY, orden_trabajo_id INTEGER NOT NULL, producto_id INTEGER NOT NULL, cantidad INTEGER NOT NULL, FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id), FOREIGN KEY (producto_id) REFERENCES Producto(id));
 CREATE TABLE Incidencia (id INTEGER PRIMARY KEY, orden_trabajo_id INTEGER NOT NULL, descripcion TEXT NOT NULL, fecha DATE NOT NULL, FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id));
+CREATE TABLE Localizacion (id INTEGER PRIMARY KEY, fila INTEGER NOT NULL, columna INTEGER NOT NULL, estanteria INTEGER NOT NULL, cara CHAR NOT NULL);
+
 
 
 
