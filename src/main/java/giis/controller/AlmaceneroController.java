@@ -4,7 +4,6 @@ import java.util.List;
 
 import giis.model.Almacenero.AlmaceneroModel;
 import giis.model.Almacenero.PedidoARecoger;
-import giis.model.Tienda.PedidoCarrito;
 import giis.ui.AlmaceneroView;
 
 public class AlmaceneroController {
