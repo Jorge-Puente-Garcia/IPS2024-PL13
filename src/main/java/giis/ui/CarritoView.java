@@ -29,6 +29,7 @@ public class CarritoView extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private TiendaController tdc;
+	private TiendaView tv;
 	
 	private JPanel contentPane;
 	private JScrollPane scrollPane;
@@ -39,9 +40,7 @@ public class CarritoView extends JFrame {
 	private JLabel lbTotal;
 	private JButton btEliminar;
 	private JTextField tfTotalPrecio;
-	private JButton btPedido;
-	
-
+	private JButton btPedido;	
 
 	/**
 	 * Create the frame.
@@ -57,6 +56,7 @@ public class CarritoView extends JFrame {
 			}
 		});
 		this.tdc = tdc;
+		this.tv = tv;
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -193,8 +193,36 @@ public class CarritoView extends JFrame {
 	private JButton getBtPedido() {
 		if (btPedido == null) {
 			btPedido = new JButton("Realizar Pedido");
+			btPedido.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if(!tdc.devolverCarrito().isEmpty()) {
+						String mensaje = "¿Está seguro de que desea continuar? Su pedido se realizará";
+				        String titulo = "Confirmación";
+	
+				        // Mostrar el cuadro de diálogo de confirmación
+				        int respuesta = JOptionPane.showConfirmDialog(null, mensaje, titulo, JOptionPane.YES_NO_OPTION);
+	
+				        // Procesar la respuesta
+				        if (respuesta == JOptionPane.YES_OPTION) {			         
+				            tdc.crearPedido();
+				            obtenerCarritoView().dispose();
+				            tv.setVisible(true);
+				        } else if (respuesta == JOptionPane.NO_OPTION) {
+				        	
+				        } 
+					}else {
+				        	String mensaje = "El carrito no puede estar vacío. Por favor, añade artículos antes de continuar.";
+					        String titulo = "Advertencia";
+					        JOptionPane.showMessageDialog(null, mensaje, titulo, JOptionPane.WARNING_MESSAGE);				
+				     }
+				}
+			});
 			btPedido.setFont(new Font("Arial Black", Font.PLAIN, 12));
 		}
 		return btPedido;
+	}
+	
+	private CarritoView obtenerCarritoView() {
+		return this;
 	}
 }

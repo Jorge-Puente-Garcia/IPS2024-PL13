@@ -6,13 +6,13 @@ import java.util.Map;
 
 import giis.util.Database;
 
-public class Carrito {
+public class CarritoModel {
 
 	private HashMap<String, Object[]> carrito = new HashMap<>();
 	private Database db;
 	private Double total = 0.0;
 	
-	public Carrito(Database db) {
+	public CarritoModel(Database db) {
 		this.db = db;
 	}
 
