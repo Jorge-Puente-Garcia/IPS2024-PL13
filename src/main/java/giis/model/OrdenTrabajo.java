@@ -3,6 +3,8 @@ package giis.model;
 import java.util.Comparator;
 import java.util.List;
 
+import giis.model.Almacenero.Almacenero;
+
 public class OrdenTrabajo {
     private Pedido pedido;
     private Almacenero almacenero;

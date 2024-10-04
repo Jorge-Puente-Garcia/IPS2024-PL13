@@ -5,13 +5,13 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import giis.model.Almacenero;
+
 import giis.model.LectorBd;
 import giis.model.Localizacion;
 import giis.model.OrdenTrabajo;
 import giis.model.Pedido;
 import giis.model.Producto;
-
+import giis.model.Almacenero.Almacenero;
 
 import java.util.Arrays;
 import java.util.Date;
