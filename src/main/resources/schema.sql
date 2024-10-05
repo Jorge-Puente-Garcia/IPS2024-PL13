@@ -8,7 +8,7 @@ drop table OrdenTrabajoProducto;
 drop table Incidencia;
 drop table Localizacion;
 
-CREATE TABLE Producto (id int PRIMARY KEY,referencia TEXT NOT NULL UNIQUE, datosBasicos TEXT NOT NULL, precio INTEGER NOT NULL); 
+CREATE TABLE Producto (id int PRIMARY KEY,referencia TEXT NOT NULL UNIQUE, datosBasicos TEXT NOT NULL, precio INTEGER NOT NULL, unidades INTEGER NOT NULL,localizacion_id INTEGER,FOREIGN KEY (localizacion_id) REFERENCES Localizacion(id));); 
 CREATE TABLE Cliente (id TEXT PRIMARY KEY,dni TEXT NOT NULL, nombre TEXT NOT NULL, apellidos TEXT NOT NULL, UNIQUE(dni));
 CREATE TABLE ProductosPedido (id INTEGER PRIMARY KEY, pedido_id INTEGER NOT NULL, producto_id INTEGER NOT NULL, cantidad INTEGER NOT NULL, FOREIGN KEY (pedido_id) REFERENCES Pedido(id), FOREIGN KEY (producto_id) REFERENCES Producto(id));
 CREATE TABLE Pedido (id INTEGER PRIMARY KEY, cliente_id int NOT NULL, fecha DATE NOT NULL, total DECIMAL(10, 2) NOT NULL, estado TEXT CHECK (estado IN ('Pendiente de recogida', 'Recogido')) NOT NULL, orden_trabajo_id INTEGER, FOREIGN KEY (cliente_id) REFERENCES Cliente(id), FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id));

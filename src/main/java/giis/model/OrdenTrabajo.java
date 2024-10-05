@@ -24,15 +24,15 @@ public class OrdenTrabajo {
 
     public void mostrarOrdenTrabajo() {
         // Obtener la lista de productos y ordenarla por estantería, cara, fila y columna
-        List<Producto> productosOrdenados = pedido.getProductos();
-        productosOrdenados.sort(Comparator.comparing((Producto p) -> p.getLocalizacion().getEstanteria())   // Ordenar por estantería
+        List<ProductoDto> productosOrdenados = pedido.getProductos();
+        productosOrdenados.sort(Comparator.comparing((ProductoDto p) -> p.getLocalizacion().getEstanteria())   // Ordenar por estantería
                                            .thenComparing(p -> p.getLocalizacion().getCara())               // Luego por cara
                                            .thenComparing(p -> p.getLocalizacion().getFila())               // Luego por fila
                                            .thenComparing(p -> p.getLocalizacion().getColumna()));           // Finalmente por altura
 
         // Mostrar los productos ordenados con toda la información relevante
-        for (Producto producto : productosOrdenados) {
-            Localizacion loc = producto.getLocalizacion(); // Obtener la localización del producto
+        for (ProductoDto producto : productosOrdenados) {
+            LocalizacionDto loc = producto.getLocalizacion(); // Obtener la localización del producto
             System.out.println("Referencia: " + producto.getReferencia() +
                                ", Cantidad: " + producto.getUnidades() +
                                ", Estantería: " + loc.getEstanteria() +
