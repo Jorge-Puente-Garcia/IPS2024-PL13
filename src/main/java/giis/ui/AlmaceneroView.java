@@ -1,20 +1,21 @@
 package giis.ui;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
 import java.awt.CardLayout;
-import javax.swing.JPanel;
+import java.awt.EventQueue;
 import java.awt.GridLayout;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import java.awt.FlowLayout;
-import javax.swing.BoxLayout;
-import java.awt.Color;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.table.TableModel;
+
+import giis.controller.AlmaceneroController;
+import giis.util.SwingUtil;
 
 public class AlmaceneroView {
 
@@ -25,7 +26,11 @@ public class AlmaceneroView {
 	private JButton btnVolverAPaginaPrincipal;
 	private JScrollPane scrollPane;
 	private JTable table;
-
+	private AlmaceneroController controller;
+	private JButton btnSeleccionar;
+	private JButton btnCancelar;
+	
+	
 	/**
 	 * Launch the application.
 	 */
@@ -47,6 +52,7 @@ public class AlmaceneroView {
 	 */
 	public AlmaceneroView() {
 		initialize();
+		
 	}
 	public JFrame getFrameTerminalPortatil() {
 		return frameTerminalPortatil;
@@ -56,8 +62,9 @@ public class AlmaceneroView {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		controller=new AlmaceneroController();
 		frameTerminalPortatil = new JFrame();
-		frameTerminalPortatil.setBounds(100, 100, 698, 528);
+		frameTerminalPortatil.setBounds(100, 100, 444, 453);
 		frameTerminalPortatil.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frameTerminalPortatil.getContentPane().setLayout(new CardLayout(0, 0));
 		frameTerminalPortatil.getContentPane().add(getPnPaginaPrincipal(), "pnPaginaPrincipal");
@@ -89,34 +96,60 @@ public class AlmaceneroView {
 			pnOrdenesDeTrabajo = new JPanel();
 			pnOrdenesDeTrabajo.setLayout(null);
 			pnOrdenesDeTrabajo.add(getBtnVolverAPaginaPrincipal());
-			pnOrdenesDeTrabajo.add(getScrollPane());
+			pnOrdenesDeTrabajo.add(getScrollPane(), "cell 10 3,grow");
+			pnOrdenesDeTrabajo.add(getBtnSeleccionar());
+			pnOrdenesDeTrabajo.add(getBtnCancelar());
 		}
 		return pnOrdenesDeTrabajo;
 	}
 	private JButton getBtnVolverAPaginaPrincipal() {
 		if (btnVolverAPaginaPrincipal == null) {
 			btnVolverAPaginaPrincipal = new JButton("Volver");
+			btnVolverAPaginaPrincipal.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					CardLayout cl = (CardLayout)(frameTerminalPortatil.getContentPane().getLayout());
+					cl.show(frameTerminalPortatil.getContentPane(), "pnPaginaPrincipal");
+				}
+			});
 			btnVolverAPaginaPrincipal.setEnabled(true);
 			btnVolverAPaginaPrincipal.setBounds(10, 10, 110, 34);
 		}
 		return btnVolverAPaginaPrincipal;
 	}
+	
 	private JScrollPane getScrollPane() {
 		if (scrollPane == null) {
-			scrollPane = new JScrollPane();
-			scrollPane.setBounds(10, 54, 664, 427);
+			scrollPane = new JScrollPane(getTable());
+			scrollPane.setBounds(85, 72, 259, 252);
 			scrollPane.setViewportView(getTable());
 		}
 		return scrollPane;
 	}
-	private JTable getTable() {
+	public JTable getTable() {
 		if (table == null) {
 			table = new JTable();
+			table.setFillsViewportHeight(true);
 			table.setName("tabPedidosNoRecogidos");
 			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			table.setDefaultEditor(Object.class, null); //readonly
-			JScrollPane tablePanel = new JScrollPane(table);
+			TableModel tmodel=SwingUtil.getTableModelFromPojos(controller.getPedidosPendientesRecogida(), new String[] {"fecha", "tamaño", "estado"});
+			table.setModel(tmodel);
+			SwingUtil.autoAdjustColumns(table);
 		}
 		return table;
+	}
+	private JButton getBtnSeleccionar() {
+		if (btnSeleccionar == null) {
+			btnSeleccionar = new JButton("Continuar");
+			btnSeleccionar.setBounds(310, 372, 110, 34);
+		}
+		return btnSeleccionar;
+	}
+	private JButton getBtnCancelar() {
+		if (btnCancelar == null) {
+			btnCancelar = new JButton("Cancelar");
+			btnCancelar.setBounds(190, 372, 110, 34);
+		}
+		return btnCancelar;
 	}
 }

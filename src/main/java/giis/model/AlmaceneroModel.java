@@ -7,8 +7,8 @@ import giis.util.Database;
 
 public class AlmaceneroModel {
 	
-	private static Database db=new Database();
-	public static List<PedidoDto> getPedidosPendientesRecogida() {
+	private Database db=new Database();
+	public List<PedidoDto> getPedidosPendientesRecogida() {
 		db.createDatabase(false);
 		db.loadDatabase();
 		String sql="SELECT p.fecha, SUM(pp.cantidad), p.estado FROM Pedido p LEFT JOIN PedidoProducto pp "
@@ -32,6 +32,6 @@ public class AlmaceneroModel {
 	}
 	
 	public static void main(String[] args) {
-		getPedidosPendientesRecogida();
+		//getPedidosPendientesRecogida();
 	}
 }

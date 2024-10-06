@@ -22,7 +22,7 @@ public class PedidoDto {
 		return fecha;
 	}
 
-	public int getTamano() {
+	public int getTamaño() {
 		return tamaño;
 	}
 
