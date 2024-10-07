@@ -2,24 +2,18 @@
 delete from Producto;
 delete from Almacenero;
 delete from Pedido;
-<<<<<<< Upstream, based on origin/master
 delete from ProductosPedido;
-=======
 delete from PedidoProducto;
 delete from Localizacion;
->>>>>>> 740c564 Localizacion Referencias existentes
+
 	
-INSERT INTO Producto (referencia, datosBasicos, precio) VALUES
-    ('REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento', 699.99),
-    ('REF002', 'Laptop ultraligera de 14 pulgadas, procesador Intel Core i7, 16GB RAM y 512GB SSD', 1199.99),
-    ('REF003', 'Auriculares inalámbricos con cancelación de ruido, duración de batería de 24 horas', 199.99),
-    ('REF004', 'Cámara fotográfica profesional de 24MP con lente de 50mm y estabilización óptica', 1499.99),
-    ('REF005', 'Reloj inteligente con monitor de frecuencia cardíaca, GPS integrado y resistente al agua', 249.99),
-    ('REF006', 'Tablet de 10 pulgadas con pantalla Full HD, 64GB de almacenamiento y batería de larga duración', 329.99),
-    ('REF007', 'Consola de videojuegos de última generación con 1TB de almacenamiento y mando inalámbrico', 499.99),
-    ('REF008', 'Impresora multifunción con conexión Wi-Fi y sistema de tinta continua', 149.99),
-    ('REF009', 'Altavoz portátil Bluetooth con sonido envolvente y resistente al agua', 89.99),
-    ('REF010', 'Cafetera de cápsulas con función automática y depósito de agua de 1 litro', 99.99);
+INSERT INTO Producto (referencia, datosBasicos, precio,unidades,localizacion_id) VALUES
+   ('REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento', 699.99, 10, 1),
+    ('REF002', 'Laptop ultraligera de 14 pulgadas, procesador Intel Core i7, 16GB RAM y 512GB SSD', 1199.99, 5, 2),
+    ('REF003', 'Auriculares inalámbricos con cancelación de ruido, duración de batería de 24 horas', 199.99, 15, 3),
+    ('REF004', 'Cámara fotográfica profesional de 24MP con lente de 50mm y estabilización óptica', 1499.99, 8, 4),
+    ('REF005', 'Reloj inteligente con monitor de frecuencia cardíaca, GPS integrado y resistente al agua', 249.99, 20, 5),
+    ('REF006', 'Tablet de 10 pulgadas con pantalla Full HD, 64GB de almacenamiento y batería de larga duración', 329.99, 12, 6);
 	
 INSERT INTO Cliente (dni, nombre, apellidos) VALUES
 	('12345678A', 'Carlos', 'González Pérez'),

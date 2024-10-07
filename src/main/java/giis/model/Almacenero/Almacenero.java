@@ -1,4 +1,4 @@
-package giis.model;
+package giis.model.Almacenero;
 
 public class Almacenero {
     private String nombre;

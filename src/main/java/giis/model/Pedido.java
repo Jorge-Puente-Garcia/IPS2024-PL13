@@ -8,9 +8,9 @@ public class Pedido {
     private double total;
     private String estado;
     private int ordenTrabajoId;
-    private List<Producto> productos;
+    private List<ProductoDto> productos;
 
-    public Pedido(int clienteId, String fecha, double total, String estado, int ordenTrabajoId,List<Producto> productos) {
+    public Pedido(int clienteId, String fecha, double total, String estado, int ordenTrabajoId,List<ProductoDto> productos) {
         this.clienteId = clienteId;
         this.fecha = fecha;
         this.total = total;
@@ -60,11 +60,11 @@ public class Pedido {
         this.ordenTrabajoId = ordenTrabajoId;
     }
 
-	public List<Producto> getProductos() {
+	public List<ProductoDto> getProductos() {
 		return productos;
 	}
 
-	public void setProductos(List<Producto> productos) {
+	public void setProductos(List<ProductoDto> productos) {
 		this.productos = productos;
 	}
 }

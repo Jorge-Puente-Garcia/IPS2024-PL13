@@ -48,14 +48,48 @@ public class LectorBd {
 			
 			listaLocalizaciones.add(loc);
 		}
-		for(LocalizacionDto l:listaLocalizaciones) {
-			System.out.println(l);
-		}
+		
 		return listaLocalizaciones;
 	
 		
 	
 	
 	}
+
+	public static List<ProductoDto> getProductoBd() {
+		db.createDatabase(false);
+		db.loadDatabase();
+		String sql = "SELECT p.referencia, p.datosBasicos, p.unidades, l.fila, l.columna, l.estanteria, l.cara " +
+                "FROM Producto p " +
+                "JOIN Localizacion l ON p.localizacion_id = l.id";;
+
+		List<Object[]> lista=db.executeQueryArray(sql,new Object[0]);
+		List<ProductoDto> listaProducto=new ArrayList<ProductoDto>();
+		for(Object[] d: lista) {
+			LocalizacionDto localizacion = new LocalizacionDto(
+		            Integer.parseInt(d[3].toString()), // fila
+		            Integer.parseInt(d[4].toString()), // columna
+		            Integer.parseInt(d[5].toString()), // estanteria
+		            d[6].toString().charAt(0)          // cara
+		        );
+		        
+		        // Crear una instancia de ProductoDto
+		        ProductoDto pto = new ProductoDto(
+		            d[0].toString(),  // referencia
+		            d[1].toString(),  // datosBasicos
+		            Integer.parseInt(d[2].toString()), // unidades
+		            localizacion // localización
+		        );
+		        
+		        listaProducto.add(pto);
+		    }
+		
+		return listaProducto;
+	
+		
+	
+	
+	}
+	
 	
 }
