@@ -45,5 +45,6 @@ public class PedidoDto {
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
+	
 
 }
