@@ -5,12 +5,13 @@ public class Localizacion implements Comparable<Localizacion> {
     private int fila;       // Fila dentro de la estantería
     private int columna;     // Altura dentro de la fila
     private char cara;      // Cara de la estantería ('A' o 'B')
-
-    public Localizacion(int fila, int columna, int estanteria, char cara) {
+    private int pasillo;
+    public Localizacion(int pasillo,int fila, int columna, int estanteria, char cara) {
         this.estanteria = estanteria;
         this.fila = fila;
         this.columna=columna;
         this.cara = cara;
+        this.pasillo=pasillo;
     }
 
     public void setEstanteria(int estanteria) {
@@ -62,4 +63,12 @@ public class Localizacion implements Comparable<Localizacion> {
     public String toString() {
         return "Estantería: " + estanteria + ", Fila: " + fila + ", Columna: " + columna + ", Cara: " + cara;
     }
+
+	public int getPasillo() {
+		return pasillo;
+	}
+
+	public void setPasillo(int pasillo) {
+		this.pasillo = pasillo;
+	}
 }

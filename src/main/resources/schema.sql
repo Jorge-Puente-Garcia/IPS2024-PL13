@@ -16,7 +16,7 @@ CREATE TABLE Almacenero (id INTEGER PRIMARY KEY, nombre TEXT NOT NULL, apellido 
 CREATE TABLE OrdenTrabajo (id INTEGER PRIMARY KEY, fecha_creacion DATE NOT NULL, estado TEXT CHECK(estado IN ('En recogida', 'Pendiente de empaquetado', 'Empaquetado')), almacenero_id INTEGER NOT NULL, incidencia TEXT, FOREIGN KEY (almacenero_id) REFERENCES Almacenero(id));
 CREATE TABLE OrdenTrabajoProducto (id INTEGER PRIMARY KEY, orden_trabajo_id INTEGER NOT NULL, producto_id INTEGER NOT NULL, cantidad INTEGER NOT NULL, FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id), FOREIGN KEY (producto_id) REFERENCES Producto(id));
 CREATE TABLE Incidencia (id INTEGER PRIMARY KEY, orden_trabajo_id INTEGER NOT NULL, descripcion TEXT NOT NULL, fecha DATE NOT NULL, FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id));
-CREATE TABLE Localizacion (id INTEGER PRIMARY KEY, fila INTEGER NOT NULL, columna INTEGER NOT NULL, estanteria INTEGER NOT NULL, cara CHAR NOT NULL);
+CREATE TABLE Localizacion (id INTEGER PRIMARY KEY,pasillo INTEGER NOT NULL, fila INTEGER NOT NULL, columna INTEGER NOT NULL, estanteria INTEGER NOT NULL, cara CHAR NOT NULL);
 
 
 

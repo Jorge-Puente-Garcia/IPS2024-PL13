@@ -6,35 +6,30 @@ import java.util.List;
 import giis.model.Almacenero.Almacenero;
 
 public class OrdenTrabajo {
-    private Pedido pedido;
-    private Almacenero almacenero;
+    List<Producto> productos;
+    String id;
+    public OrdenTrabajo(List<Producto> productos, String id) {
+        this.productos=productos;
+        this.id=id;
+       }
 
-    public OrdenTrabajo(Pedido pedido, Almacenero almacenero) {
-        this.pedido = pedido;
-        this.almacenero = almacenero;
-    }
-
-    public Pedido getPedido() {
-        return pedido;
-    }
-
-    public Almacenero getAlmacenero() {
-        return almacenero;
-    }
+   
 
     public void mostrarOrdenTrabajo() {
         // Obtener la lista de productos y ordenarla por estantería, cara, fila y columna
-        List<ProductoDto> productosOrdenados = pedido.getProductos();
-        productosOrdenados.sort(Comparator.comparing((ProductoDto p) -> p.getLocalizacion().getEstanteria())   // Ordenar por estantería
+        List<Producto> productosOrdenados = productos;
+        productosOrdenados.sort(Comparator.comparing((Producto p) ->p.getLocalizacion().getPasillo())
+        									.thenComparing(p->p.getLocalizacion().getEstanteria())   // Ordenar por estantería
                                            .thenComparing(p -> p.getLocalizacion().getCara())               // Luego por cara
                                            .thenComparing(p -> p.getLocalizacion().getFila())               // Luego por fila
                                            .thenComparing(p -> p.getLocalizacion().getColumna()));           // Finalmente por altura
 
         // Mostrar los productos ordenados con toda la información relevante
-        for (ProductoDto producto : productosOrdenados) {
-            LocalizacionDto loc = producto.getLocalizacion(); // Obtener la localización del producto
+        for (Producto producto : productosOrdenados) {
+            Localizacion loc = producto.getLocalizacion(); // Obtener la localización del producto
             System.out.println("Referencia: " + producto.getReferencia() +
                                ", Cantidad: " + producto.getUnidades() +
+                               ", Pasillo:" + loc.getPasillo() +
                                ", Estantería: " + loc.getEstanteria() +
                                ", Cara: " + loc.getCara() +
                                ", Fila: " + loc.getFila() +

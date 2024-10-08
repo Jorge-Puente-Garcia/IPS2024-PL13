@@ -6,7 +6,7 @@ public class LocalizacionDto {
 	    private int columna;     // Altura dentro de la fila
 	    private char cara;      // Cara de la estantería ('A' o 'B')
 
-	    public LocalizacionDto(int fila, int columna, int estanteria, char cara) {
+	    public LocalizacionDto(int pasillo,int fila, int columna, int estanteria, char cara) {
 	        this.setEstanteria(estanteria);
 	        this.setFila(fila);
 	        this.setColumna(columna);

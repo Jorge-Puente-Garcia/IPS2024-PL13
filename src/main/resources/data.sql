@@ -27,13 +27,13 @@ INSERT INTO Cliente (dni, nombre, apellidos) VALUES
 	('90123456I', 'David', 'Ruiz Ortiz'),
 	('01234567J', 'Laura', 'Ramírez Gil');
 	
-INSERT INTO Localizacion (fila, columna, estanteria, cara) VALUES
-(1, 2, 3, 'A'),
-(1, 3, 4, 'B'),
-(2, 1, 1, 'A'),
-(2, 2, 7, 'B'),
-(3, 1, 9, 'A'),
-(3, 2, 4, 'B');
+INSERT INTO Localizacion (pasillo,fila, columna, estanteria, cara) VALUES
+(3,1, 2, 3, 'A'),
+(2,1, 3, 4, 'B'),
+(5,2, 1, 1, 'A'),
+(4,2, 2, 7, 'B'),
+(7,3, 1, 9, 'A'),
+(8,3, 2, 4, 'B');
 
 INSERT INTO Almacenero (nombre, apellido) VALUES 
 	('Juan', 'Pérez'),

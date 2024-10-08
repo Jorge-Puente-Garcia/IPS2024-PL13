@@ -5,12 +5,13 @@ public class ProductoDto {
     private String datosBasicos;
     private int unidades;
     private LocalizacionDto localizacion;
- 
+    private int precio;
 
-    public ProductoDto(String referencia, String datosBasicos,int unidades,LocalizacionDto localizacion2) {
+    public ProductoDto(String referencia, String datosBasicos,int unidades,int precio,LocalizacionDto localizacion2) {
     	 this.referencia = referencia;
          this.datosBasicos = datosBasicos;
          this.unidades = unidades;
+         this.precio=precio;
          this.setLocalizacionDto(localizacion2);
     }
 
@@ -46,6 +47,14 @@ public class ProductoDto {
 
 	public void setLocalizacionDto(LocalizacionDto localizacion2) {
 		this.localizacion = localizacion2;
+	}
+
+	public int getPrecio() {
+		return precio;
+	}
+
+	public void setPrecio(int precio) {
+		this.precio = precio;
 	}
 
 	

@@ -21,11 +21,11 @@ public class Main {
         // Crear sistema de almacén
     	 Almacenero alm=new Almacenero("Juan", "Perez");
          LectorBd l=new LectorBd();
-         List<ProductoDto>listaProductos= l.getProductoBd();
+         List<Producto>listaProductos= l.getProductoBd();
          // Crear algunos pedidos
-         Pedido pedido1 = new Pedido(2, "22-5-2001",22.2,"Disponible",2, listaProductos);
         
-         OrdenTrabajo o=new OrdenTrabajo(pedido1, alm);
+        
+         OrdenTrabajo o=new OrdenTrabajo(listaProductos, "1");
          o.mostrarOrdenTrabajo();
         
 

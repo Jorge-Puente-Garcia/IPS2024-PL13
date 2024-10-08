@@ -32,19 +32,20 @@ public class LectorBd {
 		return listaPedidosNoRecogidos;
 	}
 
-	public static List<LocalizacionDto> getLocalizacionBd() {
+	public static List<Localizacion> getLocalizacionBd() {
 		db.createDatabase(false);
 		db.loadDatabase();
 		String sql="SELECT * FROM Localizacion";
 
 		List<Object[]> lista=db.executeQueryArray(sql,new Object[0]);
-		List<LocalizacionDto> listaLocalizaciones=new ArrayList<LocalizacionDto>();
-		LocalizacionDto loc;
+		List<Localizacion> listaLocalizaciones=new ArrayList<Localizacion>();
+		Localizacion loc;
 		for(Object[] d: lista) {
-			loc=new LocalizacionDto(Integer.parseInt(d[0].toString()),
+			loc=new Localizacion(Integer.parseInt(d[0].toString()),
 					Integer.parseInt(d[1].toString()),
 					Integer.parseInt(d[2].toString()),
-					d[3].toString().charAt(0));
+					Integer.parseInt(d[3].toString()),
+					d[4].toString().charAt(0));
 			
 			listaLocalizaciones.add(loc);
 		}
@@ -56,28 +57,30 @@ public class LectorBd {
 	
 	}
 
-	public static List<ProductoDto> getProductoBd() {
+	public static List<Producto> getProductoBd() {
 		db.createDatabase(false);
 		db.loadDatabase();
-		String sql = "SELECT p.referencia, p.datosBasicos, p.unidades, l.fila, l.columna, l.estanteria, l.cara " +
+		String sql = "SELECT p.referencia, p.datosBasicos, p.unidades,p.precio,l.pasillo, l.fila, l.columna, l.estanteria, l.cara " +
                 "FROM Producto p " +
                 "JOIN Localizacion l ON p.localizacion_id = l.id";;
 
 		List<Object[]> lista=db.executeQueryArray(sql,new Object[0]);
-		List<ProductoDto> listaProducto=new ArrayList<ProductoDto>();
+		List<Producto> listaProducto=new ArrayList<Producto>();
 		for(Object[] d: lista) {
-			LocalizacionDto localizacion = new LocalizacionDto(
-		            Integer.parseInt(d[3].toString()), // fila
-		            Integer.parseInt(d[4].toString()), // columna
-		            Integer.parseInt(d[5].toString()), // estanteria
-		            d[6].toString().charAt(0)          // cara
+			Localizacion localizacion = new Localizacion(
+		            Integer.parseInt(d[4].toString()), // pasillo
+		            Integer.parseInt(d[5].toString()), // fila
+		            Integer.parseInt(d[6].toString()), //columna
+		            Integer.parseInt(d[7].toString()),//estanteria
+		            d[8].toString().charAt(0)          // cara
 		        );
 		        
 		        // Crear una instancia de ProductoDto
-		        ProductoDto pto = new ProductoDto(
+		        Producto pto = new Producto(
 		            d[0].toString(),  // referencia
 		            d[1].toString(),  // datosBasicos
-		            Integer.parseInt(d[2].toString()), // unidades
+		            Integer.parseInt(d[2].toString()),  // unidades
+		            Double.parseDouble(d[3].toString()), // precio
 		            localizacion // localización
 		        );
 		        
