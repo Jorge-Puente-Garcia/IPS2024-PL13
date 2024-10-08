@@ -3,6 +3,7 @@ delete from Producto;
 delete from Almacenero;
 delete from Pedido;
 delete from ProductosPedido;
+delete from OrdenTrabajo;
 	
 INSERT INTO Producto (referencia, datosBasicos, precio) VALUES
     ('REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento', 699.99),
@@ -53,6 +54,18 @@ INSERT INTO ProductosPedido (id, pedido_id, producto_id, cantidad) VALUES
 	(7, 4, 5, 1),
 	(8, 5, 1, 2),
 	(9, 5, 3, 3);
+
+INSERT INTO OrdenTrabajo (id, fecha_creacion, estado, almacenero_id, incidencia) VALUES	
+(1, '2024-10-01', 'En recogida', 1, NULL),
+(2, '2024-10-02', 'Pendiente de empaquetado', 2, 'Producto roto en almacén'),
+(3, '2024-10-03', 'Empaquetado', 3, NULL),
+(4, '2024-10-04', 'En recogida', 4, NULL),
+(5, '2024-10-05', 'Pendiente de empaquetado', 5, 'Producto fuera de stock'),
+(6, '2024-10-06', 'Empaquetado', 1, NULL),
+(7, '2024-10-07', 'En recogida', 2, NULL),
+(8, '2024-10-08', 'Pendiente de empaquetado', 3, 'Incidencia de embalaje'),
+(9, '2024-10-09', 'Empaquetado', 4, NULL),
+(10, '2024-10-10', 'En recogida', 5, NULL);
 	
 	
 	

@@ -1,5 +1,5 @@
 package giis.model;
 
 public enum Estado {
-	PendienteDeRecogida, Recogido, PendienteDeEmpaquetado, Empaquetado
+	PendienteDeRecogida, Recogido, PendienteDeEmpaquetado, Empaquetado,EnRecogida
 }

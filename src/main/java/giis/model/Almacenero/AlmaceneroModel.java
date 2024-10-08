@@ -45,10 +45,6 @@ public class AlmaceneroModel {
 			listaPedidosNoRecogidos.add(dto);
 		}
 		
-		for(PedidoARecogerRecord d:listaPedidosNoRecogidos) {
-			System.out.println(d);
-		}
-		
 		return listaPedidosNoRecogidos;
 	}
 	
@@ -72,7 +68,7 @@ public class AlmaceneroModel {
 		
 	}
 	public List<OrdenTrabajoRecord> getOrdenesDeTrabajoDelAlmaceneroPorId(int almaceneroId) {
-		String sql="SELECT id, fecha_creacion, estado, incidencia, almacenero_id FROM OrdenTrabajo WHERE almacenero_id='"+almaceneroId+"';";
+		String sql="SELECT id, fecha_creacion, estado, incidencia, almacenero_id FROM OrdenTrabajo WHERE almacenero_id="+1+";";
 		
 		List<Object[]> lista=db.executeQueryArray(sql,new Object[0]);
 		List<OrdenTrabajoRecord> listaPedidosNoRecogidos=new ArrayList<OrdenTrabajoRecord>();
@@ -83,18 +79,20 @@ public class AlmaceneroModel {
 			dto.setFechaCreacion(d[1].toString());
 			String estado = d[2].toString();
 			switch (estado) {
+			case "En recogida" -> dto.setEstado(Estado.EnRecogida);
 			case "Pendiente de empaquetado" -> dto.setEstado(Estado.PendienteDeEmpaquetado);
 			case "Empaquetado" ->	dto.setEstado(Estado.Empaquetado);
 			default -> throw new IllegalArgumentException();
 			}
-			dto.setIncidencias(d[3].toString());
+			if(d[3]==null) {
+				dto.setIncidencias("Sin incidencias");
+			}else {
+				dto.setIncidencias(d[3].toString());
+			}
+			
 			dto.setAlmaceneroId(d[4].toString());
 			
 			listaPedidosNoRecogidos.add(dto);
-		}
-		
-		for(OrdenTrabajoRecord d:listaPedidosNoRecogidos) {
-			System.out.println(d);
 		}
 		
 		return listaPedidosNoRecogidos;
