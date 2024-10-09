@@ -1,5 +1,9 @@
 package giis.model.Tienda;
 
+import java.util.List;
+
+import giis.util.Database;
+
 public class ProductosPedido {
 
 	private String referencia;
@@ -27,5 +31,23 @@ public class ProductosPedido {
 		this.cantidad = cantidad;
 	}
 	
+	public void añadirProducto(int idPedido, Database db) {
+		String sql = "INSERT INTO ProductosPedido (pedido_id, producto_id, cantidad) VALUES (" 
+	             + idPedido + ", " 
+	             + obtenerIdProducto(db) + ", " 
+	             + cantidad +")"; 		
+		db.executeUpdate(sql);
+	}
+	
+	private int obtenerIdProducto(Database db) {
+		
+		String sql = "SELECT id FROM Producto where referencia='"+referencia+"';";
+		List<Object[]> lista=db.executeQueryArray(sql,new Object[0]);
+		int rs = 0;
+		for(Object[] d: lista) {		
+			rs = Integer.parseInt(d[0].toString());		
+		}
+		return rs;
+	}
 	
 }

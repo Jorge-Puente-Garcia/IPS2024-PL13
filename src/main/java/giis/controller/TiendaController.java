@@ -6,28 +6,29 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
-
 import giis.model.Tienda.CarritoModel;
 import giis.model.Tienda.PedidoCarrito;
 import giis.model.Tienda.ProductosDto;
 import giis.model.Tienda.TiendaModel;
-import giis.ui.TiendaView;
+import giis.ui.Tienda;
 import giis.util.Database;
 
 public class TiendaController {
 	
 	private Database db;
 	
+	private Tienda tienda;
+	
 	private TiendaModel model;
 	private CarritoModel carrito;
-	private TiendaView view;
 	
 	public TiendaController(Database db) {
 		this.db = new Database();
+			
+		this.model = new TiendaModel(db);
+		this.carrito = new CarritoModel(db);
 		
-		this.model = new TiendaModel(db);		
-		this.carrito = new CarritoModel(db);		
-		this.view = new TiendaView(this);	
+		this.tienda = new Tienda(this);	
 		
 		initView();
 	}
@@ -35,7 +36,7 @@ public class TiendaController {
 	private void initView() {
 		//Abre la ventana (sustituye al main generado por WindowBuilder)
 		try {
-			view.setVisible(true);
+			tienda.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -67,7 +68,7 @@ public class TiendaController {
 	}	
 	
 	public void crearPedido() {
-		PedidoCarrito pc = new PedidoCarrito(obtenerFecha(), 
+		PedidoCarrito pc = new PedidoCarrito(carrito.getCliente(), obtenerFecha(), 
 											roundToTwoDecimals(carrito.getTotal()), 
 											devolverCarrito(), db);
 		pc.cargarPedidoDb();
@@ -84,5 +85,14 @@ public class TiendaController {
 		LocalDate fechaActual = LocalDate.now();
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return fechaActual.format(formato);
+	}
+
+	public void setCliente(String dni) {
+		carrito.setCliente(dni);
+	}
+
+	public boolean getCliente() {
+		String dni = carrito.getCliente();
+		return dni==null || dni.isBlank();
 	}
 }

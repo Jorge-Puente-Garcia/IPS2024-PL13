@@ -89,14 +89,19 @@ public class PedidoCarrito {
 	}
 
 	public void cargarPedidoDb() {
-		System.out.print("Se ha cargado a la base datos el Pedido de id: ");
-		System.out.print(obtenerSiguienteIdPedido());
-		//String.format("Nombre: %s, Ciudad: %s, País: %s", nombre, ciudad, pais);
-		System.out.print(String.format("\nCliente: %s, Fecha: %s, Total: %.2f\n", cliente,fecha,total));
-		System.out.print("Con los siguientes productos:\n");
-		for(ProductosPedido pc: productosPedido) {
-			System.out.print(String.format("->Referencia: %s, Unidades: %d\n",pc.getReferencia(), pc.getCantidad()));
-		}
+		int id = obtenerSiguienteIdPedido() + 1;
+		String sql = "INSERT INTO pedido (id, cliente_id, fecha, total, estado) VALUES ('"
+				 + id + "', '" 
+	             + cliente + "', '" 
+	             + fecha + "', " 
+	             + total + ", '" 
+	             + (estado == Estado.PendienteDeRecogida ? "Pendiente de recogida" : "Recogido") + "');";
+		db.executeUpdate(sql);
+		
+		for (ProductosPedido pd : productosPedido) {
+			pd.añadirProducto(id, db);
+		}		
+		ConfirmacionConsola(id);	
 	}
 	
 	private int obtenerSiguienteIdPedido() {
@@ -107,5 +112,16 @@ public class PedidoCarrito {
 			rs = Integer.parseInt(d[0].toString());		
 		}
 		return rs;
+	}
+	
+	private void ConfirmacionConsola(int id) {
+		System.out.print("Se ha cargado a la base datos el Pedido de id: ");
+		System.out.print(id);
+		//String.format("Nombre: %s, Ciudad: %s, País: %s", nombre, ciudad, pais);
+		System.out.print(String.format("\nCliente: %s, Fecha: %s, Total: %.2f\n", cliente,fecha,total));
+		System.out.print("Con los siguientes productos:\n");
+		for(ProductosPedido pc: productosPedido) {
+			System.out.print(String.format("->Referencia: %s, Unidades: %d\n",pc.getReferencia(), pc.getCantidad()));
+		}
 	}
 }
