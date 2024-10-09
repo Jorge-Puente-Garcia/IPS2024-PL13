@@ -3,12 +3,11 @@ delete from Producto;
 delete from Almacenero;
 delete from Pedido;
 delete from ProductosPedido;
-delete from PedidoProducto;
 delete from Localizacion;
 
 	
 INSERT INTO Producto (referencia, datosBasicos, precio,unidades,localizacion_id) VALUES
-   ('REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento', 699.99, 10, 1),
+    ('REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento', 699.99, 10, 1),
     ('REF002', 'Laptop ultraligera de 14 pulgadas, procesador Intel Core i7, 16GB RAM y 512GB SSD', 1199.99, 5, 2),
     ('REF003', 'Auriculares inalámbricos con cancelación de ruido, duración de batería de 24 horas', 199.99, 15, 3),
     ('REF004', 'Cámara fotográfica profesional de 24MP con lente de 50mm y estabilización óptica', 1499.99, 8, 4),
