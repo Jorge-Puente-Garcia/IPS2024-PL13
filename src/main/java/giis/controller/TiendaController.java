@@ -6,9 +6,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.swing.JTextField;
-
 import giis.model.Tienda.CarritoModel;
 import giis.model.Tienda.PedidoCarrito;
 import giis.model.Tienda.ProductosDto;
