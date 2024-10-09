@@ -4,18 +4,68 @@ import java.util.Comparator;
 import java.util.List;
 
 import giis.model.Almacenero.Almacenero;
+import giis.model.Almacenero.Incidencia;
 
 public class OrdenTrabajo {
     List<Producto> productos;
+ 
+    private List<Incidencia> incidencias;
     String id;
-    public OrdenTrabajo(List<Producto> productos, String id) {
+    public OrdenTrabajo(List<Producto> productos, String id,List<Incidencia> incidencias) {
         this.productos=productos;
         this.id=id;
+        this.incidencias=incidencias;
+        
        }
 
    
 
-    public void mostrarOrdenTrabajo() {
+    public List<Producto> getProductos() {
+		return productos;
+	}
+    public void agregarIncidencia(Incidencia incidencia) {
+        this.incidencias.add(incidencia);
+    }
+
+
+	public void setProductos(List<Producto> productos) {
+		this.productos = productos;
+	}
+	  public List<Incidencia> getIncidencias() {
+	        return incidencias;
+	    }
+
+
+
+	public String getId() {
+		return id;
+	}
+
+
+
+	@Override
+	public String toString() {
+	    StringBuilder sb = new StringBuilder();
+	    sb.append("OrdenTrabajo [id=").append(id).append(", incidencias=").append(incidencias).append("]\n");
+	    sb.append("Productos:\n");
+	    
+	    for (Producto producto : productos) {
+	        sb.append(producto.toString()).append("\n"); // Asegúrate de que Producto tenga un método toString() adecuado
+	    }
+	    
+	    return sb.toString();
+	}
+
+
+
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+
+
+	public void mostrarOrdenTrabajo() {
         // Obtener la lista de productos y ordenarla por estantería, cara, fila y columna
         List<Producto> productosOrdenados = productos;
         productosOrdenados.sort(Comparator.comparing((Producto p) ->p.getLocalizacion().getPasillo())
@@ -37,5 +87,16 @@ public class OrdenTrabajo {
                                ", Datos básicos: " + producto.getDatosBasicos());
         }
     }
+	public boolean estaCompleta() {
+	
+	    for (Producto producto : productos) {
+	        if (producto.getUnidades() > 0) {
+	            return false; // Si quedan unidades por recoger, no está completa
+	        }
+	    }
+	  
+	    return true; // Todos los productos han sido recogidos
+	}
+
 
 }

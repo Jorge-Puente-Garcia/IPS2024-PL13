@@ -1,6 +1,15 @@
 package giis.model.Almacenero;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 import giis.model.Estado;
+import giis.model.OrdenTrabajo;
+import giis.model.Producto;
+import giis.model.ProductoDto;
 
 public class PedidoARecogerDto {
 
@@ -45,4 +54,8 @@ public class PedidoARecogerDto {
 	public String toString() {
 		return "PedidoARecoger [fecha=" + fecha + ", tamano=" + tamaño + ", estado=" + estado + "]";
 	}
+
+
+
+	
 }
