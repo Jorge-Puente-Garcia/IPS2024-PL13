@@ -11,7 +11,7 @@ public class CarritoModel {
 	private HashMap<String, Object[]> carrito = new HashMap<>();
 	private Database db;
 	private Double total = 0.0;
-	
+	private String dni;
 	public CarritoModel(Database db) {
 		this.db = db;
 	}
@@ -70,5 +70,13 @@ public class CarritoModel {
 	
 	public Double getTotal() {
 		return this.total;
+	}
+
+	public void setCliente(String dni) {
+		this.dni = dni;
+	}
+
+	public String getCliente() {
+		return dni;
 	}
 }

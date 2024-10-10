@@ -21,14 +21,6 @@ public class AlmaceneroController {
 	public AlmaceneroController() {
 		this.model = new AlmaceneroModel();
 	}
-	private void initView() {
-		//Abre la ventana (sustituye al main generado por WindowBuilder)
-		try {
-			view.getFrameTerminalPortatil().setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	public List<PedidoARecogerDto> getPedidosPendientesRecogida(){
 		pedidosSinRecoger=model.getPedidosPendientesRecogida();
 		pedidosSinRecogerParaImprimir=pedidoRecordToDtoList();
