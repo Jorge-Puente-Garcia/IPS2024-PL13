@@ -33,7 +33,7 @@ public class Main {
          List<OrdenTrabajo>ots=alm.otsPendientesDeEmpaquetar();
          System.out.println(ots);
          System.out.println(e.seleccionarOT(ots));
-         
+         e.iniciarProcesoEmpaquetado(ots);
         
 
        
