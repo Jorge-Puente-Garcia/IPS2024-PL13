@@ -68,7 +68,7 @@ public class AlmaceneroModel {
 		
 	}
 	public List<OrdenTrabajoRecord> getOrdenesDeTrabajoDelAlmaceneroPorId(int almaceneroId) {
-		String sql="SELECT id, fecha_creacion, estado, incidencia, almacenero_id FROM OrdenTrabajo WHERE almacenero_id="+1+";";
+		String sql="SELECT id, fecha_creacion, estado, incidencia, almacenero_id FROM OrdenTrabajo WHERE almacenero_id="+almaceneroId+";";
 		
 		List<Object[]> lista=db.executeQueryArray(sql,new Object[0]);
 		List<OrdenTrabajoRecord> listaPedidosNoRecogidos=new ArrayList<OrdenTrabajoRecord>();
@@ -97,6 +97,32 @@ public class AlmaceneroModel {
 		
 		return listaPedidosNoRecogidos;
 	}
+	
+	public PaqueteDto creaEtiquetaYAlbaran(OrdenTrabajoRecord otr) {
+		 String sacarInfoEtiquetaEnvio = "SELECT ped.id AS pedido_id, c.nombre, c.apellidos, c.dni, ped.fecha " +
+                 "FROM OrdenTrabajoProducto otp " +
+                 "JOIN Producto p ON otp.producto_id = p.id " +
+                 "JOIN ProductosPedido pp ON pp.producto_id = p.id " +
+                 "JOIN Pedido ped ON pp.pedido_id = ped.id " +
+                 "JOIN Cliente c ON ped.cliente_id = c.id " +
+                 "WHERE otp.orden_trabajo_id ="+otr.getId()+";";
+		 
+		 List<Object[]> lista=db.executeQueryArray(sacarInfoEtiquetaEnvio,new Object[0]);	
+		  PaqueteDto dto = null;
+		 for(Object[] d: lista) {
+			 
+			 String pedidoId= d[0].toString();
+			 String nombreCliente = d[1].toString();
+             String apellidosCliente = d[2].toString();
+             String dniCliente = d[3].toString();
+             String fecha= d[4].toString();
+		 
+             dto=new PaqueteDto(pedidoId,nombreCliente,apellidosCliente,dniCliente,fecha);
+             
+		 }
+		 return dto;
+		                
+		}
 	
 	
 

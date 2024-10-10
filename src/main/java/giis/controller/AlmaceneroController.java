@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import giis.model.Almacenero.AlmaceneroModel;
-import giis.model.Almacenero.OrdenTrabajoDto;
-import giis.model.Almacenero.OrdenTrabajoRecord;
-import giis.model.Almacenero.PedidoARecogerDto;
-import giis.model.Almacenero.PedidoARecogerRecord;
+import giis.model.Almacenero.*;
 import giis.ui.AlmaceneroView;
 
 public class AlmaceneroController {
