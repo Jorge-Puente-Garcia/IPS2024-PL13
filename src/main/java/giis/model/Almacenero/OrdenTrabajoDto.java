@@ -39,5 +39,9 @@ public class OrdenTrabajoDto {
 		this.almaceneroId = almaceneroId;
 	}
 	
+	/*
+	 * 
+	 */
+	
 	
 }

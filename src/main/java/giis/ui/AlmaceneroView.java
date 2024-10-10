@@ -30,7 +30,7 @@ public class AlmaceneroView {
 	private JScrollPane scrollPane;
 	private JTable tablaOrdenesTrabajoDisponibles;
 	private AlmaceneroController controller;
-	private JButton btnSeleccionar;
+	private JButton btnCrearOT;
 	private JButton btnCancelar;
 	private JButton btnVerOrdenesDeTrabajo;
 	private JPanel pnIdentificación;
@@ -38,6 +38,11 @@ public class AlmaceneroView {
 	private JPanel pnOrdenesDeTrabajoSeleccionadas;
 	private JScrollPane scrpOrdenesTrabajoSeleccionadas;
 	private JTable tablaOrdenesTrabajoSeleccionadas;
+	private JButton btnVolverAtrasVerOrdenesTrabajo;
+	private JPanel pnEmpaquetado;
+	private JButton btnVolverPnEmpaquetado;
+	private JScrollPane scrollPane_1;
+	private JButton btnNewButton;
 	
 	
 	/**
@@ -80,6 +85,7 @@ public class AlmaceneroView {
 		frameTerminalPortatil.getContentPane().add(getPnPaginaPrincipal(), "pnPaginaPrincipal");
 		frameTerminalPortatil.getContentPane().add(getPnOrdenesDeTrabajoDisponibles(), "pnOrdenesDeTrabajo");
 		frameTerminalPortatil.getContentPane().add(getPnOrdenesDeTrabajoSeleccionadas(), "pnOrdenesDeTrabajoSeleccionadas");
+		frameTerminalPortatil.getContentPane().add(getPnEmpaquetado(), "name_1725463696209000");
 	}
 
 	private JPanel getPnPaginaPrincipal() {
@@ -109,7 +115,7 @@ public class AlmaceneroView {
 			pnOrdenesDeTrabajoDisponibles.setLayout(null);
 			pnOrdenesDeTrabajoDisponibles.add(getBtnVolverAPaginaPrincipal());
 			pnOrdenesDeTrabajoDisponibles.add(getScrollPane(), "cell 10 3,grow");
-			pnOrdenesDeTrabajoDisponibles.add(getBtnSeleccionar());
+			pnOrdenesDeTrabajoDisponibles.add(getBtnCrearOT());
 			pnOrdenesDeTrabajoDisponibles.add(getBtnCancelar());
 		}
 		return pnOrdenesDeTrabajoDisponibles;
@@ -151,35 +157,42 @@ public class AlmaceneroView {
 				public void mouseClicked(MouseEvent e) {
 					int fila = tablaOrdenesTrabajoDisponibles.getSelectedRow();
 					if(fila >= 0) {
-						getBtnSeleccionar().setEnabled(true);
+						getBtnCrearOT().setEnabled(true);
 					}
 				}
 			});
 		}
 		return tablaOrdenesTrabajoDisponibles;
 	}
-	private JButton getBtnSeleccionar() {
-		if (btnSeleccionar == null) {
-			btnSeleccionar = new JButton("Seleccionar");
-			btnSeleccionar.addActionListener(new ActionListener() {
+	private JButton getBtnCrearOT() {
+		if (btnCrearOT == null) {
+			btnCrearOT = new JButton("Crear OT");
+			btnCrearOT.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					getTablaOrdenesTrabajoDisponibles().setEnabled(false);
+					getBtnCrearOT().setEnabled(false);
 					controller.ponEnRecogidaElPedido(getTablaOrdenesTrabajoDisponibles().getSelectedRow());
 					TableModel tmodel=SwingUtil.getTableModelFromPojos(controller.getPedidosPendientesRecogida(), new String[] {"fecha", "tamaño", "estado"});
 					getTablaOrdenesTrabajoDisponibles().setModel(tmodel);
 					SwingUtil.autoAdjustColumns(tablaOrdenesTrabajoDisponibles);
+					CardLayout cl = (CardLayout)(frameTerminalPortatil.getContentPane().getLayout());
+					cl.show(frameTerminalPortatil.getContentPane(), "pnOrdenesDeTrabajoSeleccionadas");
+					TableModel tmodel2=SwingUtil.getTableModelFromPojos(controller.getOrdenesDeTrabajoSeleccionadas(), new String[] {"fechaCreacion", "estado", "incidencias","almaceneroId"});
+					getTablaOrdenesTrabajoSeleccionadas().setModel(tmodel2);
+					SwingUtil.autoAdjustColumns(getTablaOrdenesTrabajoSeleccionadas());
 				}
 			});
-			btnSeleccionar.setEnabled(false);
-			btnSeleccionar.setBounds(310, 372, 110, 34);
+			btnCrearOT.setEnabled(false);
+			btnCrearOT.setBounds(310, 372, 110, 34);
 		}
-		return btnSeleccionar;
+		return btnCrearOT;
 	}
 	private JButton getBtnCancelar() {
 		if (btnCancelar == null) {
 			btnCancelar = new JButton("Cancelar");
 			btnCancelar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					getBtnSeleccionar().setEnabled(false);
+					getBtnCrearOT().setEnabled(false);
 				}
 			});
 			btnCancelar.setBounds(190, 372, 110, 34);
@@ -193,6 +206,9 @@ public class AlmaceneroView {
 				public void actionPerformed(ActionEvent e) {
 					CardLayout cl = (CardLayout)(frameTerminalPortatil.getContentPane().getLayout());
 					cl.show(frameTerminalPortatil.getContentPane(), "pnOrdenesDeTrabajoSeleccionadas");
+					TableModel tmodel=SwingUtil.getTableModelFromPojos(controller.getOrdenesDeTrabajoSeleccionadas(), new String[] {"fechaCreacion", "estado", "incidencias","almaceneroId"});
+					getTablaOrdenesTrabajoSeleccionadas().setModel(tmodel);
+					SwingUtil.autoAdjustColumns(getTablaOrdenesTrabajoSeleccionadas());
 				}
 			});
 		}
@@ -234,13 +250,14 @@ public class AlmaceneroView {
 			pnOrdenesDeTrabajoSeleccionadas = new JPanel();
 			pnOrdenesDeTrabajoSeleccionadas.setLayout(null);
 			pnOrdenesDeTrabajoSeleccionadas.add(getScrpOrdenesTrabajoSeleccionadas());
+			pnOrdenesDeTrabajoSeleccionadas.add(getBtnVolverAtrasVerOrdenesTrabajo());
 		}
 		return pnOrdenesDeTrabajoSeleccionadas;
 	}
 	private JScrollPane getScrpOrdenesTrabajoSeleccionadas() {
 		if (scrpOrdenesTrabajoSeleccionadas == null) {
 			scrpOrdenesTrabajoSeleccionadas = new JScrollPane((Component) null);
-			scrpOrdenesTrabajoSeleccionadas.setBounds(33, 83, 336, 252);
+			scrpOrdenesTrabajoSeleccionadas.setBounds(34, 56, 355, 252);
 			scrpOrdenesTrabajoSeleccionadas.setViewportView(getTablaOrdenesTrabajoSeleccionadas());
 		}
 		return scrpOrdenesTrabajoSeleccionadas;
@@ -260,5 +277,48 @@ public class AlmaceneroView {
 		}
 		return tablaOrdenesTrabajoSeleccionadas;
 	}
-	
+	private JButton getBtnVolverAtrasVerOrdenesTrabajo() {
+		if (btnVolverAtrasVerOrdenesTrabajo == null) {
+			btnVolverAtrasVerOrdenesTrabajo = new JButton("Volver");
+			btnVolverAtrasVerOrdenesTrabajo.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					CardLayout cl = (CardLayout)(frameTerminalPortatil.getContentPane().getLayout());
+					cl.show(frameTerminalPortatil.getContentPane(), "pnPaginaPrincipal");
+				}
+			});
+			btnVolverAtrasVerOrdenesTrabajo.setBounds(10, 10, 108, 36);
+		}
+		return btnVolverAtrasVerOrdenesTrabajo;
+	}
+	private JPanel getPnEmpaquetado() {
+		if (pnEmpaquetado == null) {
+			pnEmpaquetado = new JPanel();
+			pnEmpaquetado.setLayout(null);
+			pnEmpaquetado.add(getBtnVolverPnEmpaquetado());
+			pnEmpaquetado.add(getScrollPane_1());
+			pnEmpaquetado.add(getBtnNewButton());
+		}
+		return pnEmpaquetado;
+	}
+	private JButton getBtnVolverPnEmpaquetado() {
+		if (btnVolverPnEmpaquetado == null) {
+			btnVolverPnEmpaquetado = new JButton("Volver");
+			btnVolverPnEmpaquetado.setBounds(10, 10, 85, 21);
+		}
+		return btnVolverPnEmpaquetado;
+	}
+	private JScrollPane getScrollPane_1() {
+		if (scrollPane_1 == null) {
+			scrollPane_1 = new JScrollPane();
+			scrollPane_1.setBounds(20, 41, 388, 282);
+		}
+		return scrollPane_1;
+	}
+	private JButton getBtnNewButton() {
+		if (btnNewButton == null) {
+			btnNewButton = new JButton("New button");
+			btnNewButton.setBounds(335, 385, 85, 21);
+		}
+		return btnNewButton;
+	}
 }
