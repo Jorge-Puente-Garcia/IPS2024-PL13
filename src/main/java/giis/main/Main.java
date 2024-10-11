@@ -33,6 +33,7 @@ public class Main {
          listaProductos1.add(p1);
          listaProductos1.add(p2);
          OrdenTrabajo o1=new OrdenTrabajo(listaProductos1, "1",incidencias); 
+         o1.mostrarOrdenTrabajo();
          alm1.recogerProductos(o1);
          Empaquetado e=new Empaquetado(alm1);
          List<OrdenTrabajo>ots1=alm1.otsPendientesDeEmpaquetar();
