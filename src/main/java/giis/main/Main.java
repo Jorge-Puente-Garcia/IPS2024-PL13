@@ -22,18 +22,22 @@ import java.util.Date;
 public class Main {
     public static void main(String[] args) {
         // Crear sistema de almacén
-    	 Almacenero alm=new Almacenero("Juan", "Perez");
+    	 Almacenero alm1=new Almacenero("Juan", "Perez");
          LectorBd l=new LectorBd();
+         Localizacion l1=new Localizacion(1, 2, 3, 4,'A');
+         Localizacion l2=new Localizacion(3, 2, 3, 1,'B');
+         Producto p1=new Producto("REF001", "Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento", 5, 199.99, l1);
+         Producto p2=new Producto("REF002", "Laptop ultraligera de 14 pulgadas, procesador Intel Core i7, 16GB RAM y 512GB SSD", 6,1199.99, l2);
          List<Incidencia> incidencias = new ArrayList<Incidencia>();
-         List<Producto>listaProductos= l.getProductoBd(); 
-         OrdenTrabajo o1=new OrdenTrabajo(listaProductos, "1",incidencias);
-         OrdenTrabajo o2=new OrdenTrabajo(listaProductos, "2",incidencias);
-         alm.recogerProductos(o1);
-         Empaquetado e=new Empaquetado(alm);
-         List<OrdenTrabajo>ots=alm.otsPendientesDeEmpaquetar();
-         System.out.println(ots);
-         System.out.println(e.seleccionarOT(ots));
-         e.iniciarProcesoEmpaquetado(ots);
+         List<Producto>listaProductos1=new ArrayList<Producto>();  
+         listaProductos1.add(p1);
+         listaProductos1.add(p2);
+         OrdenTrabajo o1=new OrdenTrabajo(listaProductos1, "1",incidencias); 
+         alm1.recogerProductos(o1);
+         Empaquetado e=new Empaquetado(alm1);
+         List<OrdenTrabajo>ots1=alm1.otsPendientesDeEmpaquetar();
+         System.out.println(ots1);
+         e.iniciarProcesoEmpaquetado(ots1);
         
 
        

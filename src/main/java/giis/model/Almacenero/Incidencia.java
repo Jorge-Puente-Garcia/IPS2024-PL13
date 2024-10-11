@@ -19,11 +19,11 @@ public class Incidencia {
         this.id = id;
         this.referenciaProducto = referenciaProducto;
         this.descripcion = descripcion;
-        this.fila = fila;
-        this.columna = columna;
-        this.estanteria = estanteria;
-        this.cara = cara;
-        this.pasillo = pasillo; // Asignar pasillo
+        this.setFila(fila);
+        this.setColumna(columna);
+        this.setEstanteria(estanteria);
+        this.setCara(cara);
+        this.setPasillo(pasillo); // Asignar pasillo
         this.fecha = fecha;
     }
     // Getters y Setters
@@ -64,4 +64,34 @@ public class Incidencia {
                 ", fechaHora=" + getFechaHora() +
                 '}';
     }
+	public int getFila() {
+		return fila;
+	}
+	public void setFila(int fila) {
+		this.fila = fila;
+	}
+	public int getColumna() {
+		return columna;
+	}
+	public void setColumna(int columna) {
+		this.columna = columna;
+	}
+	public int getEstanteria() {
+		return estanteria;
+	}
+	public void setEstanteria(int estanteria) {
+		this.estanteria = estanteria;
+	}
+	public char getCara() {
+		return cara;
+	}
+	public void setCara(char cara) {
+		this.cara = cara;
+	}
+	public int getPasillo() {
+		return pasillo;
+	}
+	public void setPasillo(int pasillo) {
+		this.pasillo = pasillo;
+	}
 }
