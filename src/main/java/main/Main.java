@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import giis.controller.TiendaController;
+import giis.ui.AlmaceneroView;
 import giis.util.Database;
 
 import java.awt.GridLayout;
@@ -21,6 +22,7 @@ public class Main extends JFrame {
 	private JButton btAbrirTienda;
 	
 	private static Database db = new Database();
+	private JButton btnAbrirAlmacen;
 	
 	/**
 	 * Launch the application.
@@ -55,6 +57,7 @@ public class Main extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new GridLayout(3, 0, 0, 0));
 		contentPane.add(getBtAbrirTienda());
+		contentPane.add(getBtnAbrirAlmacen());
 		
 		setLocationRelativeTo(null);
 	}
@@ -69,5 +72,25 @@ public class Main extends JFrame {
 			});
 		}
 		return btAbrirTienda;
+	}
+	private JButton getBtnAbrirAlmacen() {
+		if (btnAbrirAlmacen == null) {
+			btnAbrirAlmacen = new JButton("AbrirAlmacen");
+			btnAbrirAlmacen.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							try {
+								AlmaceneroView window = new AlmaceneroView();
+								window.getFrameTerminalPortatil().setVisible(true);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
+				}
+			});
+		}
+		return btnAbrirAlmacen;
 	}
 }

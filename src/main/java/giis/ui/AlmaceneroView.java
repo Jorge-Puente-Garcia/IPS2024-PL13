@@ -59,6 +59,7 @@ public class AlmaceneroView {
 				}
 			}
 		});
+		
 	}
 
 	/**
@@ -66,6 +67,7 @@ public class AlmaceneroView {
 	 */
 	public AlmaceneroView() {
 		initialize();
+		
 		
 	}
 	public JFrame getFrameTerminalPortatil() {
@@ -86,6 +88,7 @@ public class AlmaceneroView {
 		frameTerminalPortatil.getContentPane().add(getPnOrdenesDeTrabajoDisponibles(), "pnOrdenesDeTrabajo");
 		frameTerminalPortatil.getContentPane().add(getPnOrdenesDeTrabajoSeleccionadas(), "pnOrdenesDeTrabajoSeleccionadas");
 		frameTerminalPortatil.getContentPane().add(getPnEmpaquetado(), "name_1725463696209000");
+		frameTerminalPortatil.setLocationRelativeTo(null);
 	}
 
 	private JPanel getPnPaginaPrincipal() {
