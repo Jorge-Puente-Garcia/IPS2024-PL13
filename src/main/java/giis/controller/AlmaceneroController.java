@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import giis.model.Almacenero.AlmaceneroModel;
-import giis.model.Almacenero.*;
-import giis.ui.AlmaceneroView;
+import giis.model.Almacenero.EtiquetaRecord;
+import giis.model.Almacenero.OrdenTrabajoDto;
+import giis.model.Almacenero.OrdenTrabajoRecord;
+import giis.model.Almacenero.PedidoARecogerDto;
+import giis.model.Almacenero.PedidoARecogerRecord;
 
 public class AlmaceneroController {
 	private AlmaceneroModel model;
-	private AlmaceneroView view;
 	
 	private List<PedidoARecogerRecord> pedidosSinRecoger;
 	private List<PedidoARecogerDto> pedidosSinRecogerParaImprimir;
@@ -38,6 +40,7 @@ public class AlmaceneroController {
 		List<OrdenTrabajoDto> l=new ArrayList<OrdenTrabajoDto>();
 		for(OrdenTrabajoRecord r: pedidosAsignados) {
 			OrdenTrabajoDto d=new OrdenTrabajoDto();
+			d.setId(r.getId());
 			d.setEstado(r.getEstado());
 			d.setFechaCreacion(r.getFechaCreacion());
 			d.setIncidencias(r.getIncidencias());
@@ -69,6 +72,22 @@ public class AlmaceneroController {
 			return true;
 		}
 		return false;
+	}
+	public String getEtiquetaEnvio(OrdenTrabajoDto otd) {
+		OrdenTrabajoRecord or= new OrdenTrabajoRecord();
+		or.setCodigoBarras(otd.getCodigoBarras());
+		or.setId(otd.getId());
+		String r=model.creaEtiqueta(or);
+		return r;
+		
+	}
+	public String getAlbaran(OrdenTrabajoDto otd) {
+		OrdenTrabajoRecord or= new OrdenTrabajoRecord();
+		or.setCodigoBarras(otd.getCodigoBarras());
+		or.setId(otd.getId());
+		String r=model.creaAlbaran(or);
+		return r;
+		
 	}
 	
 }

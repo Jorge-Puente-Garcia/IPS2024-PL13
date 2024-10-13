@@ -9,12 +9,20 @@ public class OrdenTrabajoRecord {
 	private Estado estado;
 	private String incidencias;
 	private String almaceneroId;
+	private String codigoBarras;
 	
-	
+
 	public OrdenTrabajoRecord() {
 	
 	}
-	
+		public String getCodigoBarras() {
+		return codigoBarras;
+	}
+
+	public void setCodigoBarras(String codigoBarras) {
+		this.codigoBarras = codigoBarras;
+	}
+
 	public String getId() {
 		return id;
 	}
