@@ -98,10 +98,12 @@ public class AlmaceneroModel {
 	}
 
 	public String creaEtiqueta(OrdenTrabajoRecord otr) {
-		String sacarInfoEtiquetaEnvio = "SELECT Cliente.nombre, Cliente.apellidos, Cliente.direccion, Cliente.numeroTelefono, OrdenTrabajo.codigoBarrasPaquete "
+		String sacarInfoEtiquetaEnvio = "SELECT Cliente.nombre, Cliente.apellidos, Cliente.direccion, Cliente.numeroTelefono "
 				+ "FROM OrdenTrabajo JOIN Pedido ON Pedido.orden_trabajo_id = OrdenTrabajo.id JOIN Cliente "
 				+ "ON Pedido.cliente_id = Cliente.id WHERE OrdenTrabajo.id = " + otr.getId() + ";";
+		String actualizarCodigoBarras="UPDATE OrdenTrabajo SET codigoBarrasPaquete = '"+otr.getCodigoBarras()+"' WHERE id =" + otr.getId() + ";";
 
+		db.executeUpdate(actualizarCodigoBarras);
 		List<Object[]> lista = db.executeQueryArray(sacarInfoEtiquetaEnvio, new Object[0]);
 		EtiquetaRecord edto = new EtiquetaRecord();
 		String direccion = "";
@@ -110,11 +112,10 @@ public class AlmaceneroModel {
 			String apellidos = d[1].toString();
 			direccion = d[2].toString();
 			String numeroTeléfono = d[3].toString();
-			String codigoBarra = d[4].toString();
 			edto.setNombre(nombre);
 			edto.setApellidos(apellidos);
 			edto.setNumeroTeléfon(numeroTeléfono);
-			edto.setCodigoBarra(codigoBarra);
+			edto.setCodigoBarra(otr.getCodigoBarras());
 		}
 
 		String paqueteId = otr.getId();
