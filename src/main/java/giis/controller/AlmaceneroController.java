@@ -3,8 +3,8 @@ package giis.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import giis.model.Estado;
 import giis.model.Almacenero.AlmaceneroModel;
-import giis.model.Almacenero.EtiquetaRecord;
 import giis.model.Almacenero.OrdenTrabajoDto;
 import giis.model.Almacenero.OrdenTrabajoRecord;
 import giis.model.Almacenero.PedidoARecogerDto;
@@ -41,7 +41,13 @@ public class AlmaceneroController {
 		for(OrdenTrabajoRecord r: pedidosAsignados) {
 			OrdenTrabajoDto d=new OrdenTrabajoDto();
 			d.setId(r.getId());
-			d.setEstado(r.getEstado());
+			if(r.getEstado().equals("Pendiente de empaquetado")) {
+				d.setEstado(Estado.PendienteDeEmpaquetado);
+			}else if(r.getEstado().equals("Empaquetado")) {
+				d.setEstado(Estado.Empaquetado);
+			}else if(r.getEstado().equals("En recogida")) {
+				d.setEstado(Estado.EnRecogida);
+			}
 			d.setFechaCreacion(r.getFechaCreacion());
 			d.setIncidencias(r.getIncidencias());
 			d.setAlmaceneroId(r.getAlmaceneroId());
@@ -59,7 +65,13 @@ public class AlmaceneroController {
 		List<PedidoARecogerDto> l=new ArrayList<PedidoARecogerDto>();
 		for(PedidoARecogerRecord r: pedidosSinRecoger) {
 			PedidoARecogerDto d=new PedidoARecogerDto();
-			d.setEstado(r.getEstado());
+			if(r.getEstado().equals("Pendiente de recogida")) {
+				d.setEstado(Estado.PendienteDeRecogida);
+			}else if(r.getEstado().equals("Recogido")) {
+				d.setEstado(Estado.Recogido);
+			}else if(r.getEstado().equals("En recogida")) {
+				d.setEstado(Estado.EnRecogida);
+			}
 			d.setFecha(r.getFecha());
 			d.setTamano(r.getTamaño());
 			l.add(d);
