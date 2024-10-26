@@ -7,9 +7,9 @@ public class PedidoARecogerRecord {
 	private String id;
 	private String fecha;
 	private int tamaño;
-	private Estado estado;
+	private String estado;
 	
-	public PedidoARecogerRecord(String id,String fecha, int tamano, Estado estado) {
+	public PedidoARecogerRecord(String id,String fecha, int tamano, String estado) {
 		super();
 		this.id=id;
 		this.fecha = fecha;
@@ -33,7 +33,7 @@ public class PedidoARecogerRecord {
 		return tamaño;
 	}
 
-	public Estado getEstado() {
+	public String getEstado() {
 		return estado;
 	}
 
@@ -47,7 +47,7 @@ public class PedidoARecogerRecord {
 		this.tamaño = tamano;
 		
 	}
-	public void setEstado(Estado estado) {
+	public void setEstado(String estado) {
 		this.estado = estado;
 	}
 

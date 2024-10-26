@@ -19,39 +19,22 @@ public class AlmaceneroModel {
 	}
 
 	public List<PedidoARecogerRecord> getPedidosPendientesRecogida() {
-		String sql = "SELECT p.id ,p.fecha, SUM(pp.cantidad), p.estado FROM Pedido p LEFT JOIN ProductosPedido pp "
+		String sql = "SELECT p.id ,p.fecha, SUM(pp.cantidad) as Tamano, p.estado FROM Pedido p LEFT JOIN ProductosPedido pp "
 				+ "ON pp.pedido_id = p.id WHERE p.estado = 'Pendiente de recogida' GROUP BY p.id, p.fecha, p.estado ORDER BY p.fecha;";
 
-		List<Object[]> lista = db.executeQueryArray(sql, new Object[0]);
-		List<PedidoARecogerRecord> listaPedidosNoRecogidos = new ArrayList<PedidoARecogerRecord>();
-		PedidoARecogerRecord dto;
-
-		for (Object[] d : lista) {
-			dto = new PedidoARecogerRecord();
-			dto.setId(d[0].toString());
-			dto.setFecha(d[1].toString());
-			dto.setTamano(Integer.parseInt(d[2].toString()));
-			String estado = d[3].toString();
-			switch (estado) {
-			case "Pendiente de recogida" -> dto.setEstado(Estado.PendienteDeRecogida);
-			case "Recogido" -> dto.setEstado(Estado.Recogido);
-			default -> throw new IllegalArgumentException();
-			}
-
-			listaPedidosNoRecogidos.add(dto);
-		}
-
-		return listaPedidosNoRecogidos;
+		List<PedidoARecogerRecord> li=db.executeQueryPojo(PedidoARecogerRecord.class, sql);
+		return li;
 	}
 
 	public void ponEnRecogidaElPedido(PedidoARecogerRecord par) {
-		String sqlUpdate = "UPDATE PEDIDO SET estado='Recogido' WHERE id='" + par.getId() + "';";
-		db.executeUpdate(sqlUpdate);
+		String sqlUpdate = "UPDATE PEDIDO SET estado='Recogido' WHERE id=?;";
+		db.executeUpdate(sqlUpdate,par.getId());//CAMBIO
+		
 	}
 
 	public boolean isOkIdAlmacenero(String id) {
-		String sql = "SELECT nombre from ALMACENERO WHERE id='" + id + "';";
-		List<Object[]> lista = db.executeQueryArray(sql);
+		String sql = "SELECT nombre from ALMACENERO WHERE id=?;";
+		List<Object[]> lista = db.executeQueryArray(sql,id);//CAMBIO
 		if (lista.isEmpty()) {
 			return false;
 		}
@@ -59,64 +42,68 @@ public class AlmaceneroModel {
 	}
 
 	public void creaOrdenDeTrabajo(int almaceneroId) {
-		String sqlInsert = "INSERT INTO OrdenTrabajo (fecha_creacion,estado,almacenero_id,incidencia) " + "VALUES ('"
-				+ LocalDate.now().toString() + "' , 'En recogida' , '" + almaceneroId + "' ,'Ninguna');";
-		db.executeUpdate(sqlInsert);
+		String sqlInsert = "INSERT INTO OrdenTrabajo (fecha_creacion,estado,almacenero_id,incidencia) " 
+						+ "VALUES (? , 'En recogida' , ? ,'Ninguna');";
+		//String sqlInsert = "INSERT INTO OrdenTrabajo (fecha_creacion,estado,almacenero_id,incidencia) " + "VALUES ('"
+		//+ LocalDate.now().toString() + "' , 'En recogida' , '" + almaceneroId + "' ,'Ninguna');";
+		db.executeUpdate(sqlInsert,LocalDate.now().toString(),almaceneroId); //CAMBIO
 
 	}
 
 	public List<OrdenTrabajoRecord> getOrdenesDeTrabajoDelAlmaceneroPorId(int almaceneroId) {
-		String sql = "SELECT id, fecha_creacion, estado, incidencia, almacenero_id FROM OrdenTrabajo WHERE almacenero_id="
-				+ almaceneroId + ";";
+		String sql = "SELECT id, fecha_creacion, estado, incidencia, almacenero_id FROM OrdenTrabajo WHERE almacenero_id=?;";
 
-		List<Object[]> lista = db.executeQueryArray(sql, new Object[0]);
-		List<OrdenTrabajoRecord> listaPedidosNoRecogidos = new ArrayList<OrdenTrabajoRecord>();
-		OrdenTrabajoRecord dto;
-		for (Object[] d : lista) {
-			dto = new OrdenTrabajoRecord();
-			dto.setId(d[0].toString());
-			dto.setFechaCreacion(d[1].toString());
-			String estado = d[2].toString();
-			switch (estado) {
-			case "En recogida" -> dto.setEstado(Estado.EnRecogida);
-			case "Pendiente de empaquetado" -> dto.setEstado(Estado.PendienteDeEmpaquetado);
-			case "Empaquetado" -> dto.setEstado(Estado.Empaquetado);
-			default -> throw new IllegalArgumentException();
-			}
-			if (d[3] == null) {
-				dto.setIncidencias("Sin incidencias");
-			} else {
-				dto.setIncidencias(d[3].toString());
-			}
+		//List<Object[]> lista = db.executeQueryArray(sql, new Object[0]);
+		//	List<OrdenTrabajoRecord> listaPedidosNoRecogidos = new ArrayList<OrdenTrabajoRecord>();
+		List<OrdenTrabajoRecord> li=db.executeQueryPojo(OrdenTrabajoRecord.class, sql,almaceneroId);
+//		OrdenTrabajoRecord dto;
+//		for (Object[] d : lista) {
+//			dto = new OrdenTrabajoRecord();
+//			dto.setId(d[0].toString());
+//			dto.setFechaCreacion(d[1].toString());
+//			String estado = d[2].toString();
+//			switch (estado) {
+//			case "En recogida" -> dto.setEstado(Estado.EnRecogida);
+//			case "Pendiente de empaquetado" -> dto.setEstado(Estado.PendienteDeEmpaquetado);
+//			case "Empaquetado" -> dto.setEstado(Estado.Empaquetado);
+//			default -> throw new IllegalArgumentException();
+//			}
+//			if (d[3] == null) {
+//				dto.setIncidencias("Sin incidencias");
+//			} else {
+//				dto.setIncidencias(d[3].toString());
+//			}
+//
+//			dto.setAlmaceneroId(d[4].toString());
 
-			dto.setAlmaceneroId(d[4].toString());
+			//listaPedidosNoRecogidos.add(dto);
+		//}
 
-			listaPedidosNoRecogidos.add(dto);
-		}
-
-		return listaPedidosNoRecogidos;
+		return li;
 	}
 
 	public String creaEtiqueta(OrdenTrabajoRecord otr) {
 		String sacarInfoEtiquetaEnvio = "SELECT Cliente.nombre, Cliente.apellidos, Cliente.direccion, Cliente.numeroTelefono "
 				+ "FROM OrdenTrabajo JOIN Pedido ON Pedido.orden_trabajo_id = OrdenTrabajo.id JOIN Cliente "
-				+ "ON Pedido.cliente_id = Cliente.id WHERE OrdenTrabajo.id = " + otr.getId() + ";";
-		String actualizarCodigoBarras="UPDATE OrdenTrabajo SET codigoBarrasPaquete = '"+otr.getCodigoBarras()+"' WHERE id =" + otr.getId() + ";";
-
-		db.executeUpdate(actualizarCodigoBarras);
+				+ "ON Pedido.cliente_id = Cliente.id WHERE OrdenTrabajo.id = ?;";
+		String actualizarCodigoBarras="UPDATE OrdenTrabajo SET codigoBarrasPaquete = ? WHERE id = ? ;";
+		
+		db.executeUpdate(actualizarCodigoBarras,otr.getCodigoBarras(),otr.getId());
 		List<Object[]> lista = db.executeQueryArray(sacarInfoEtiquetaEnvio, new Object[0]);
-		EtiquetaRecord edto = new EtiquetaRecord();
+		
+		List<EtiquetaRecord> li=db.executeQueryPojo(EtiquetaRecord.class, sacarInfoEtiquetaEnvio,otr.getId());
+		EtiquetaRecord edto = li.get(0);
 		String direccion = "";
-		for (Object[] d : lista) {
-			String nombre = d[0].toString();
-			String apellidos = d[1].toString();
-			direccion = d[2].toString();
-			String numeroTeléfono = d[3].toString();
-			edto.setNombre(nombre);
-			edto.setApellidos(apellidos);
-			edto.setNumeroTeléfon(numeroTeléfono);
-			edto.setCodigoBarra(otr.getCodigoBarras());
-		}
+//		for (Object[] d : lista) {
+//			String nombre = d[0].toString();
+//			String apellidos = d[1].toString();
+//			direccion = d[2].toString();
+//			String numeroTeléfono = d[3].toString();
+//			edto.setNombre(nombre);
+//			edto.setApellidos(apellidos);
+//			edto.setNumeroTeléfon(numeroTeléfono);
+//			edto.setCodigoBarra(otr.getCodigoBarras());
+//		}
 
 		String paqueteId = otr.getId();
 		edto.setPaqueteId(paqueteId);
@@ -139,11 +126,10 @@ public class AlmaceneroModel {
 		db.loadDatabase();
 		String sacarInfoAlbaran = "SELECT Producto.datosBasicos AS nombre, Producto.referencia, OrdenTrabajoProducto.cantidad "
 				+ "FROM OrdenTrabajo JOIN OrdenTrabajoProducto ON OrdenTrabajo.id = OrdenTrabajoProducto.orden_trabajo_id "
-				+ "JOIN Producto ON OrdenTrabajoProducto.producto_id = Producto.id WHERE OrdenTrabajo.id = "
-				+ otr.getId() + ";";
+				+ "JOIN Producto ON OrdenTrabajoProducto.producto_id = Producto.id WHERE OrdenTrabajo.id =?;";
 
-		List<Object[]> lista = db.executeQueryArray(sacarInfoAlbaran, new Object[0]);
-
+		List<Object[]> lista = db.executeQueryArray(sacarInfoAlbaran,otr.getId()); //CAMBIO
+		
 		// Cálculo del ancho máximo de las columnas
 		int maxNombreLength = 0;
 		int maxReferenciaLength = 0;
@@ -162,8 +148,9 @@ public class AlmaceneroModel {
 		maxNombreLength = Math.max(maxNombreLength, 31); // Mínimo 31
 		maxReferenciaLength = Math.max(maxReferenciaLength, 31); // Mínimo 31
 		maxCantidadLength = Math.max(maxCantidadLength, 20); // Mínimo 20
-
-		 String albaran = " Albarán:                                                                                  \n"
+		
+		String albaran = "Datos del cliente y del paquete:"+creaEtiqueta(otr).substring(20);
+		albaran += " Albarán:                                                                                  \n"
 	                + String.format("|%-" + maxNombreLength + "s |%-" + maxReferenciaLength + "s  |%-" + maxCantidadLength + "s  |\n",
 	                " Nombre producto ", " Referencia producto ", " Cantidad ")
 	                + String.format("|%-" + maxNombreLength + "s |%-" + maxReferenciaLength + "s  |%-" + maxCantidadLength + "s  |\n",
@@ -193,10 +180,14 @@ public class AlmaceneroModel {
 	}
 
 	public static void main(String[] args) {
-		//OrdenTrabajoRecord otr = new OrdenTrabajoRecord();
-		//otr.setCodigoBarras("CodigoInventado");
-		//otr.setId("1");
-		//creaAlbaran(otr);
+//		OrdenTrabajoRecord otr = new OrdenTrabajoRecord();
+//		db=new Database();
+//		db.createDatabase(false);
+//		db.loadDatabase();
+//		List<PedidoARecogerRecord> l=getPedidosPendientesRecogida();
+//		for(PedidoARecogerRecord p:l) {
+//			System.out.println(p.getId());
+//		}
 	}
 
 }

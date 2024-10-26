@@ -1,20 +1,28 @@
 package giis.model.Almacenero;
 
-import giis.model.Estado;
-
 public class OrdenTrabajoRecord {
 	
 	private String id;
-	private String fechaCreacion;
-	private Estado estado;
-	private String incidencias;
-	private String almaceneroId;
+	private String fecha_creacion;
+	private String estado;
+	private String incidencia;
+	private String almacenero_id;
 	private String codigoBarras;
 	
 
-	public OrdenTrabajoRecord() {
 	
+		public OrdenTrabajoRecord(String id, String fecha_creacion, String estado, String incidencia, String almacenero_id) {
+		this.id = id;
+		this.fecha_creacion = fecha_creacion;
+		this.estado = estado;
+		this.incidencia = incidencia;
+		this.almacenero_id = almacenero_id;
 	}
+
+		public OrdenTrabajoRecord() {
+			// TODO Auto-generated constructor stub
+		}
+
 		public String getCodigoBarras() {
 		return codigoBarras;
 	}
@@ -30,34 +38,34 @@ public class OrdenTrabajoRecord {
 		this.id = id;
 	}
 	public String getFechaCreacion() {
-		return fechaCreacion;
+		return fecha_creacion;
 	}
-	public void setFechaCreacion(String fechaCreacion) {
-		this.fechaCreacion = fechaCreacion;
+	public void setFecha_creacion(String fechaCreacion) {
+		this.fecha_creacion = fechaCreacion;
 	}
-	public Estado getEstado() {
+	public String getEstado() {
 		return estado;
 	}
-	public void setEstado(Estado recogido) {
+	public void setEstado(String recogido) {
 		this.estado = recogido;
 	}
 	public String getIncidencias() {
-		return incidencias;
+		return incidencia;
 	}
-	public void setIncidencias(String incidencias) {
-		this.incidencias = incidencias;
+	public void setIncidencia(String incidencias) {
+		this.incidencia = incidencias;
 	}
 	public String getAlmaceneroId() {
-		return almaceneroId;
+		return almacenero_id;
 	}
-	public void setAlmaceneroId(String almaceneroId) {
-		this.almaceneroId = almaceneroId;
+	public void setAlmacenero_id(String almaceneroId) {
+		this.almacenero_id = almaceneroId;
 	}
 
 	@Override
 	public String toString() {
-		return "OrdenTrabajoRecord [id=" + id + ", fechaCreacion=" + fechaCreacion + ", estado=" + estado
-				+ ", incidencias=" + incidencias + ", almaceneroId=" + almaceneroId + "]";
+		return "OrdenTrabajoRecord [id=" + id + ", fechaCreacion=" + fecha_creacion + ", estado=" + estado
+				+ ", incidencias=" + incidencia + ", almaceneroId=" + almacenero_id + "]";
 	}
 	
 
