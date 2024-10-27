@@ -4,10 +4,14 @@ public class EtiquetaRecord {
 
 	private String nombre;
 	private String apellidos;
-	private String numeroTeléfon;
-	private String codigoBarra;
+	private String numeroTelefono;
 	private String paqueteId;
+	private String direccion;
 	
+	
+	public  EtiquetaRecord() {
+		
+	}
 	public String getNombre() {
 		return nombre;
 	}
@@ -20,22 +24,24 @@ public class EtiquetaRecord {
 	public void setApellidos(String apellidos) {
 		this.apellidos = apellidos;
 	}
-	public String getNumeroTeléfon() {
-		return numeroTeléfon;
+	public String getNumeroTelefono() {
+		return numeroTelefono;
 	}
-	public void setNumeroTeléfon(String numeroTeléfon) {
-		this.numeroTeléfon = numeroTeléfon;
+	public void setNumeroTelefono(String numeroTeléfon) {
+		this.numeroTelefono = numeroTeléfon;
 	}
-	public String getCodigoBarra() {
-		return codigoBarra;
-	}
-	public void setCodigoBarra(String codigoBarra) {
-		this.codigoBarra = codigoBarra;
-	}
+
 	public String getPaqueteId() {
 		return paqueteId;
 	}
 	public void setPaqueteId(String paqueteId) {
 		this.paqueteId = paqueteId;
 	}
+	public String getDireccion() {
+		return direccion;
+	}
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+	
 }
