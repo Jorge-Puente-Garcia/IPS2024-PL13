@@ -63,17 +63,17 @@ INSERT INTO ProductosPedido (id, pedido_id, producto_id, cantidad) VALUES
 	(8, 5, 1, 2),
 	(9, 5, 3, 3);
 
-INSERT INTO OrdenTrabajo (fecha_creacion, estado, codigoBarrasPaquete, almacenero_id, incidencia) VALUES
-	('2024-10-01', 'En recogida', 'PKG123456', 1, NULL),
-	('2024-10-02', 'Pendiente de empaquetado', 'PKG654321', 2, 'Problema con el código de barras'),
-	('2024-10-03', 'Empaquetado', 'PKG789012', 3, NULL),
-	('2024-10-04', 'En recogida', 'PKG345678', 4, 'Producto dañado en recogida'),
-	('2024-10-05', 'Pendiente de empaquetado', 'PKG901234', 5, NULL),
-	('2024-10-06', 'Empaquetado', 'PKG567890', 1, 'Incidencia en empaquetado'),
-	('2024-10-07', 'En recogida', 'PKG234567', 2, NULL),
-	('2024-10-08', 'Pendiente de empaquetado', 'PKG876543', 3, NULL),
-	('2024-10-09', 'Empaquetado', 'PKG098765', 4, 'Caja deteriorada'),
-	('2024-10-10', 'En recogida', 'PKG112233', 5, NULL);
+INSERT INTO OrdenTrabajo (fecha_creacion, estado, almacenero_id, incidencia) VALUES
+	('2024-10-01', 'En recogida', 1, NULL),
+	('2024-10-02', 'Pendiente de empaquetado', 2, 'Problema con el código de barras'),
+	('2024-10-03', 'En recogida', 3, NULL),
+	('2024-10-04', 'En recogida', 4, 'Producto dañado en recogida'),
+	('2024-10-05', 'Pendiente de empaquetado', 5, NULL),
+	('2024-10-06', 'En recogida',  1, 'Incidencia en empaquetado'),
+	('2024-10-07', 'En recogida',  2, NULL),
+	('2024-10-08', 'Pendiente de empaquetado', 3, NULL),
+	('2024-10-09', 'En recogida', 4, 'Caja deteriorada'),
+	('2024-10-10', 'En recogida',  5, NULL);
 	
 	
 INSERT INTO OrdenTrabajoProducto (orden_trabajo_id, producto_id, cantidad) VALUES
