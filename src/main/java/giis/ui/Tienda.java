@@ -28,6 +28,7 @@ import giis.controller.TiendaController;
 import giis.model.Tienda.CarritoProductos;
 import giis.model.Tienda.Categorias;
 import giis.model.Tienda.ProductosDto;
+import giis.util.TableColumnAdjuster;
 
 public class Tienda extends JFrame {
 
@@ -562,8 +563,8 @@ public class Tienda extends JFrame {
                         pr.getPrecioUnitario(), pr.getDatosbasicos() });
                 }
                 tbProductos.setModel(tableModel);
-                tbProductos.getColumnModel().getColumn(0).setMaxWidth(80);
-                tbProductos.getColumnModel().getColumn(1).setMaxWidth(80);
+                TableColumnAdjuster tca=new TableColumnAdjuster(tbProductos);
+        		tca.adjustColumns();
             }
             tbProductos.revalidate();
             tbProductos.repaint();

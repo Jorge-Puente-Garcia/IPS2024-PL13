@@ -69,14 +69,15 @@ public class TiendaModel {
         String sqlId = "SELECT id_padre FROM categoria where nombre = ?";
         List<Object[]> lista1 = db.executeQueryArray(sqlId, categoria);
         String id_padre = lista1.get(0)[0].toString();
+        
         String sqlIdPadre2 = "SELECT id_padre FROM categoria where id = ?";
         List<Object[]> lista2 = db.executeQueryArray(sqlIdPadre2, id_padre);
-        try {
-            String id_padre2 = lista2.get(0)[0].toString();
+        Object o = lista2.get(0)[0];
+        
+        if(o != null) {           
             String sql = "SELECT * from categoria where id_padre = ?;";
-            return db.executeQueryPojo(Categorias.class, sql, id_padre2);
-        } catch (Exception e) {
-            return getCategoriasPrincipales();
-        }
-    }
+            return db.executeQueryPojo(Categorias.class, sql, o.toString());
+        }else
+            return getCategoriasPrincipales();     
+    }   
 }
