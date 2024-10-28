@@ -1,4 +1,5 @@
 --Inicialización de todas las tablas necesarias para empezar a trabajar
+delete from Categoria;
 delete from Producto;
 delete from Almacenero;
 delete from Pedido;
@@ -8,15 +9,39 @@ delete from OrdenTrabajo;
 delete from OrdenTrabajoProducto;
 delete from Cliente;
 
-
-INSERT INTO Producto (referencia, datosBasicos, precio,unidades,localizacion_id) VALUES
-    ('REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento', 699.99, 10, 1),
-    ('REF002', 'Laptop ultraligera de 14 pulgadas, procesador Intel Core i7, 16GB RAM y 512GB SSD', 1199.99, 5, 2),
-    ('REF003', 'Auriculares inalámbricos con cancelación de ruido, duración de batería de 24 horas', 199.99, 15, 3),
-    ('REF004', 'Cámara fotográfica profesional de 24MP con lente de 50mm y estabilización óptica', 1499.99, 8, 4),
-    ('REF005', 'Reloj inteligente con monitor de frecuencia cardíaca, GPS integrado y resistente al agua', 249.99, 20, 5),
-    ('REF006', 'Tablet de 10 pulgadas con pantalla Full HD, 64GB de almacenamiento y batería de larga duración', 329.99, 12, 6);
-	
+INSERT INTO Categoria (nombre, id_padre) VALUES
+    ('Electrónica', NULL),
+    ('Ropa', NULL),
+    ('Computadoras', 1),
+    ('Teléfonos Móviles', 1),
+    ('Televisores', 1),
+    ('Tablets', 1),
+    ('Portátiles', 3),
+    ('Sobremesa', 3),
+    ('Camisas', 2),
+    ('Pantalones', 2),
+    ('Calzado', 2);
+    
+INSERT INTO Producto (referencia, datosBasicos, precio, unidades, localizacion_id, id_categoria) VALUES
+    ('REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento', 699.99, 10, 1, 4),
+    ('REF002', 'Laptop ultraligera de 14 pulgadas, procesador Intel Core i7, 16GB RAM y 512GB SSD', 1199.99, 5, 2, 7),
+    ('REF003', 'Auriculares inalámbricos con cancelación de ruido, duración de batería de 24 horas', 199.99, 15, 3, 1),
+    ('REF004', 'Cámara fotográfica profesional de 24MP con lente de 50mm y estabilización óptica', 1499.99, 8, 4, 1),
+    ('REF005', 'Reloj inteligente con monitor de frecuencia cardíaca, GPS integrado y resistente al agua', 249.99, 20, 5, 1),
+    ('REF006', 'Tablet de 10 pulgadas con pantalla Full HD, 64GB de almacenamiento y batería de larga duración', 329.99, 12, 6, 6),
+    ('REF007', 'PC de Escritorio Lenovo con 8GB RAM y 1TB HDD', 650.00, 7, 2, 8),
+    ('REF008', 'iPhone con 256GB de almacenamiento y cámara avanzada', 999.00, 15, 1, 4),
+    ('REF009', 'Televisor Samsung de 55 pulgadas, 4K UHD', 1200.00, 4, 3, 5),
+    ('REF010', 'Camisa Polo de algodón para hombre', 45.00, 25, 5, 9),
+    ('REF011', 'Jeans Levis clásicos para hombre', 60.00, 18, 5, 10),
+    ('REF012', 'Zapatos deportivos Nike para correr', 90.00, 20, 5, 11);
+    
+INSERT INTO Carrito (dni, referencia, cantidad, precio) VALUES
+	('12345678A', 'REF001', 2, 1399.98),
+	('12345678A', 'REF002', 1, 1199.99),
+	('23456789B', 'REF003', 3, 599.97),
+	('23456789B', 'REF004', 2, 2999.98);
+		
 INSERT INTO Cliente (dni, nombre, apellidos, direccion, numeroTelefono) VALUES
 	('12345678A', 'Carlos', 'González Pérez', 'Calle Mayor 1, Madrid', '600123456'),
 	('23456789B', 'María', 'Fernández López', 'Avenida del Sol 15, Valencia', '611234567'),
@@ -30,12 +55,12 @@ INSERT INTO Cliente (dni, nombre, apellidos, direccion, numeroTelefono) VALUES
 	('01234567J', 'Laura', 'Ramírez Gil', 'Calle Naranjo 21, Granada', '699012345');
 	
 INSERT INTO Localizacion (pasillo,fila, columna, estanteria, cara) VALUES
-(3,1, 2, 3, 'A'),
-(2,1, 3, 4, 'B'),
-(5,2, 1, 1, 'A'),
-(4,2, 2, 7, 'B'),
-(7,3, 1, 9, 'A'),
-(8,3, 2, 4, 'B');
+	(3,1, 2, 3, 'A'),
+	(2,1, 3, 4, 'B'),
+	(5,2, 1, 1, 'A'),
+	(4,2, 2, 7, 'B'),
+	(7,3, 1, 9, 'A'),
+	(8,3, 2, 4, 'B');
 
 INSERT INTO Almacenero (nombre, apellido) VALUES 
 	('Juan', 'Pérez'),
@@ -77,21 +102,13 @@ INSERT INTO OrdenTrabajo (fecha_creacion, estado, almacenero_id, incidencia) VAL
 	
 	
 INSERT INTO OrdenTrabajoProducto (orden_trabajo_id, producto_id, cantidad) VALUES
-(1, 1, 5),
-(1, 2, 10),
-(2, 3, 15),
-(2, 4, 7),
-(3, 5, 20),
-(3, 6, 12),
-(4, 7, 8),
-(5, 8, 30),
-(6, 9, 25),
-(7, 10, 18);
-
-	
-	
-	
-	
-	
-	
-	
+	(1, 1, 5),
+	(1, 2, 10),
+	(2, 3, 15),
+	(2, 4, 7),
+	(3, 5, 20),
+	(3, 6, 12),
+	(4, 7, 8),
+	(5, 8, 30),
+	(6, 9, 25),
+	(7, 10, 18);
