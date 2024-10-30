@@ -1,4 +1,5 @@
 --Inicialización de todas las tablas necesarias para empezar a trabajar
+delete from Categoria;
 delete from Producto;
 delete from Almacenero;
 delete from Pedido;
@@ -25,13 +26,38 @@ INSERT INTO Localizacion (pasillo, estanteria, posicion, altura) VALUES
     (7, 'Derecha', 2, 4),
     (8, 'Izquierda', 5, 2);
 
--- Tabla Producto
-INSERT INTO Producto (referencia, datosBasicos, precio, unidades, localizacion_id) VALUES 
-('A001', 'Producto 1', 10, 50, 1), ('A002', 'Producto 2', 20, 30, 2), ('A003', 'Producto 3', 15, 45, 3), 
-('A004', 'Producto 4', 25, 20, 4), ('A005', 'Producto 5', 18, 10, 5), ('A006', 'Producto 6', 12, 60, 6), 
-('A007', 'Producto 7', 22, 33, 7), ('A008', 'Producto 8', 30, 25, 8), ('A009', 'Producto 9', 35, 55, 9), 
-('A010', 'Producto 10', 40, 15, 10), ('A011', 'Producto 11', 45, 5, 11), ('A012', 'Producto 12', 50, 65, 12), 
-('A013', 'Producto 13', 55, 75, 13), ('A014', 'Producto 14', 60, 35, 14), ('A015', 'Producto 15', 65, 25, 15);
+INSERT INTO Categoria (nombre, id_padre) VALUES
+    ('Electrónica', NULL),
+    ('Ropa', NULL),
+    ('Computadoras', 1),
+    ('Teléfonos Móviles', 1),
+    ('Televisores', 1),
+    ('Tablets', 1),
+    ('Portátiles', 3),
+    ('Sobremesa', 3),
+    ('Camisas', 2),
+    ('Pantalones', 2),
+    ('Calzado', 2);
+    
+INSERT INTO Producto (referencia, datosBasicos, precio, unidades, localizacion_id, id_categoria) VALUES
+    ('REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento', 699.99, 10, 1, 4),
+    ('REF002', 'Laptop ultraligera de 14 pulgadas, procesador Intel Core i7, 16GB RAM y 512GB SSD', 1199.99, 5, 2, 7),
+    ('REF003', 'Auriculares inalámbricos con cancelación de ruido, duración de batería de 24 horas', 199.99, 15, 3, 1),
+    ('REF004', 'Cámara fotográfica profesional de 24MP con lente de 50mm y estabilización óptica', 1499.99, 8, 4, 1),
+    ('REF005', 'Reloj inteligente con monitor de frecuencia cardíaca, GPS integrado y resistente al agua', 249.99, 20, 5, 1),
+    ('REF006', 'Tablet de 10 pulgadas con pantalla Full HD, 64GB de almacenamiento y batería de larga duración', 329.99, 12, 6, 6),
+    ('REF007', 'PC de Escritorio Lenovo con 8GB RAM y 1TB HDD', 650.00, 7, 2, 8),
+    ('REF008', 'iPhone con 256GB de almacenamiento y cámara avanzada', 999.00, 15, 1, 4),
+    ('REF009', 'Televisor Samsung de 55 pulgadas, 4K UHD', 1200.00, 4, 3, 5),
+    ('REF010', 'Camisa Polo de algodón para hombre', 45.00, 25, 5, 9),
+    ('REF011', 'Jeans Levis clásicos para hombre', 60.00, 18, 5, 10),
+    ('REF012', 'Zapatos deportivos Nike para correr', 90.00, 20, 5, 11);
+    
+INSERT INTO Carrito (dni, referencia, cantidad, precio) VALUES
+	('12345678A', 'REF001', 2, 1399.98),
+	('12345678A', 'REF002', 1, 1199.99),
+	('23456789B', 'REF003', 3, 599.97),
+	('23456789B', 'REF004', 2, 2999.98);
 
 -- Tabla Cliente
 INSERT INTO Cliente (dni, nombre, apellidos, direccion, numeroTelefono) VALUES 
@@ -87,9 +113,4 @@ INSERT INTO OrdenTrabajoProducto (orden_trabajo_id, producto_id, cantidad) VALUE
 (4, 8, 3), (4, 9, 2), (5, 10, 7), (5, 11, 1), (6, 12, 5), (6, 13, 8), 
 (7, 14, 2), (7, 15, 9), (8, 1, 4);
 
-	
-	
-	
-	
-	
 	

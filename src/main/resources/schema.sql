@@ -1,5 +1,7 @@
+drop table Categoria;
 drop table Producto;
 drop table Cliente;
+drop table Carrito; 
 drop table ProductosPedido;
 drop table Pedido;
 drop table Almacenero;
@@ -11,8 +13,15 @@ drop table Caja;
 drop table Paquete;
 drop table Albaran;
 
-CREATE TABLE Producto (id INTEGER PRIMARY KEY AUTOINCREMENT,referencia TEXT NOT NULL UNIQUE, datosBasicos TEXT NOT NULL, precio INTEGER NOT NULL,unidades INTEGER NOT NULL,localizacion_id INTEGER,FOREIGN KEY (localizacion_id) REFERENCES Localizacion(id)););
+CREATE TABLE Categoria (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    id_padre INTEGER NULL,
+    FOREIGN KEY (id_padre) REFERENCES categoria(id) ON DELETE CASCADE
+);
+CREATE TABLE Producto (id INTEGER PRIMARY KEY AUTOINCREMENT,referencia TEXT NOT NULL UNIQUE, datosBasicos TEXT NOT NULL, precio INTEGER NOT NULL,unidades INTEGER NOT NULL,localizacion_id INTEGER,id_categoria INTEGER NOT NULL, FOREIGN KEY (localizacion_id) REFERENCES Localizacion(id));
 CREATE TABLE Cliente (id INTEGER PRIMARY KEY AUTOINCREMENT,dni TEXT NOT NULL, nombre TEXT NOT NULL, apellidos TEXT NOT NULL,direccion TEXT,numeroTelefono INTEGER, UNIQUE(dni));
+CREATE TABLE Carrito (id INTEGER PRIMARY KEY AUTOINCREMENT, dni TEXT NOT NULL, referencia TEXT NOT NULL, cantidad INTEGER NOT NULL, precio INTEGER NOT NULL, FOREIGN KEY (referencia) REFERENCES Producto(referencia),FOREIGN KEY (dni) REFERENCES Cliente(dni));
 CREATE TABLE ProductosPedido (id INTEGER PRIMARY KEY AUTOINCREMENT, pedido_id INTEGER NOT NULL, producto_id INTEGER NOT NULL, cantidad INTEGER NOT NULL, FOREIGN KEY (pedido_id) REFERENCES Pedido(id), FOREIGN KEY (producto_id) REFERENCES Producto(id));
 CREATE TABLE Pedido (id INTEGER PRIMARY KEY AUTOINCREMENT, cliente_id int NOT NULL, fecha DATE NOT NULL, total DECIMAL(10, 2) NOT NULL, estado TEXT CHECK (estado IN ('Pendiente de recogida', 'Recogido','PendienteDePago')) NOT NULL, orden_trabajo_id INTEGER, FOREIGN KEY (cliente_id) REFERENCES Cliente(id), FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id));
 CREATE TABLE Almacenero (id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT NOT NULL, apellido TEXT NOT NULL);
@@ -23,8 +32,3 @@ CREATE TABLE Localizacion (id INTEGER PRIMARY KEY AUTOINCREMENT, pasillo INTEGER
 CREATE TABLE Caja(id INTEGER PRIMARY KEY AUTOINCREMENT);
 CREATE TABLE Paquete(id INTEGER PRIMARY KEY AUTOINCREMENT,codigoBarrasPaquete TEXT );
 CREATE TABLE Albaran(id INTEGER PRIMARY KEY AUTOINCREMENT);
-
-
-
-
-
