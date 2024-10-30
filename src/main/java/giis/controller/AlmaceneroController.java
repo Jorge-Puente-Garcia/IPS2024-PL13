@@ -14,6 +14,7 @@ import javax.swing.table.TableModel;
 
 import giis.model.Estado;
 import giis.model.Almacenero.AlmaceneroModel;
+import giis.model.Almacenero.ElementoARecogerDto;
 import giis.model.Almacenero.OrdenTrabajoDto;
 import giis.model.Almacenero.OrdenTrabajoRecord;
 import giis.model.Almacenero.PedidoARecogerDto;
@@ -45,6 +46,9 @@ public class AlmaceneroController {
 		pedidosAsignados=model.getOrdenesDeTrabajoDelAlmaceneroPorId(almaceneroId);
 		pedidosAsignadosParaImprimir=workorderRecordToDtoList();
 		return pedidosAsignadosParaImprimir;
+	}
+	private List<ElementoARecogerDto> getElementosARecogerDeLaWorkorderSeleccionada() {		
+		return model.getElementosARecogerDeLaOrdenDeTrabajo(pedidosAsignados.get(vista.getTablaOrdenesTrabajoSeleccionadas().getSelectedRow()));
 	}
 	
 	
@@ -114,7 +118,6 @@ public class AlmaceneroController {
 		
 	}
 	public ActionListener getActionListenerParaSeleccionarOrdenesTrabajo() {
-		// TODO Auto-generated method stub
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
@@ -184,6 +187,20 @@ public class AlmaceneroController {
 		return tmodel;
 		
 	}
+	
+	public TableModel getTableModerElemetosARecoger() {
+		TableModel tmodel =SwingUtil.getTableModelFromPojos(getElementosARecogerDeLaWorkorderSeleccionada(),
+				new String[] { "codigoBarras", "cantidad"});
+		return tmodel;
+	}
+	
+	public TableModel getTableModerElemetosRecogidos() {
+		TableModel tmodel =SwingUtil.getTableModelFromPojos(getElementosARecogerDeLaWorkorderSeleccionada(),
+				new String[] { "codigoBarras", "cantidad","pasillo","posicion","estanteria","altura"});
+		return tmodel;
+	}
+	
+	
 	public ActionListener getActionListenerVolverAtrasHaciaOrdenesTrabajo() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -205,23 +222,25 @@ public class AlmaceneroController {
 			public void actionPerformed(ActionEvent e) {
 				String worOrdId = JOptionPane
 						.showInputDialog("Por favor, dame el id de la workorder con el empaquetado finalizado: ");
-				String codigoBarras = JOptionPane.showInputDialog("Código de barras que tenrá el paquete: : ");
 				OrdenTrabajoDto dto = new OrdenTrabajoDto();
 				dto.setId(worOrdId);
-				dto.setCodigoBarras(codigoBarras);
 				JOptionPane.showMessageDialog(null, getEtiquetaEnvio(dto), "Etiqueta de envio: ",
 						JOptionPane.INFORMATION_MESSAGE);
 				String infoAlvaran = getAlbaran(dto);
 				vista.getTaAlbaran().setText(infoAlvaran);
-				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
-				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnAlbaran");
+				JOptionPane.showMessageDialog(null, vista.getTaAlbaran(), "Etiqueta de envio: ",
+						JOptionPane.INFORMATION_MESSAGE);
 			}
 		};
 	}
 	public ActionListener getActionListenerEmpaquetar() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				TableModel tmodel = getTableModerElemetosRecogidos();
+				vista.getTablaOrdenesElementosRecogidos().setModel(tmodel);
+				vista.getTablaOrdenesElementosRecogidos().revalidate();
 				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesElementosRecogidos());
 				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnEmpaquetado");
 			}
 		};
@@ -243,15 +262,20 @@ public class AlmaceneroController {
 				TableModel tmodel = SwingUtil.getTableModelFromPojos(getPedidosPendientesRecogida(),
 						new String[] { "fecha", "tamaño", "estado" });
 				vista.getTablaOrdenesTrabajoDisponibles().setModel(tmodel);
+				vista.getTablaOrdenesTrabajoDisponibles().revalidate();
+				vista.getTablaOrdenesTrabajoDisponibles().repaint();
 				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesTrabajoDisponibles());
 				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
 				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnOrdenesDeTrabajoSeleccionadas");
 				TableModel tmodel2 = SwingUtil.getTableModelFromPojos(getOrdenesDeTrabajoSeleccionadas(),
 						new String[] { "fechaCreacion", "estado", "incidencias", "almaceneroId" });
 				vista.getTablaOrdenesTrabajoSeleccionadas().setModel(tmodel2);
+				vista.getTablaOrdenesTrabajoSeleccionadas().revalidate();
+				vista.getTablaOrdenesTrabajoSeleccionadas().repaint();
 				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesTrabajoSeleccionadas());
 			}
 		};
 	}
+	
 	
 }

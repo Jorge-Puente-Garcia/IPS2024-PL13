@@ -130,6 +130,15 @@ public class AlmaceneroModel {
 		return albaran;
 
 	}
+	
+	public List<ElementoARecogerDto> getElementosARecogerDeLaOrdenDeTrabajo(OrdenTrabajoRecord ordenTrabajoRecord) {
+		String sql = "SELECT Producto.referencia AS codigoBarras, OrdenTrabajoProducto.cantidad AS cantidad, Localizacion.pasillo, Localizacion.posicion, "
+				+ "Localizacion.estanteria , Localizacion.altura FROM OrdenTrabajoProducto JOIN Producto ON OrdenTrabajoProducto.producto_id = Producto.id JOIN Localizacion"
+				+ " ON Producto.localizacion_id = Localizacion.id WHERE OrdenTrabajoProducto.orden_trabajo_id = ? ORDER BY Localizacion.pasillo ASC, "
+				+ "Localizacion.posicion ASC, CASE WHEN Localizacion.estanteria = 'Izquierda' THEN 0 ELSE 1 END;";
+		List<ElementoARecogerDto> li=db.executeQueryPojo(ElementoARecogerDto.class, sql,ordenTrabajoRecord.getId());
+		return li;
+	}
 
 	public static void main(String[] args) {
 //		OrdenTrabajoRecord otr = new OrdenTrabajoRecord();
@@ -142,4 +151,5 @@ public class AlmaceneroModel {
 //		}
 	}
 
+	
 }
