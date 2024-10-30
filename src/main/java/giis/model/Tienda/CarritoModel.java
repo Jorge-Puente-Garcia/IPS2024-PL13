@@ -1,82 +1,105 @@
 package giis.model.Tienda;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import giis.model.Cliente;
 import giis.util.Database;
 
 public class CarritoModel {
 
-	private HashMap<String, Object[]> carrito = new HashMap<>();
-	private Database db;
-	private Double total = 0.0;
-	private String dni;
-	public CarritoModel(Database db) {
-		this.db = db;
-	}
+    private Database db;
+    private Double total = 0.0;
+    private Cliente cliente;
+    private List<CarritoProductos> carrito = new ArrayList<>();
 
-	public HashMap<String, Object[]> devolverCarrito(){
-		return carrito;
-	}
-	
-	// Método para agregar un producto al carrito
-	public void agregarAlCarrito(String referencia, int cantidad) {
-	    if (carrito.containsKey(referencia)) {
-	        // Si el producto ya está en el carrito, incrementamos la cantidad
-	        Object[] producto = carrito.get(referencia);	        
-	        int cantidadActual = (int) producto[0]; // Obtener la cantidad actual
-	        producto[0] = cantidadActual + cantidad; // Actualizar la cantidad
-	        carrito.put(referencia, producto); // Actualizar el carrito con la nueva cantidad
-	        
-	    } else {
-	        // Si el producto no está en el carrito, lo agregamos con los datos
-	        carrito.put(referencia, new Object[]{cantidad,  getPrecioProducto(referencia)});
-	    }
-	    calcularTotal();
-	}
+    public CarritoModel(Database db, Cliente cliente) {
+        this.db = db;
+        this.cliente = cliente;
+        crearCarrito();
 
-	private double getPrecioProducto(String referencia) {
-		String sql= "SELECT precio from Producto where referencia ='" + referencia + "'";
-		
-		List<Object[]> lista = db.executeQueryArray(sql,new Object[0]);
-		Double rs = 0.0;
-		for (Object[] object : lista) {
-			rs = Double.parseDouble(object[0].toString());
-		}
-		return rs;
-	}
-	
-	public void cambiarCantidad(String referencia, int cantidad) {
-		Object[] producto = carrito.get(referencia);
-		producto[0] = cantidad; // Actualizar la cantidad
-        carrito.put(referencia, producto);
-        calcularTotal();
-	}
+    }
 
-	public void eliminarDelCarrito(String referencia) {
-		carrito.remove(referencia);
-		calcularTotal();
-	}
-	
-	private void calcularTotal() {
-		this.total = 0.0;
-		for (Map.Entry<String, Object[]> entry : devolverCarrito().entrySet()) {
-			int cantidad = Integer.parseInt(entry.getValue()[0].toString());
-			double precio = Double.parseDouble(entry.getValue()[1].toString());
-			this.total += cantidad * precio;
-		}
-	}
-	
-	public Double getTotal() {
-		return this.total;
-	}
+    private void actualizarCarrito() {
+        String sql = "SELECT referencia, cantidad, precio from Carrito where dni = ?;";
+        carrito = db.executeQueryPojo(CarritoProductos.class, sql,
+            cliente.getDni());
+    }
 
-	public void setCliente(String dni) {
-		this.dni = dni;
-	}
+    private void actualizarTotal() {
+        total = carrito.stream().mapToDouble(CarritoProductos::getPrecio).sum();
+    }
 
-	public String getCliente() {
-		return dni;
-	}
+    public void crearCarrito() {
+        actualizarCarrito();
+        actualizarTotal();
+    }
+
+    public void eliminarDelCarrito(String referencia) {
+        String sql = "delete from Carrito where referencia = ? and dni = ?;";
+        db.executeUpdate(sql, referencia, cliente.getDni());
+        actualizarCarrito();
+        actualizarTotal();
+    }
+
+    public void agregarAlCarrito(String referencia, int cantidad) {
+        String checkSql = "SELECT referencia, cantidad, precio FROM Carrito WHERE referencia = ? and dni = ?;";
+        List<CarritoProductos> cr = db.executeQueryPojo(CarritoProductos.class,
+            checkSql, referencia, cliente.getDni());
+
+        if (cr.size() == 0) {
+            String sql = "INSERT INTO Carrito (dni, referencia, cantidad, precio) "
+                + "VALUES (?, ?, ?, (SELECT precio FROM producto WHERE referencia = ?) * ?);";
+            db.executeUpdate(sql, cliente.getDni(), referencia, cantidad,
+                referencia, cantidad);
+
+        } else {
+            String sql = "UPDATE Carrito SET cantidad = cantidad + ?, "
+                + "precio = ROUND(precio + (SELECT precio FROM producto WHERE referencia = ?) * ?, 2) "
+                + "WHERE referencia = ? and dni = ?;";
+            db.executeUpdate(sql, cantidad, referencia, cantidad, referencia,
+                cliente.getDni());
+        }
+        actualizarCarrito();
+        actualizarTotal();
+    }
+
+    public void cambiarCantidad(String referencia, int cantidad) {
+        String sql = "update Carrito set cantidad = ?, "
+            + "precio = (SELECT precio FROM producto WHERE referencia = ?) * ?"
+            + "where referencia = ? and dni = ?";
+        db.executeUpdate(sql, cantidad, referencia, cantidad, referencia,
+            cliente.getDni());
+        actualizarCarrito();
+        actualizarTotal();
+    }
+
+    public Database getDb() {
+        return db;
+    }
+
+    public void setDb(Database db) {
+        this.db = db;
+    }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public List<CarritoProductos> getCarrito() {
+        return carrito;
+    }
+
 }
