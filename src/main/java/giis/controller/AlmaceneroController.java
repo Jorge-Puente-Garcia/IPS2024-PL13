@@ -48,6 +48,7 @@ public class AlmaceneroController {
 		return pedidosAsignadosParaImprimir;
 	}
 	private List<ElementoARecogerDto> getElementosARecogerDeLaWorkorderSeleccionada() {		
+		pedidosAsignados=model.getOrdenesDeTrabajoDelAlmaceneroPorId(almaceneroId);
 		return model.getElementosARecogerDeLaOrdenDeTrabajo(pedidosAsignados.get(vista.getTablaOrdenesTrabajoSeleccionadas().getSelectedRow()));
 	}
 	
@@ -73,7 +74,7 @@ public class AlmaceneroController {
 	}
 	public void ponEnRecogidaElPedido(int selectedRow) {
 		PedidoARecogerRecord par=pedidosSinRecoger.get(selectedRow);
-		model.creaOrdenDeTrabajo(almaceneroId);
+		model.creaOrdenDeTrabajo(almaceneroId,par);
 		model.ponEnRecogidaElPedido(par);
 	}
 	
@@ -196,7 +197,7 @@ public class AlmaceneroController {
 	
 	public TableModel getTableModerElemetosRecogidos() {
 		TableModel tmodel =SwingUtil.getTableModelFromPojos(getElementosARecogerDeLaWorkorderSeleccionada(),
-				new String[] { "codigoBarras", "cantidad","pasillo","posicion","estanteria","altura"});
+				new String[] { "nombre", "cantidad","pasillo","posicion","estanteria","altura"});
 		return tmodel;
 	}
 	

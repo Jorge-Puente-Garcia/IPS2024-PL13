@@ -21,6 +21,7 @@ import javax.swing.table.TableModel;
 
 import giis.controller.AlmaceneroController;
 import giis.util.SwingUtil;
+import javax.swing.SwingConstants;
 
 public class AlmaceneroView {
 
@@ -57,6 +58,7 @@ public class AlmaceneroView {
 	private JButton btnNotificarIncidencia;
 	private JTable tablaOrdenesElemetosRecogidos;
 	private JLabel lblArecoger;
+	private JLabel lblRecogidaOT;
 
 	/**
 	 * Launch the application.
@@ -93,7 +95,7 @@ public class AlmaceneroView {
 	private void initialize() {
 		controller = new AlmaceneroController(this);
 		frameTerminalPortatil = new JFrame();
-		frameTerminalPortatil.setBounds(100, 100, 412, 463);
+		frameTerminalPortatil.setBounds(100, 100, 429, 463);
 		frameTerminalPortatil.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frameTerminalPortatil.getContentPane().setLayout(new CardLayout(0, 0));
 		frameTerminalPortatil.getContentPane().add(getPnIdentificación(), "pnIdentificación");
@@ -150,7 +152,7 @@ public class AlmaceneroView {
 	private JScrollPane getScrollPane() {
 		if (scrollPane == null) {
 			scrollPane = new JScrollPane(getTablaOrdenesTrabajoDisponibles());
-			scrollPane.setBounds(67, 72, 404, 252);
+			scrollPane.setBounds(10, 72, 378, 252);
 			scrollPane.setViewportView(getTablaOrdenesTrabajoDisponibles());
 		}
 		return scrollPane;
@@ -181,7 +183,7 @@ public class AlmaceneroView {
 			btnCrearOT = new JButton("Crear OT");
 			btnCrearOT.addActionListener(controller.getActionListenerCrearOrdenTrabajo());
 			btnCrearOT.setEnabled(false);
-			btnCrearOT.setBounds(361, 372, 110, 34);
+			btnCrearOT.setBounds(278, 372, 110, 34);
 		}
 		return btnCrearOT;
 	}
@@ -190,7 +192,7 @@ public class AlmaceneroView {
 		if (btnCancelar == null) {
 			btnCancelar = new JButton("Cancelar");
 			btnCancelar.addActionListener(controller.getActionListenerCancelar());
-			btnCancelar.setBounds(241, 372, 110, 34);
+			btnCancelar.setBounds(158, 372, 110, 34);
 		}
 		return btnCancelar;
 	}
@@ -216,7 +218,7 @@ public class AlmaceneroView {
 		if (btnIdentificarse == null) {
 			btnIdentificarse = new JButton("Identifícate");
 			btnIdentificarse.addActionListener(controller.getActionPerformedIdentificarseAlmacenero());
-			btnIdentificarse.setBounds(137, 177, 222, 45);
+			btnIdentificarse.setBounds(85, 178, 222, 45);
 		}
 		return btnIdentificarse;
 	}
@@ -235,7 +237,7 @@ public class AlmaceneroView {
 	private JScrollPane getScrpOrdenesTrabajoSeleccionadas() {
 		if (scrpOrdenesTrabajoSeleccionadas == null) {
 			scrpOrdenesTrabajoSeleccionadas = new JScrollPane((Component) null);
-			scrpOrdenesTrabajoSeleccionadas.setBounds(34, 56, 452, 252);
+			scrpOrdenesTrabajoSeleccionadas.setBounds(20, 56, 368, 252);
 			scrpOrdenesTrabajoSeleccionadas.setViewportView(getTablaOrdenesTrabajoSeleccionadas());
 		}
 		return scrpOrdenesTrabajoSeleccionadas;
@@ -279,6 +281,7 @@ public class AlmaceneroView {
 			pnEmpaquetado.add(getBtnEscanearYAñadir());
 			pnEmpaquetado.add(getBtnNotificarIncidencia());
 			pnEmpaquetado.add(getLblArecoger());
+			pnEmpaquetado.add(getLblRecogidaOT());
 		}
 		return pnEmpaquetado;
 	}
@@ -287,7 +290,7 @@ public class AlmaceneroView {
 		if (btnVolverPnEmpaquetado == null) {
 			btnVolverPnEmpaquetado = new JButton("Volver");
 			btnVolverPnEmpaquetado.addActionListener(controller.getActionListenerVolverAlPnEmpaquetado());
-			btnVolverPnEmpaquetado.setBounds(10, 10, 96, 33);
+			btnVolverPnEmpaquetado.setBounds(10, 62, 96, 33);
 		}
 		return btnVolverPnEmpaquetado;
 	}
@@ -309,7 +312,7 @@ public class AlmaceneroView {
 		if (btnFinalizarEmpaquetado == null) {
 			btnFinalizarEmpaquetado = new JButton("Finalizar empaquetado");
 			btnFinalizarEmpaquetado.addActionListener(controller.getActionListenerFinalizarEmpaquetado());
-			btnFinalizarEmpaquetado.setBounds(192, 380, 191, 31);
+			btnFinalizarEmpaquetado.setBounds(214, 380, 191, 31);
 		}
 		return btnFinalizarEmpaquetado;
 	}
@@ -318,7 +321,7 @@ public class AlmaceneroView {
 		if (btnEmpaquetar == null) {
 			btnEmpaquetar = new JButton("Empaquetar");
 			btnEmpaquetar.addActionListener(controller.getActionListenerEmpaquetar());
-			btnEmpaquetar.setBounds(368, 318, 118, 31);
+			btnEmpaquetar.setBounds(270, 318, 118, 31);
 		}
 		return btnEmpaquetar;
 	}
@@ -358,7 +361,7 @@ public class AlmaceneroView {
 	private JScrollPane getScrpVisualizarElementosYaEmpaquetados() {
 		if (scrpVisualizarElementosYaEmpaquetados == null) {
 			scrpVisualizarElementosYaEmpaquetados = new JScrollPane();
-			scrpVisualizarElementosYaEmpaquetados.setBounds(10, 85, 377, 160);
+			scrpVisualizarElementosYaEmpaquetados.setBounds(0, 136, 415, 160);
 			scrpVisualizarElementosYaEmpaquetados.setViewportView(getTablaOrdenesElementosRecogidos());
 		}
 		return scrpVisualizarElementosYaEmpaquetados;
@@ -366,7 +369,7 @@ public class AlmaceneroView {
 	private JLabel getLblCantidad() {
 		if (lblCantidad == null) {
 			lblCantidad = new JLabel("Canrtiad a recoger:");
-			lblCantidad.setBounds(10, 300, 135, 21);
+			lblCantidad.setBounds(31, 306, 135, 21);
 		}
 		return lblCantidad;
 	}
@@ -375,29 +378,38 @@ public class AlmaceneroView {
 			spinner = new JSpinner();
 			spinner.setFont(new Font("Tahoma", Font.PLAIN, 12));
 			spinner.setModel(new SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
-			spinner.setBounds(123, 300, 47, 31);
+			spinner.setBounds(176, 300, 47, 31);
 		}
 		return spinner;
 	}
 	private JButton getBtnEscanearYAñadir() {
 		if (btnEscanearYAñadir == null) {
 			btnEscanearYAñadir = new JButton("Escanear y añadir");
-			btnEscanearYAñadir.setBounds(180, 300, 172, 32);
+			btnEscanearYAñadir.setBounds(233, 300, 172, 32);
 		}
 		return btnEscanearYAñadir;
 	}
 	private JButton getBtnNotificarIncidencia() {
 		if (btnNotificarIncidencia == null) {
 			btnNotificarIncidencia = new JButton("Notificar incidencia");
-			btnNotificarIncidencia.setBounds(10, 380, 172, 31);
+			btnNotificarIncidencia.setBounds(32, 380, 172, 31);
 		}
 		return btnNotificarIncidencia;
 	}
 	private JLabel getLblArecoger() {
 		if (lblArecoger == null) {
 			lblArecoger = new JLabel("A recoger:");
-			lblArecoger.setBounds(10, 53, 154, 21);
+			lblArecoger.setBounds(10, 105, 154, 21);
 		}
 		return lblArecoger;
+	}
+	private JLabel getLblRecogidaOT() {
+		if (lblRecogidaOT == null) {
+			lblRecogidaOT = new JLabel("Recogida OT");
+			lblRecogidaOT.setFont(new Font("Arial Black", Font.PLAIN, 20));
+			lblRecogidaOT.setHorizontalAlignment(SwingConstants.CENTER);
+			lblRecogidaOT.setBounds(10, 10, 395, 39);
+		}
+		return lblRecogidaOT;
 	}
 }

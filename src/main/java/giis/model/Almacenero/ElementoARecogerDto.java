@@ -3,6 +3,7 @@ package giis.model.Almacenero;
 public class ElementoARecogerDto {
 
 	public int codigoBarras;
+	public String nombre;
 	public int cantidad;
 	public int pasillo;
 	public int posicion;
@@ -20,7 +21,12 @@ public class ElementoARecogerDto {
 	public int getCodigoBarras() {
 		return codigoBarras;
 	}
-
+	public String getNombre() {
+		return nombre;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
 	public void setCodigoBarras(int codigoBarras) {
 		this.codigoBarras = codigoBarras;
 	}
