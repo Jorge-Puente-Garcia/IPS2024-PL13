@@ -1,6 +1,5 @@
 package giis.ui;
 
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.EventQueue;
@@ -17,11 +16,14 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.table.TableModel;
 
 import giis.controller.AlmaceneroController;
 import giis.util.SwingUtil;
-import javax.swing.SwingConstants;
+import javax.swing.ScrollPaneConstants;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class AlmaceneroView {
 
@@ -42,14 +44,11 @@ public class AlmaceneroView {
 	private JScrollPane scrpOrdenesTrabajoSeleccionadas;
 	private JTable tablaOrdenesTrabajoSeleccionadas;
 	private JButton btnVolverAtrasVerOrdenesTrabajo;
-	private JPanel pnEmpaquetado;
+	private JPanel pnRecogida;
 	private JButton btnVolverPnEmpaquetado;
 	private JButton btnFinalizarEmpaquetado;
-	private JButton btnEmpaquetar;
-	private JButton btnEnProcesoEmpaquetado;
-	private JPanel pnVisualizarAlbaran;
-	private JScrollPane scrpAlbaran;
-	private JTextArea taAlbaran;
+	private JButton btnRecoger;
+	private JButton btnEnProcesoRecogida;
 	protected String infoAlvaran;
 	private JScrollPane scrpVisualizarElementosYaEmpaquetados;
 	private JLabel lblCantidad;
@@ -59,6 +58,19 @@ public class AlmaceneroView {
 	private JTable tablaOrdenesElemetosRecogidos;
 	private JLabel lblArecoger;
 	private JLabel lblRecogidaOT;
+	private JLabel lblOTid;
+	private JButton btnVerOrdenesParaEmpaquetar;
+	private JButton btnNewButton_1;
+	private JPanel pnVisualizarOrdenesPendientesEmpaquetado;
+	private JButton btnVolverDesdeEmpaquetado;
+	private JTextArea taAlbaran;
+	private JScrollPane scrpOrdenesPendientesEmpaquetado;
+	private JTable tablaOrdenesTrabajoPendeientesEmpaquetado;
+	private JButton btnIniciarEmpaquetado;
+	private JPanel pnEmpaquetadoOrden;
+	private JLabel lblEmpaquetadoProductos;
+	private JButton btnVolverDesdeEmpaquetadoDeproductosDeOt;
+	private JScrollPane scrpProductosAEmpaquetar;
 
 	/**
 	 * Launch the application.
@@ -103,18 +115,21 @@ public class AlmaceneroView {
 		frameTerminalPortatil.getContentPane().add(getPnOrdenesDeTrabajoDisponibles(), "pnOrdenesDeTrabajo");
 		frameTerminalPortatil.getContentPane().add(getPnOrdenesDeTrabajoSeleccionadas(),
 				"pnOrdenesDeTrabajoSeleccionadas");
-		frameTerminalPortatil.getContentPane().add(getPnEmpaquetado(), "pnEmpaquetado");
-		frameTerminalPortatil.getContentPane().add(getPnVisualizarAlbaran(), "pnAlbaran");
+		frameTerminalPortatil.getContentPane().add(getPnRecogida(), "pnRecogida");
+		frameTerminalPortatil.getContentPane().add(getPnVisualizarOrdenesPendientesEmpaquetado(), "pnEmpaquetado");
+		frameTerminalPortatil.getContentPane().add(getPnEmpaquetadoOrden(), "name_1837872369179200");
 		frameTerminalPortatil.setLocationRelativeTo(null);
 	}
 
 	private JPanel getPnPaginaPrincipal() {
 		if (pnPaginaPrincipal == null) {
 			pnPaginaPrincipal = new JPanel();
-			pnPaginaPrincipal.setLayout(new GridLayout(3, 1, 0, 0));
+			pnPaginaPrincipal.setLayout(new GridLayout(5, 1, 0, 0));
 			pnPaginaPrincipal.add(getBtnSeleccionarOrdenesDeTrabajo());
 			pnPaginaPrincipal.add(getBtnVerOrdenesDeTrabajo());
-			pnPaginaPrincipal.add(getBtnEnProcesoEmpaquetado());
+			pnPaginaPrincipal.add(getBtnEnProcesoRecogida());
+			pnPaginaPrincipal.add(getBtnVerOrdenesParaEmpaquetar());
+			pnPaginaPrincipal.add(getBtnNewButton_1());
 		}
 		return pnPaginaPrincipal;
 	}
@@ -166,7 +181,7 @@ public class AlmaceneroView {
 			tablaOrdenesTrabajoDisponibles.setName("tabPedidosNoRecogidos");
 			tablaOrdenesTrabajoDisponibles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			tablaOrdenesTrabajoDisponibles.setDefaultEditor(Object.class, null); // readonly
-			TableModel tmodel = SwingUtil.getTableModelFromPojos(controller.getPedidosPendientesRecogida(),
+			TableModel tmodel = SwingUtil.getTableModelFromPojos(controller.getPedidosPendientesDeEntrarEnUnaOT(),
 					new String[] { "fecha", "tamaño", "estado" });
 			
 			tablaOrdenesTrabajoDisponibles.setModel(tmodel);
@@ -229,7 +244,7 @@ public class AlmaceneroView {
 			pnOrdenesDeTrabajoSeleccionadas.setLayout(null);
 			pnOrdenesDeTrabajoSeleccionadas.add(getScrpOrdenesTrabajoSeleccionadas());
 			pnOrdenesDeTrabajoSeleccionadas.add(getBtnVolverAtrasVerOrdenesTrabajo());
-			pnOrdenesDeTrabajoSeleccionadas.add(getBtnEmpaquetar());
+			pnOrdenesDeTrabajoSeleccionadas.add(getBtnRecoger());
 		}
 		return pnOrdenesDeTrabajoSeleccionadas;
 	}
@@ -246,6 +261,7 @@ public class AlmaceneroView {
 	public JTable getTablaOrdenesTrabajoSeleccionadas() {
 		if (tablaOrdenesTrabajoSeleccionadas == null) {
 			tablaOrdenesTrabajoSeleccionadas = new JTable();
+			tablaOrdenesTrabajoSeleccionadas.addMouseListener(controller.getMouseListenerSeleccionarUnaOtParaEmpaquetar());
 			tablaOrdenesTrabajoSeleccionadas.setShowHorizontalLines(false);
 			tablaOrdenesTrabajoSeleccionadas.setFillsViewportHeight(true);
 			tablaOrdenesTrabajoSeleccionadas.setName("tabPedidosNoEmpaquetados");
@@ -253,11 +269,25 @@ public class AlmaceneroView {
 			tablaOrdenesTrabajoSeleccionadas.setDefaultEditor(Object.class, null); // readonly
 			TableModel tmodel = controller.getTableModelSeleccionOrdenesTrabajo();
 			tablaOrdenesTrabajoSeleccionadas.setModel(tmodel);
-			tablaOrdenesTrabajoDisponibles.revalidate();
-			tablaOrdenesTrabajoDisponibles.repaint();
 			SwingUtil.autoAdjustColumns(tablaOrdenesTrabajoSeleccionadas);
 		}
 		return tablaOrdenesTrabajoSeleccionadas;
+	}
+	
+	public JTable getTablaOrdenesTrabajoPendientesEmpaquetado() {
+		if (tablaOrdenesTrabajoPendeientesEmpaquetado == null) {
+			tablaOrdenesTrabajoPendeientesEmpaquetado = new JTable();
+			tablaOrdenesTrabajoPendeientesEmpaquetado.addMouseListener(controller.getMouseListenerSeleccionarEnLaTablaOrdenesPendientesEmpaquetado());
+			tablaOrdenesTrabajoPendeientesEmpaquetado.setShowHorizontalLines(false);
+			tablaOrdenesTrabajoPendeientesEmpaquetado.setFillsViewportHeight(true);
+			tablaOrdenesTrabajoPendeientesEmpaquetado.setName("tabPedidosNoEmpaquetados");
+			tablaOrdenesTrabajoPendeientesEmpaquetado.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tablaOrdenesTrabajoPendeientesEmpaquetado.setDefaultEditor(Object.class, null); // readonly
+			TableModel tmodel = controller.getTableModelPrdenesTrabajoPendientesEmpaquetado();
+			tablaOrdenesTrabajoPendeientesEmpaquetado.setModel(tmodel);
+			SwingUtil.autoAdjustColumns(tablaOrdenesTrabajoPendeientesEmpaquetado);
+		}
+		return tablaOrdenesTrabajoPendeientesEmpaquetado;
 	}
 
 	private JButton getBtnVolverAtrasVerOrdenesTrabajo() {
@@ -269,21 +299,22 @@ public class AlmaceneroView {
 		return btnVolverAtrasVerOrdenesTrabajo;
 	}
 
-	private JPanel getPnEmpaquetado() {
-		if (pnEmpaquetado == null) {
-			pnEmpaquetado = new JPanel();
-			pnEmpaquetado.setLayout(null);
-			pnEmpaquetado.add(getBtnVolverPnEmpaquetado());
-			pnEmpaquetado.add(getBtnFinalizarEmpaquetado());
-			pnEmpaquetado.add(getScrpVisualizarElementosYaEmpaquetados());
-			pnEmpaquetado.add(getLblCantidad());
-			pnEmpaquetado.add(getSpinner());
-			pnEmpaquetado.add(getBtnEscanearYAñadir());
-			pnEmpaquetado.add(getBtnNotificarIncidencia());
-			pnEmpaquetado.add(getLblArecoger());
-			pnEmpaquetado.add(getLblRecogidaOT());
+	private JPanel getPnRecogida() {
+		if (pnRecogida == null) {
+			pnRecogida = new JPanel();
+			pnRecogida.setLayout(null);
+			pnRecogida.add(getBtnVolverPnEmpaquetado());
+			pnRecogida.add(getBtnFinalizarRecogida());
+			pnRecogida.add(getScrpVisualizarElementosYaEmpaquetados());
+			pnRecogida.add(getLblCantidad());
+			pnRecogida.add(getSpinner());
+			pnRecogida.add(getBtnEscanearYAñadir());
+			pnRecogida.add(getBtnNotificarIncidencia());
+			pnRecogida.add(getLblArecoger());
+			pnRecogida.add(getLblRecogidaOT());
+			pnRecogida.add(getLblOTid());
 		}
-		return pnEmpaquetado;
+		return pnRecogida;
 	}
 
 	private JButton getBtnVolverPnEmpaquetado() {
@@ -308,55 +339,32 @@ public class AlmaceneroView {
 		return tablaOrdenesElemetosRecogidos;
 	}
 
-	private JButton getBtnFinalizarEmpaquetado() {
+	public JButton getBtnFinalizarRecogida() {
 		if (btnFinalizarEmpaquetado == null) {
-			btnFinalizarEmpaquetado = new JButton("Finalizar empaquetado");
-			btnFinalizarEmpaquetado.addActionListener(controller.getActionListenerFinalizarEmpaquetado());
+			btnFinalizarEmpaquetado = new JButton("Finalizar recogida");
+			btnFinalizarEmpaquetado.setEnabled(false);
+			btnFinalizarEmpaquetado.addActionListener(controller.getActionListenerFinalizarRecogida());
 			btnFinalizarEmpaquetado.setBounds(214, 380, 191, 31);
 		}
 		return btnFinalizarEmpaquetado;
 	}
 
-	private JButton getBtnEmpaquetar() {
-		if (btnEmpaquetar == null) {
-			btnEmpaquetar = new JButton("Empaquetar");
-			btnEmpaquetar.addActionListener(controller.getActionListenerEmpaquetar());
-			btnEmpaquetar.setBounds(270, 318, 118, 31);
+	public JButton getBtnRecoger() {
+		if (btnRecoger == null) {
+			btnRecoger = new JButton("Iniciar recogida");
+			btnRecoger.setEnabled(false);
+			btnRecoger.addActionListener(controller.getActionListenerEmpezarARecoger());
+			btnRecoger.setBounds(222, 318, 152, 31);
 		}
-		return btnEmpaquetar;
+		return btnRecoger;
 	}
 
-	private JButton getBtnEnProcesoEmpaquetado() {
-		if (btnEnProcesoEmpaquetado == null) {
-			btnEnProcesoEmpaquetado = new JButton("En proceso de empaquetado");
-			btnEnProcesoEmpaquetado.addActionListener(controller.getActionListenerEmpezarEmpezarProcesoEmpaquetado());
+	private JButton getBtnEnProcesoRecogida() {
+		if (btnEnProcesoRecogida == null) {
+			btnEnProcesoRecogida = new JButton("En proceso de recogida");
+			btnEnProcesoRecogida.addActionListener(controller.getActionListenerEmpezarEmpezarProcesoEmpaquetado());
 		}
-		return btnEnProcesoEmpaquetado;
-	}
-
-	private JPanel getPnVisualizarAlbaran() {
-		if (pnVisualizarAlbaran == null) {
-			pnVisualizarAlbaran = new JPanel();
-			pnVisualizarAlbaran.setLayout(new BorderLayout(0, 0));
-			pnVisualizarAlbaran.add(getScrpAlbaran());
-		}
-		return pnVisualizarAlbaran;
-	}
-
-	private JScrollPane getScrpAlbaran() {
-		if (scrpAlbaran == null) {
-			scrpAlbaran = new JScrollPane();
-			scrpAlbaran.setViewportView(getTaAlbaran());
-		}
-		return scrpAlbaran;
-	}
-
-	public JTextArea getTaAlbaran() {
-		if (taAlbaran == null) {
-			taAlbaran = new JTextArea();
-			taAlbaran.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		}
-		return taAlbaran;
+		return btnEnProcesoRecogida;
 	}
 	private JScrollPane getScrpVisualizarElementosYaEmpaquetados() {
 		if (scrpVisualizarElementosYaEmpaquetados == null) {
@@ -373,7 +381,7 @@ public class AlmaceneroView {
 		}
 		return lblCantidad;
 	}
-	private JSpinner getSpinner() {
+	public JSpinner getSpinner() {
 		if (spinner == null) {
 			spinner = new JSpinner();
 			spinner.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -385,13 +393,15 @@ public class AlmaceneroView {
 	private JButton getBtnEscanearYAñadir() {
 		if (btnEscanearYAñadir == null) {
 			btnEscanearYAñadir = new JButton("Escanear y añadir");
+			btnEscanearYAñadir.addActionListener(controller.getActionPerformedEscanearUnProducto());
 			btnEscanearYAñadir.setBounds(233, 300, 172, 32);
 		}
 		return btnEscanearYAñadir;
 	}
-	private JButton getBtnNotificarIncidencia() {
+	public JButton getBtnNotificarIncidencia() {
 		if (btnNotificarIncidencia == null) {
 			btnNotificarIncidencia = new JButton("Notificar incidencia");
+			btnNotificarIncidencia.addActionListener(controller.getActionPerformedNotificaIncidencia());
 			btnNotificarIncidencia.setBounds(32, 380, 172, 31);
 		}
 		return btnNotificarIncidencia;
@@ -411,5 +421,102 @@ public class AlmaceneroView {
 			lblRecogidaOT.setBounds(10, 10, 395, 39);
 		}
 		return lblRecogidaOT;
+	}
+	public JLabel getLblOTid() {
+		if (lblOTid == null) {
+			lblOTid = new JLabel("");
+			lblOTid.setFont(new Font("Arial Black", Font.PLAIN, 14));
+			lblOTid.setBounds(176, 62, 154, 33);
+		}
+		return lblOTid;
+	}
+	private JButton getBtnVerOrdenesParaEmpaquetar() {
+		if (btnVerOrdenesParaEmpaquetar == null) {
+			btnVerOrdenesParaEmpaquetar = new JButton("Ver ordenes para empaquetar");
+			btnVerOrdenesParaEmpaquetar.addActionListener(controller.getActionPerformedMuestraPanelEmpaquetado());
+		}
+		return btnVerOrdenesParaEmpaquetar;
+	}
+	private JButton getBtnNewButton_1() {
+		if (btnNewButton_1 == null) {
+			btnNewButton_1 = new JButton("En proceso de empaquetado");
+		}
+		return btnNewButton_1;
+	}
+	
+	public JTextArea getTaAlbaran() {
+		if (taAlbaran == null) {
+			taAlbaran = new JTextArea();
+			taAlbaran.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		}
+		return taAlbaran;
+	}
+	private JPanel getPnVisualizarOrdenesPendientesEmpaquetado() {
+		if (pnVisualizarOrdenesPendientesEmpaquetado == null) {
+			pnVisualizarOrdenesPendientesEmpaquetado = new JPanel();
+			pnVisualizarOrdenesPendientesEmpaquetado.setLayout(null);
+			pnVisualizarOrdenesPendientesEmpaquetado.add(getBtnVolverDesdeEmpaquetado());
+			pnVisualizarOrdenesPendientesEmpaquetado.add(getScrpOrdenesPendientesEmpaquetado());
+			pnVisualizarOrdenesPendientesEmpaquetado.add(getBtnIniciarEmpaquetado());
+		}
+		return pnVisualizarOrdenesPendientesEmpaquetado;
+	}
+	private JButton getBtnVolverDesdeEmpaquetado() {
+		if (btnVolverDesdeEmpaquetado == null) {
+			btnVolverDesdeEmpaquetado = new JButton("Volver");
+			btnVolverDesdeEmpaquetado.addActionListener(controller.getActionListenerVolverPaginaPrincipal());
+			btnVolverDesdeEmpaquetado.setBounds(10, 10, 105, 32);
+		}
+		return btnVolverDesdeEmpaquetado;
+	}
+	private JScrollPane getScrpOrdenesPendientesEmpaquetado() {
+		if (scrpOrdenesPendientesEmpaquetado == null) {
+			scrpOrdenesPendientesEmpaquetado = new JScrollPane((Component) null);
+			scrpOrdenesPendientesEmpaquetado.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			scrpOrdenesPendientesEmpaquetado.setBounds(10, 72, 395, 252);
+			scrpOrdenesPendientesEmpaquetado.setViewportView(getTablaOrdenesTrabajoPendientesEmpaquetado());
+		}
+		return scrpOrdenesPendientesEmpaquetado;
+	}
+	public JButton getBtnIniciarEmpaquetado() {
+		if (btnIniciarEmpaquetado == null) {
+			btnIniciarEmpaquetado = new JButton("Iniciar empaquetado");
+			btnIniciarEmpaquetado.setEnabled(false);
+			btnIniciarEmpaquetado.setBounds(225, 334, 180, 40);
+		}
+		return btnIniciarEmpaquetado;
+	}
+	private JPanel getPnEmpaquetadoOrden() {
+		if (pnEmpaquetadoOrden == null) {
+			pnEmpaquetadoOrden = new JPanel();
+			pnEmpaquetadoOrden.setLayout(null);
+			pnEmpaquetadoOrden.add(getLblEmpaquetadoProductos());
+			pnEmpaquetadoOrden.add(getBtnVolverDesdeEmpaquetadoDeproductosDeOt());
+			pnEmpaquetadoOrden.add(getScrpProductosAEmpaquetar());
+		}
+		return pnEmpaquetadoOrden;
+	}
+	private JLabel getLblEmpaquetadoProductos() {
+		if (lblEmpaquetadoProductos == null) {
+			lblEmpaquetadoProductos = new JLabel("Empaquetado OT");
+			lblEmpaquetadoProductos.setFont(new Font("Arial Black", Font.PLAIN, 20));
+			lblEmpaquetadoProductos.setHorizontalAlignment(SwingConstants.CENTER);
+			lblEmpaquetadoProductos.setBounds(10, 10, 395, 46);
+		}
+		return lblEmpaquetadoProductos;
+	}
+	private JButton getBtnVolverDesdeEmpaquetadoDeproductosDeOt() {
+		if (btnVolverDesdeEmpaquetadoDeproductosDeOt == null) {
+			btnVolverDesdeEmpaquetadoDeproductosDeOt = new JButton("Volver");
+			btnVolverDesdeEmpaquetadoDeproductosDeOt.setBounds(10, 66, 105, 30);
+		}
+		return btnVolverDesdeEmpaquetadoDeproductosDeOt;
+	}
+	private JScrollPane getScrpProductosAEmpaquetar() {
+		if (scrpProductosAEmpaquetar == null) {
+			scrpProductosAEmpaquetar = new JScrollPane();
+			scrpProductosAEmpaquetar.setBounds(10, 106, 395, 239);
+		}
+		return scrpProductosAEmpaquetar;
 	}
 }

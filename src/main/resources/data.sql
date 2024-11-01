@@ -91,14 +91,14 @@ INSERT INTO Almacenero (nombre, apellido) VALUES
 
 -- Tabla OrdenTrabajo
 INSERT INTO OrdenTrabajo (fecha_creacion, estado, almacenero_id, incidencia) VALUES 
-('2024-01-01', 'En recogida', 1, NULL), ('2024-01-02', 'Pendiente de empaquetado', 2, NULL), 
-('2024-01-03', 'En recogida', 3, 'Producto dañado'), ('2024-01-04', 'Pendiente de empaquetado', 4, NULL), 
-('2024-01-05', 'En recogida', 5, 'Retraso en entrega'), ('2024-01-06', 'Pendiente de empaquetado', 6, NULL), 
-('2024-01-07', 'En recogida', 7, NULL), ('2024-01-08', 'Pendiente de empaquetado', 8, 'Producto faltante'), 
-('2024-01-09', 'En recogida', 9, NULL), ('2024-01-10', 'Pendiente de empaquetado', 10, NULL), 
-('2024-01-11', 'En recogida', 11, 'Producto dañado'), ('2024-01-12', 'Pendiente de empaquetado', 12, NULL), 
-('2024-01-13', 'En recogida', 13, 'Error en cantidad'), ('2024-01-14', 'Pendiente de empaquetado', 14, NULL), 
-('2024-01-15', 'En recogida', 15, NULL);
+('2024-01-01', 'Pendiente de recogida', 1, NULL), ('2024-01-02', 'Pendiente de empaquetado', 2, NULL), 
+('2024-01-03', 'Pendiente de recogida', 3, 'Producto dañado'), ('2024-01-04', 'Pendiente de empaquetado', 4, NULL), 
+('2024-01-05', 'Pendiente de recogida', 5, 'Retraso en entrega'), ('2024-01-06', 'Pendiente de empaquetado', 6, NULL), 
+('2024-01-07', 'Pendiente de recogida', 7, NULL), ('2024-01-08', 'Pendiente de empaquetado', 8, 'Producto faltante'), 
+('2024-01-09', 'Pendiente de recogida', 9, NULL), ('2024-01-10', 'Pendiente de empaquetado', 10, NULL), 
+('2024-01-11', 'Pendiente de recogida', 11, 'Producto dañado'), ('2024-01-12', 'Pendiente de empaquetado', 12, NULL), 
+('2024-01-13', 'Pendiente de recogida', 13, 'Error en cantidad'), ('2024-01-14', 'Pendiente de empaquetado', 14, NULL), 
+('2024-01-15', 'Pendiente de recogida', 15, NULL);
 
 -- Tabla Pedido
 INSERT INTO Pedido (cliente_id, fecha, total, estado, orden_trabajo_id) VALUES 

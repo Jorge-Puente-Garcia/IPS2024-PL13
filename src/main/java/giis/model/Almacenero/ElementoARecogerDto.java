@@ -12,11 +12,6 @@ public class ElementoARecogerDto {
 	
 	public ElementoARecogerDto() {
 	}
-	public ElementoARecogerDto(int codigoBarras, int cantidad) {
-		super();
-		this.codigoBarras = codigoBarras;
-		this.cantidad = cantidad;
-	}
 
 	public int getCodigoBarras() {
 		return codigoBarras;
