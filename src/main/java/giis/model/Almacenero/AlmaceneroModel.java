@@ -27,7 +27,7 @@ public class AlmaceneroModel {
 
 	public void ponEnRecogidaElPedido(PedidoARecogerRecord par) {
 		String sqlUpdate = "UPDATE PEDIDO SET estado='Recogido' WHERE id=?;";
-		db.executeUpdate(sqlUpdate,par.getId());//CAMBIO
+		db.executeUpdate(sqlUpdate,par.getId());
 		
 	}
 
@@ -40,15 +40,27 @@ public class AlmaceneroModel {
 		return true;
 	}
 
-	public void creaOrdenDeTrabajo(int almaceneroId) {
+	public void creaOrdenDeTrabajo(int almaceneroId, PedidoARecogerRecord par) {
 		String sqlInsert = "INSERT INTO OrdenTrabajo (fecha_creacion,estado,almacenero_id,incidencia) " 
-						+ "VALUES (? , 'En recogida' , ? ,'Ninguna');";
-		db.executeUpdate(sqlInsert,LocalDate.now().toString(),almaceneroId); //CAMBIO
+						+ "VALUES (? , 'Pendiente de recogida' , ? ,'');";
+		db.executeUpdate(sqlInsert,LocalDate.now().toString(),almaceneroId); //Se mete la Orden de Trabajo
+		
+		String sacaProductosPedido="SELECT pp.producto_id, pp.cantidad FROM Pedido ped JOIN ProductosPedido pp ON ped.id = pp.pedido_id WHERE ped.id = ?;";
+		String insertaOrdenTrabajoProducto="INSERT INTO OrdenTrabajoProducto (orden_trabajo_id, producto_id, cantidad) VALUES (?,?,?);";
+		String sacaIdOrdenTrabajo="SELECT MAX(id) AS id FROM OrdenTrabajo;";
+		List<Object[]> productosIdCantidad= db.executeQueryArray(sacaProductosPedido, par.getId());
+		List<Object[]> idWoList=db.executeQueryArray(sacaIdOrdenTrabajo);
+		String ordenTrabajoId=idWoList.get(0)[0].toString();//Sacamos el id
+		for(Object[] s:productosIdCantidad) {
+			System.out.println(ordenTrabajoId);
+			db.executeUpdate(insertaOrdenTrabajoProducto,ordenTrabajoId,s[0].toString(),Integer.parseInt(s[1].toString()));//Se mete a la tabla orden de trabajo producto
+		}
+		
 
 	}
 
 	public List<OrdenTrabajoRecord> getOrdenesDeTrabajoDelAlmaceneroPorId(int almaceneroId) {
-		String sql = "SELECT id, fecha_creacion, estado, incidencia, almacenero_id FROM OrdenTrabajo WHERE almacenero_id=?;";
+		String sql = "SELECT id, fecha_creacion, estado, incidencia, almacenero_id FROM OrdenTrabajo WHERE almacenero_id=? AND estado='Pendiente de recogida';";
 		List<OrdenTrabajoRecord> li=db.executeQueryPojo(OrdenTrabajoRecord.class, sql,almaceneroId);
 		return li;
 	}
@@ -132,14 +144,29 @@ public class AlmaceneroModel {
 	}
 	
 	public List<ElementoARecogerDto> getElementosARecogerDeLaOrdenDeTrabajo(OrdenTrabajoRecord ordenTrabajoRecord) {
-		String sql = "SELECT Producto.referencia AS codigoBarras, OrdenTrabajoProducto.cantidad AS cantidad, Localizacion.pasillo, Localizacion.posicion, "
+		String sacaTodo="Select * from ordenTrabajoProducto where OrdenTrabajoProducto.orden_trabajo_id ="+ordenTrabajoRecord.getId()+";";
+		List<Object[]> todo=db.executeQueryArray(sacaTodo);
+		System.out.println(ordenTrabajoRecord.getId());
+		String sql = "SELECT Producto.id AS codigoBarras,Producto.nombre, OrdenTrabajoProducto.cantidad AS cantidad, Localizacion.pasillo, Localizacion.posicion, "
 				+ "Localizacion.estanteria , Localizacion.altura FROM OrdenTrabajoProducto JOIN Producto ON OrdenTrabajoProducto.producto_id = Producto.id JOIN Localizacion"
 				+ " ON Producto.localizacion_id = Localizacion.id WHERE OrdenTrabajoProducto.orden_trabajo_id = ? ORDER BY Localizacion.pasillo ASC, "
 				+ "Localizacion.posicion ASC, CASE WHEN Localizacion.estanteria = 'Izquierda' THEN 0 ELSE 1 END;";
 		List<ElementoARecogerDto> li=db.executeQueryPojo(ElementoARecogerDto.class, sql,ordenTrabajoRecord.getId());
 		return li;
 	}
-
+	
+	public void updateWorkOrderParaQuePaseAEnProcesoDeRecogida(OrdenTrabajoRecord ordenTrabajoRecord) {
+		String actualizaLasOt= "UPDATE OrdenTrabajo SET estado='En recogida' WHERE id=?;";
+		db.executeUpdate(actualizaLasOt, ordenTrabajoRecord.getId());
+	}
+	
+	public void updateToPendienteDeEmpaquetadoElProducto(OrdenTrabajoRecord ordenTrabajoEnRecogida) {
+		String updateAPendienteEmpaquetado="UPDATE OrdenTrabajo SET estado='Pendiente de empaquetado' WHERE id=?;";
+		db.executeUpdate(updateAPendienteEmpaquetado, ordenTrabajoEnRecogida.getId());
+		
+	}
+	
+	
 	public static void main(String[] args) {
 //		OrdenTrabajoRecord otr = new OrdenTrabajoRecord();
 //		db=new Database();
@@ -150,6 +177,21 @@ public class AlmaceneroModel {
 //			System.out.println(p.getId());
 //		}
 	}
+
+	public void actualizaIncidenciaOT(String incidencia, OrdenTrabajoRecord ordenTrabajoEnRecogida) {
+		String actualizarIncidenciaWO="UPDATE OrdenTrabajo SET incidencia=? WHERE id=?;";
+		db.executeUpdate(actualizarIncidenciaWO,incidencia,ordenTrabajoEnRecogida.getId());
+	}
+
+	public List<OrdenTrabajoRecord> getOrdenesDeTrabajoPendientesEmpaquetado() {
+		String pedidosPendientesEmpaquetado="SELECT id, fecha_creacion, estado, incidencia, almacenero_id FROM OrdenTrabajo WHERE estado='Pendiente de empaquetado' AND incidencia='' or incidencia is null;";
+		List<OrdenTrabajoRecord> li=db.executeQueryPojo(OrdenTrabajoRecord.class, pedidosPendientesEmpaquetado);
+		return li;
+	}
+
+	
+
+	
 
 	
 }

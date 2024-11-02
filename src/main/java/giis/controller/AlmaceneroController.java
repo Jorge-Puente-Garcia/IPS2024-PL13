@@ -28,7 +28,11 @@ public class AlmaceneroController {
 	private List<PedidoARecogerRecord> pedidosSinRecoger;
 	private List<PedidoARecogerDto> pedidosSinRecogerParaImprimir;
 	private List<OrdenTrabajoRecord> pedidosAsignados;
+	private List<OrdenTrabajoRecord> pedidosAPendientesEmpaquetado;
 	private List<OrdenTrabajoDto> pedidosAsignadosParaImprimir;
+	private List<OrdenTrabajoDto> pedidosPendientesEmpaquetadoParaImprimir;
+	private List<ElementoARecogerDto> elementosARecoger;
+	private OrdenTrabajoRecord ordenTrabajoEnRecogida;
 	private int almaceneroId;
 	
 	
@@ -36,7 +40,7 @@ public class AlmaceneroController {
 		this.vista=almaceneroView;
 		this.model = new AlmaceneroModel();
 	}
-	public List<PedidoARecogerDto> getPedidosPendientesRecogida(){
+	public List<PedidoARecogerDto> getPedidosPendientesDeEntrarEnUnaOT(){
 		pedidosSinRecoger=model.getPedidosPendientesRecogida();
 		pedidosSinRecogerParaImprimir=pedidoRecordToDtoList();
 		return pedidosSinRecogerParaImprimir;
@@ -44,23 +48,31 @@ public class AlmaceneroController {
 	
 	public List<OrdenTrabajoDto> getOrdenesDeTrabajoSeleccionadas() {
 		pedidosAsignados=model.getOrdenesDeTrabajoDelAlmaceneroPorId(almaceneroId);
-		pedidosAsignadosParaImprimir=workorderRecordToDtoList();
+		pedidosAsignadosParaImprimir=workorderRecordToDtoList(pedidosAsignados);
 		return pedidosAsignadosParaImprimir;
 	}
+	
+	private List<OrdenTrabajoDto> getOrdenesDeTrabajoPendiestesEmpaquetado() {
+		pedidosAPendientesEmpaquetado=model.getOrdenesDeTrabajoPendientesEmpaquetado();
+		pedidosPendientesEmpaquetadoParaImprimir=workorderRecordToDtoList(pedidosAPendientesEmpaquetado);
+		return pedidosPendientesEmpaquetadoParaImprimir;
+	}
 	private List<ElementoARecogerDto> getElementosARecogerDeLaWorkorderSeleccionada() {		
-		return model.getElementosARecogerDeLaOrdenDeTrabajo(pedidosAsignados.get(vista.getTablaOrdenesTrabajoSeleccionadas().getSelectedRow()));
+		ordenTrabajoEnRecogida=pedidosAsignados.get(vista.getTablaOrdenesTrabajoSeleccionadas().getSelectedRow());
+		this.elementosARecoger =model.getElementosARecogerDeLaOrdenDeTrabajo(ordenTrabajoEnRecogida);
+		return elementosARecoger;
 	}
 	
 	
-	private List<OrdenTrabajoDto> workorderRecordToDtoList() {
+	private List<OrdenTrabajoDto> workorderRecordToDtoList(List<OrdenTrabajoRecord> pedidosAsignados) {
 		List<OrdenTrabajoDto> l=new ArrayList<OrdenTrabajoDto>();
 		for(OrdenTrabajoRecord r: pedidosAsignados) {
 			OrdenTrabajoDto d=new OrdenTrabajoDto();
 			d.setId(r.getId());
 			if(r.getEstado().equals("Pendiente de empaquetado")) {
 				d.setEstado(Estado.PendienteDeEmpaquetado);
-			}else if(r.getEstado().equals("Empaquetado")) {
-				d.setEstado(Estado.Empaquetado);
+			}else if(r.getEstado().equals("Pendiente de recogida")) {
+				d.setEstado(Estado.PendienteDeRecogida);
 			}else if(r.getEstado().equals("En recogida")) {
 				d.setEstado(Estado.EnRecogida);
 			}
@@ -73,7 +85,7 @@ public class AlmaceneroController {
 	}
 	public void ponEnRecogidaElPedido(int selectedRow) {
 		PedidoARecogerRecord par=pedidosSinRecoger.get(selectedRow);
-		model.creaOrdenDeTrabajo(almaceneroId);
+		model.creaOrdenDeTrabajo(almaceneroId,par);
 		model.ponEnRecogidaElPedido(par);
 	}
 	
@@ -128,6 +140,7 @@ public class AlmaceneroController {
 	public ActionListener getActionListenerVolverPaginaPrincipal() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				vista.getBtnIniciarEmpaquetado().setEnabled(false);
 				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
 				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnPaginaPrincipal");
 			}
@@ -138,7 +151,9 @@ public class AlmaceneroController {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int fila = vista.getTablaOrdenesTrabajoDisponibles().getSelectedRow();
-				if (fila >= 0) {
+				if(fila<0) {
+					JOptionPane.showConfirmDialog(null, "Tienes que seleccionar un pedido","Error de selección",2);
+				}else{
 					vista.getBtnCrearOT().setEnabled(true);
 				}
 			}
@@ -187,16 +202,23 @@ public class AlmaceneroController {
 		return tmodel;
 		
 	}
+	public TableModel getTableModelPrdenesTrabajoPendientesEmpaquetado() {
+		TableModel tmodel =SwingUtil.getTableModelFromPojos(getOrdenesDeTrabajoPendiestesEmpaquetado(),
+				new String[] { "fechaCreacion", "estado", "incidencias", "almaceneroId" });
+		return tmodel;
+	}
 	
+
 	public TableModel getTableModerElemetosARecoger() {
 		TableModel tmodel =SwingUtil.getTableModelFromPojos(getElementosARecogerDeLaWorkorderSeleccionada(),
 				new String[] { "codigoBarras", "cantidad"});
+		pedidosAsignados=model.getOrdenesDeTrabajoDelAlmaceneroPorId(almaceneroId);
 		return tmodel;
 	}
 	
 	public TableModel getTableModerElemetosRecogidos() {
 		TableModel tmodel =SwingUtil.getTableModelFromPojos(getElementosARecogerDeLaWorkorderSeleccionada(),
-				new String[] { "codigoBarras", "cantidad","pasillo","posicion","estanteria","altura"});
+				new String[] { "nombre", "cantidad","pasillo","posicion","estanteria","altura"});
 		return tmodel;
 	}
 	
@@ -204,6 +226,7 @@ public class AlmaceneroController {
 	public ActionListener getActionListenerVolverAtrasHaciaOrdenesTrabajo() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				vista.getBtnRecoger().setEnabled(false);
 				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
 				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnPaginaPrincipal");
 			}
@@ -217,31 +240,29 @@ public class AlmaceneroController {
 			}
 		};
 	}
-	public ActionListener getActionListenerFinalizarEmpaquetado() {
+	public ActionListener getActionListenerFinalizarRecogida() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String worOrdId = JOptionPane
-						.showInputDialog("Por favor, dame el id de la workorder con el empaquetado finalizado: ");
-				OrdenTrabajoDto dto = new OrdenTrabajoDto();
-				dto.setId(worOrdId);
-				JOptionPane.showMessageDialog(null, getEtiquetaEnvio(dto), "Etiqueta de envio: ",
-						JOptionPane.INFORMATION_MESSAGE);
-				String infoAlvaran = getAlbaran(dto);
-				vista.getTaAlbaran().setText(infoAlvaran);
-				JOptionPane.showMessageDialog(null, vista.getTaAlbaran(), "Etiqueta de envio: ",
-						JOptionPane.INFORMATION_MESSAGE);
+			vista.getTablaOrdenesTrabajoDisponibles().setEnabled(true);
+			vista.getTablaOrdenesTrabajoSeleccionadas().setEnabled(true);
+				model.updateToPendienteDeEmpaquetadoElProducto(ordenTrabajoEnRecogida);
 			}
 		};
 	}
-	public ActionListener getActionListenerEmpaquetar() {
+	public ActionListener getActionListenerEmpezarARecoger() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int fila=vista.getTablaOrdenesTrabajoSeleccionadas().getSelectedRow();
+				model.updateWorkOrderParaQuePaseAEnProcesoDeRecogida(pedidosAsignados.get(fila));
+				vista.getTablaOrdenesTrabajoSeleccionadas().setEnabled(false);
 				TableModel tmodel = getTableModerElemetosRecogidos();
 				vista.getTablaOrdenesElementosRecogidos().setModel(tmodel);
 				vista.getTablaOrdenesElementosRecogidos().revalidate();
 				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
 				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesElementosRecogidos());
-				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnEmpaquetado");
+				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnRecogida");
+				pedidosAsignados=model.getOrdenesDeTrabajoDelAlmaceneroPorId(almaceneroId);
+				vista.getLblOTid().setText("OT id: "+ordenTrabajoEnRecogida.getId());
 			}
 		};
 	}
@@ -249,7 +270,7 @@ public class AlmaceneroController {
 	return new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
-			cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnEmpaquetado");
+			cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnRecogida");
 		}
 	};
 	}
@@ -259,7 +280,7 @@ public class AlmaceneroController {
 				vista.getTablaOrdenesTrabajoDisponibles().setEnabled(false);
 				vista.getBtnCrearOT().setEnabled(false);
 				ponEnRecogidaElPedido(vista.getTablaOrdenesTrabajoDisponibles().getSelectedRow());
-				TableModel tmodel = SwingUtil.getTableModelFromPojos(getPedidosPendientesRecogida(),
+				TableModel tmodel = SwingUtil.getTableModelFromPojos(getPedidosPendientesDeEntrarEnUnaOT(),
 						new String[] { "fecha", "tamaño", "estado" });
 				vista.getTablaOrdenesTrabajoDisponibles().setModel(tmodel);
 				vista.getTablaOrdenesTrabajoDisponibles().revalidate();
@@ -273,6 +294,106 @@ public class AlmaceneroController {
 				vista.getTablaOrdenesTrabajoSeleccionadas().revalidate();
 				vista.getTablaOrdenesTrabajoSeleccionadas().repaint();
 				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesTrabajoSeleccionadas());
+				getPedidosPendientesDeEntrarEnUnaOT();
+			}
+		};
+	}
+	public MouseListener getMouseListenerSeleccionarUnaOtParaEmpaquetar() {
+		return new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(vista.getTablaOrdenesTrabajoSeleccionadas().getSelectedRow()<0) {
+					JOptionPane.showConfirmDialog(null, "Tienes que seleccionar una OT","Error de selección",2);
+				}else {
+					vista.getBtnRecoger().setEnabled(true); 
+				}
+				
+			}
+		};
+	}
+	
+	public MouseListener getMouseListenerSeleccionarEnLaTablaOrdenesPendientesEmpaquetado() {
+		return new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(vista.getTablaOrdenesTrabajoPendientesEmpaquetado().getSelectedRow()<0) {
+					JOptionPane.showConfirmDialog(null, "Tienes que seleccionar una OT","Error de selección",2);
+				}else {
+					vista.getBtnIniciarEmpaquetado().setEnabled(true); 
+				}
+			}
+		};
+	}
+	
+	public ActionListener getActionPerformedEscanearUnProducto() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String codigoBarras = JOptionPane
+						.showInputDialog("Escanea el codigo de barras: ");
+				if(codigoBarras.isBlank()) {
+					JOptionPane.showMessageDialog(null, "No has escaneado un código correcto");
+				}else if(!isAValidCodeOfWO(codigoBarras)) {
+					JOptionPane.showMessageDialog(null, "Ese código de barras no pertenece a esta OT");
+				}else if(!isValidUnits((int)vista.getSpinner().getValue(),codigoBarras)) {
+					JOptionPane.showMessageDialog(null, "La cantidad a recoger es incorrecta");
+				}else {
+					List<ElementoARecogerDto> elementosNoEliminados=new ArrayList<ElementoARecogerDto>();
+					for(ElementoARecogerDto elemento:elementosARecoger) {
+						if(!String.valueOf(elemento.getCodigoBarras()).equals(codigoBarras)) {
+							elementosNoEliminados.add(elemento);
+						}
+					}
+					elementosARecoger=elementosNoEliminados;
+					TableModel tmodel =SwingUtil.getTableModelFromPojos(elementosARecoger,
+							new String[] { "nombre", "cantidad","pasillo","posicion","estanteria","altura"});
+					vista.getTablaOrdenesElementosRecogidos().setModel(tmodel);
+					SwingUtil.autoAdjustColumns(vista.getTablaOrdenesElementosRecogidos());
+					if(elementosARecoger.size()==0){
+					vista.getBtnFinalizarRecogida().setEnabled(true); ;
+					}
+				}
+				
+			}			
+		};
+	}
+	
+	private boolean isAValidCodeOfWO(String codigoBarras) {
+		for(ElementoARecogerDto elemento:elementosARecoger) {
+			if(String.valueOf(elemento.getCodigoBarras()).equals(codigoBarras)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private boolean isValidUnits(int unidades,String codigoBarras) {
+		for(ElementoARecogerDto elemento:elementosARecoger) {
+			if(elemento.cantidad==unidades && String.valueOf(elemento.getCodigoBarras()).equals(codigoBarras)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public ActionListener getActionPerformedNotificaIncidencia() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String incidencia = JOptionPane
+						.showInputDialog("Escribe la incidencia: ");
+				if(!incidencia.isBlank()) {
+					int decision=JOptionPane.showConfirmDialog(null, "Texto incidencia:\n"+incidencia,"Notificación de incidencia:",2);
+					if(decision==JOptionPane.OK_OPTION) {
+						model.actualizaIncidenciaOT(incidencia,ordenTrabajoEnRecogida);
+						vista.getBtnNotificarIncidencia().setEnabled(false);
+					}
+				}
+				
+			}
+		};
+	}
+	public ActionListener getActionPerformedMuestraPanelEmpaquetado() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnEmpaquetado");
 			}
 		};
 	}

@@ -39,19 +39,31 @@ INSERT INTO Categoria (nombre, id_padre) VALUES
     ('Pantalones', 2),
     ('Calzado', 2);
     
-INSERT INTO Producto (referencia, datosBasicos, precio, unidades, localizacion_id, id_categoria) VALUES
-    ('REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento', 699.99, 10, 1, 4),
-    ('REF002', 'Laptop ultraligera de 14 pulgadas, procesador Intel Core i7, 16GB RAM y 512GB SSD', 1199.99, 5, 2, 7),
-    ('REF003', 'Auriculares inalámbricos con cancelación de ruido, duración de batería de 24 horas', 199.99, 15, 3, 1),
-    ('REF004', 'Cámara fotográfica profesional de 24MP con lente de 50mm y estabilización óptica', 1499.99, 8, 4, 1),
-    ('REF005', 'Reloj inteligente con monitor de frecuencia cardíaca, GPS integrado y resistente al agua', 249.99, 20, 5, 1),
-    ('REF006', 'Tablet de 10 pulgadas con pantalla Full HD, 64GB de almacenamiento y batería de larga duración', 329.99, 12, 6, 6),
-    ('REF007', 'PC de Escritorio Lenovo con 8GB RAM y 1TB HDD', 650.00, 7, 2, 8),
-    ('REF008', 'iPhone con 256GB de almacenamiento y cámara avanzada', 999.00, 15, 1, 4),
-    ('REF009', 'Televisor Samsung de 55 pulgadas, 4K UHD', 1200.00, 4, 3, 5),
-    ('REF010', 'Camisa Polo de algodón para hombre', 45.00, 25, 5, 9),
-    ('REF011', 'Jeans Levis clásicos para hombre', 60.00, 18, 5, 10),
-    ('REF012', 'Zapatos deportivos Nike para correr', 90.00, 20, 5, 11);
+INSERT INTO Producto (nombre, referencia, datosBasicos, precio, unidades, localizacion_id, id_categoria) VALUES
+    ('Smartphone AMOLED', 'REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento', 699.99, 10, 1, 4),
+    ('Laptop Ultraligera', 'REF002', 'Laptop ultraligera de 14 pulgadas, procesador Intel Core i7, 16GB RAM y 512GB SSD', 1199.99, 5, 2, 7),
+    ('Auriculares Inalámbricos', 'REF003', 'Auriculares inalámbricos con cancelación de ruido, duración de batería de 24 horas', 199.99, 15, 3, 1),
+    ('Cámara Fotográfica', 'REF004', 'Cámara fotográfica profesional de 24MP con lente de 50mm y estabilización óptica', 1499.99, 8, 4, 1),
+    ('Reloj Inteligente', 'REF005', 'Reloj inteligente con monitor de frecuencia cardíaca, GPS integrado y resistente al agua', 249.99, 20, 5, 1),
+    ('Tablet Full HD', 'REF006', 'Tablet de 10 pulgadas con pantalla Full HD, 64GB de almacenamiento y batería de larga duración', 329.99, 12, 6, 6),
+    ('PC de Escritorio', 'REF007', 'PC de Escritorio Lenovo con 8GB RAM y 1TB HDD', 650.00, 7, 2, 8),
+    ('iPhone 256GB', 'REF008', 'iPhone con 256GB de almacenamiento y cámara avanzada', 999.00, 15, 1, 4),
+    ('Televisor 4K', 'REF009', 'Televisor Samsung de 55 pulgadas, 4K UHD', 1200.00, 4, 3, 5),
+    ('Camisa Polo', 'REF010', 'Camisa Polo de algodón para hombre', 45.00, 25, 5, 9),
+    ('Jeans Clásicos', 'REF011', 'Jeans Levis clásicos para hombre', 60.00, 18, 5, 10),
+    ('Zapatos Deportivos', 'REF012', 'Zapatos deportivos Nike para correr', 90.00, 20, 5, 11),
+    ('Cafetera de goteo', 'REF013', 'Cafetera eléctrica de goteo, 12 tazas, con filtro reutilizable.', 49.99, 50, 1, 2),
+	('Tostadora de pan', 'REF014', 'Tostadora de 2 rebanadas, con control de dorado y bandeja extraíble.', 29.99, 30, 1, 2),
+	('Batidora de mano', 'REF015', 'Batidora de mano con 5 velocidades y accesorios de mezcla.', 35.50, 25, 1, 2),
+	('Aspiradora ciclónica', 'REF016', 'Aspiradora sin bolsa, potente y fácil de manejar.', 89.99, 15, 1, 3),
+	('Plancha de vapor', 'REF017', 'Plancha de vapor con suela de cerámica y sistema anti-goteo.', 39.95, 40, 1, 2),
+	('Televisor LED 50"', 'REF018', 'Televisor LED de 50 pulgadas, 4K UHD, Smart TV.', 499.99, 10, 1, 1),
+	('Laptop portátil', 'REF019', 'Laptop 15.6" con procesador i5, 8GB RAM, 256GB SSD.', 699.99, 20, 1, 4),
+	('Smartphone Android', 'REF020', 'Smartphone de 6.5", 128GB almacenamiento, cámara triple.', 299.99, 100, 1, 4),
+	('Silla ergonómica', 'REF021', 'Silla de oficina ergonómica con ajuste de altura y soporte lumbar.', 149.99, 25, 1, 5),
+	('Mesa de comedor', 'REF022', 'Mesa de comedor de madera, 6 plazas, diseño moderno.', 399.99, 10, 1, 5);
+    
+
     
 INSERT INTO Carrito (dni, referencia, cantidad, precio) VALUES
 	('12345678A', 'REF001', 2, 1399.98),
@@ -79,14 +91,14 @@ INSERT INTO Almacenero (nombre, apellido) VALUES
 
 -- Tabla OrdenTrabajo
 INSERT INTO OrdenTrabajo (fecha_creacion, estado, almacenero_id, incidencia) VALUES 
-('2024-01-01', 'En recogida', 1, NULL), ('2024-01-02', 'Pendiente de empaquetado', 2, NULL), 
-('2024-01-03', 'En recogida', 3, 'Producto dañado'), ('2024-01-04', 'Pendiente de empaquetado', 4, NULL), 
-('2024-01-05', 'En recogida', 5, 'Retraso en entrega'), ('2024-01-06', 'Pendiente de empaquetado', 6, NULL), 
-('2024-01-07', 'En recogida', 7, NULL), ('2024-01-08', 'Pendiente de empaquetado', 8, 'Producto faltante'), 
-('2024-01-09', 'En recogida', 9, NULL), ('2024-01-10', 'Pendiente de empaquetado', 10, NULL), 
-('2024-01-11', 'En recogida', 11, 'Producto dañado'), ('2024-01-12', 'Pendiente de empaquetado', 12, NULL), 
-('2024-01-13', 'En recogida', 13, 'Error en cantidad'), ('2024-01-14', 'Pendiente de empaquetado', 14, NULL), 
-('2024-01-15', 'En recogida', 15, NULL);
+('2024-01-01', 'Pendiente de recogida', 1, NULL), ('2024-01-02', 'Pendiente de empaquetado', 2, NULL), 
+('2024-01-03', 'Pendiente de recogida', 3, 'Producto dañado'), ('2024-01-04', 'Pendiente de empaquetado', 4, NULL), 
+('2024-01-05', 'Pendiente de recogida', 5, 'Retraso en entrega'), ('2024-01-06', 'Pendiente de empaquetado', 6, NULL), 
+('2024-01-07', 'Pendiente de recogida', 7, NULL), ('2024-01-08', 'Pendiente de empaquetado', 8, 'Producto faltante'), 
+('2024-01-09', 'Pendiente de recogida', 9, NULL), ('2024-01-10', 'Pendiente de empaquetado', 10, NULL), 
+('2024-01-11', 'Pendiente de recogida', 11, 'Producto dañado'), ('2024-01-12', 'Pendiente de empaquetado', 12, NULL), 
+('2024-01-13', 'Pendiente de recogida', 13, 'Error en cantidad'), ('2024-01-14', 'Pendiente de empaquetado', 14, NULL), 
+('2024-01-15', 'Pendiente de recogida', 15, NULL);
 
 -- Tabla Pedido
 INSERT INTO Pedido (cliente_id, fecha, total, estado, orden_trabajo_id) VALUES 
