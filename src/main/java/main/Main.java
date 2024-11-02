@@ -33,8 +33,8 @@ public class Main extends JFrame {
             public void run() {
                 try {
 
-                    db.createDatabase(false);
-                    db.loadDatabase();
+                    //db.createDatabase(true);
+                    //db.loadDatabase();
 
                     Main frame = new Main();
                     frame.setVisible(true);
