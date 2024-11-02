@@ -9,7 +9,8 @@ import giis.util.Database;
 public class AlmaceneroModel {
 
 	private Database db;
-
+	
+	
 	public AlmaceneroModel() {
 		this.db = new Database();
 		db.createDatabase(false);
@@ -40,23 +41,49 @@ public class AlmaceneroModel {
 		return true;
 	}
 
-	public void creaOrdenDeTrabajo(int almaceneroId, PedidoARecogerRecord par) {
-		String sqlInsert = "INSERT INTO OrdenTrabajo (fecha_creacion,estado,almacenero_id,incidencia) " 
-						+ "VALUES (? , 'Pendiente de recogida' , ? ,'');";
-		db.executeUpdate(sqlInsert,LocalDate.now().toString(),almaceneroId); //Se mete la Orden de Trabajo
-		
-		String sacaProductosPedido="SELECT pp.producto_id, pp.cantidad FROM Pedido ped JOIN ProductosPedido pp ON ped.id = pp.pedido_id WHERE ped.id = ?;";
-		String insertaOrdenTrabajoProducto="INSERT INTO OrdenTrabajoProducto (orden_trabajo_id, producto_id, cantidad) VALUES (?,?,?);";
-		String sacaIdOrdenTrabajo="SELECT MAX(id) AS id FROM OrdenTrabajo;";
-		List<Object[]> productosIdCantidad= db.executeQueryArray(sacaProductosPedido, par.getId());
-		List<Object[]> idWoList=db.executeQueryArray(sacaIdOrdenTrabajo);
-		String ordenTrabajoId=idWoList.get(0)[0].toString();//Sacamos el id
-		for(Object[] s:productosIdCantidad) {
-			System.out.println(ordenTrabajoId);
-			db.executeUpdate(insertaOrdenTrabajoProducto,ordenTrabajoId,s[0].toString(),Integer.parseInt(s[1].toString()));//Se mete a la tabla orden de trabajo producto
-		}
-		
+	public void creaOrdenDeTrabajo(int almaceneroId, List<PedidoARecogerRecord> pars) {
+	    String sqlInsert = "INSERT INTO OrdenTrabajo (fecha_creacion, estado, almacenero_id, incidencia) " 
+	                    + "VALUES (?, 'Pendiente de recogida', ?, '');";
+	    db.executeUpdate(sqlInsert, LocalDate.now().toString(), almaceneroId); // Inserta la Orden de Trabajo inicial
 
+	    // Obtener el ID de la Orden de Trabajo actual
+	    String sacaIdOrdenTrabajo = "SELECT MAX(id) AS id FROM OrdenTrabajo;";
+	    List<Object[]> idWoList = db.executeQueryArray(sacaIdOrdenTrabajo);
+	    String ordenTrabajoId = idWoList.get(0)[0].toString();
+	    String sacaProductosPedido = "SELECT pp.producto_id, pp.cantidad FROM Pedido ped JOIN ProductosPedido pp ON ped.id = pp.pedido_id WHERE ped.id = ?;";
+	    String insertaOrdenTrabajoProducto = "INSERT INTO OrdenTrabajoProducto (orden_trabajo_id, producto_id, cantidad) VALUES (?, ?, ?);";
+
+	    int cargaActual = 0; // Carga actual de la orden de trabajo
+
+	    for (PedidoARecogerRecord par : pars) {
+	        // Consulta la lista de productos y cantidades asociadas al pedido
+	        List<Object[]> productosIdCantidad = db.executeQueryArray(sacaProductosPedido, par.getId());
+
+	        for (Object[] s : productosIdCantidad) {
+	            int productoId = Integer.parseInt(s[0].toString());
+	            int cantidad = Integer.parseInt(s[1].toString());
+
+	            // Divide la cantidad en lotes de tamaño máximo 5
+	            while (cantidad > 0) {
+	                int lote = Math.min(cantidad, 5 - cargaActual); // Tamaño del lote restante para completar 5
+	                db.executeUpdate(insertaOrdenTrabajoProducto, ordenTrabajoId, productoId, lote);
+
+	                // Actualiza el contador de carga actual y la cantidad restante
+	                cargaActual += lote;
+	                cantidad -= lote;
+
+	                // Si la carga actual llega a 5, crear nueva orden y restablecer el contador
+	                if (cargaActual == 5) {
+	                    db.executeUpdate(sqlInsert, LocalDate.now().toString(), almaceneroId);
+	                    idWoList = db.executeQueryArray(sacaIdOrdenTrabajo);
+	                    ordenTrabajoId = idWoList.get(0)[0].toString();
+	                    cargaActual = 0; // Reinicia el contador de carga para la nueva orden de trabajo
+	                }
+	            }
+	        }
+	        // Actualiza el estado del pedido a "En recogida"
+	        ponEnRecogidaElPedido(par);
+	    }
 	}
 
 	public List<OrdenTrabajoRecord> getOrdenesDeTrabajoDelAlmaceneroPorId(int almaceneroId) {
@@ -167,7 +194,7 @@ public class AlmaceneroModel {
 	}
 	
 	
-	public static void main(String[] args) {
+//	public static void main(String[] args) {
 //		OrdenTrabajoRecord otr = new OrdenTrabajoRecord();
 //		db=new Database();
 //		db.createDatabase(false);
@@ -176,7 +203,7 @@ public class AlmaceneroModel {
 //		for(PedidoARecogerRecord p:l) {
 //			System.out.println(p.getId());
 //		}
-	}
+//	}
 
 	public void actualizaIncidenciaOT(String incidencia, OrdenTrabajoRecord ordenTrabajoEnRecogida) {
 		String actualizarIncidenciaWO="UPDATE OrdenTrabajo SET incidencia=? WHERE id=?;";
