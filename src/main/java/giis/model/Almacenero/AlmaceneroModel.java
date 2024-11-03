@@ -2,7 +2,6 @@ package giis.model.Almacenero;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 import giis.util.Database;
 
@@ -11,10 +10,8 @@ public class AlmaceneroModel {
 	private Database db;
 	
 	
-	public AlmaceneroModel() {
-		this.db = new Database();
-		db.createDatabase(false);
-		db.loadDatabase();
+	public AlmaceneroModel(Database db2) {
+		this.db = db2;
 
 	}
 
@@ -116,9 +113,6 @@ public class AlmaceneroModel {
 	}
 
 	public String creaAlbaran(OrdenTrabajoRecord otr) {
-		db = new Database();
-		db.createDatabase(false);
-		db.loadDatabase();
 		String sacarInfoParaElAlbaran = "SELECT Producto.datosBasicos AS nombre, Producto.referencia, OrdenTrabajoProducto.cantidad "
 				+ "FROM OrdenTrabajo JOIN OrdenTrabajoProducto ON OrdenTrabajo.id = OrdenTrabajoProducto.orden_trabajo_id "
 				+ "JOIN Producto ON OrdenTrabajoProducto.producto_id = Producto.id WHERE OrdenTrabajo.id =?;";
@@ -145,6 +139,7 @@ public class AlmaceneroModel {
 		maxCantidadLength = Math.max(maxCantidadLength, 20); // Mínimo 20
 		
 		String albaran = "Datos del cliente y del paquete:"+creaEtiqueta(otr).substring(20)+"\n";
+		//String albaran ="";
 		albaran += " Albarán:\n"
 	                + String.format("|%-" + maxNombreLength + "s |%-" + maxReferenciaLength + "s  |%-" + maxCantidadLength + "s  |\n",
 	                " Nombre producto ", " Referencia producto ", " Cantidad ")
@@ -171,8 +166,6 @@ public class AlmaceneroModel {
 	}
 	
 	public List<ElementoARecogerDto> getElementosARecogerDeLaOrdenDeTrabajo(OrdenTrabajoRecord ordenTrabajoRecord) {
-		String sacaTodo="Select * from ordenTrabajoProducto where OrdenTrabajoProducto.orden_trabajo_id ="+ordenTrabajoRecord.getId()+";";
-		List<Object[]> todo=db.executeQueryArray(sacaTodo);
 		System.out.println(ordenTrabajoRecord.getId());
 		String sql = "SELECT Producto.id AS codigoBarras,Producto.nombre, OrdenTrabajoProducto.cantidad AS cantidad, Localizacion.pasillo, Localizacion.posicion, "
 				+ "Localizacion.estanteria , Localizacion.altura FROM OrdenTrabajoProducto JOIN Producto ON OrdenTrabajoProducto.producto_id = Producto.id JOIN Localizacion"

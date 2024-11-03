@@ -20,6 +20,7 @@ import giis.model.Almacenero.OrdenTrabajoRecord;
 import giis.model.Almacenero.PedidoARecogerDto;
 import giis.model.Almacenero.PedidoARecogerRecord;
 import giis.ui.AlmaceneroView;
+import giis.util.Database;
 import giis.util.SwingUtil;
 
 public class AlmaceneroController {
@@ -42,9 +43,9 @@ public class AlmaceneroController {
 	private int almaceneroId;
 	
 	
-	public AlmaceneroController(AlmaceneroView almaceneroView) {
+	public AlmaceneroController(AlmaceneroView almaceneroView, Database db) {
 		this.vista=almaceneroView;
-		this.model = new AlmaceneroModel();
+		this.model = new AlmaceneroModel(db);
 	}
 	public List<PedidoARecogerDto> getPedidosPendientesDeEntrarEnUnaOT(){
 		pedidosSinRecoger=model.getPedidosPendientesRecogida();
@@ -276,7 +277,7 @@ public class AlmaceneroController {
 			public void actionPerformed(ActionEvent e) {
 			vista.getTablaOrdenesTrabajoDisponibles().setEnabled(true);
 			vista.getTablaOrdenesTrabajoSeleccionadas().setEnabled(true);
-				model.updateToPendienteDeEmpaquetadoElProducto(ordenTrabajoEnRecogida);
+			model.updateToPendienteDeEmpaquetadoElProducto(ordenTrabajoEnRecogida);
 			}
 		};
 	}
@@ -317,18 +318,13 @@ public class AlmaceneroController {
 				TableModel tmodel = SwingUtil.getTableModelFromPojos(getPedidosPendientesDeEntrarEnUnaOT(),
 						new String[] { "fecha", "tamaño", "estado" });
 				
-				vista.getTablaOrdenesTrabajoDisponibles().setModel(tmodel);
-				vista.getTablaOrdenesTrabajoDisponibles().revalidate();
-				vista.getTablaOrdenesTrabajoDisponibles().repaint();
-				
+				vista.getTablaOrdenesTrabajoDisponibles().setModel(tmodel);				
 				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesTrabajoDisponibles());
 				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
 				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnOrdenesDeTrabajoSeleccionadas");
 				TableModel tmodel2 = SwingUtil.getTableModelFromPojos(getOrdenesDeTrabajoSeleccionadas(),
 						new String[] { "fechaCreacion", "estado", "incidencias", "almaceneroId" });
 				vista.getTablaOrdenesTrabajoSeleccionadas().setModel(tmodel2);
-				vista.getTablaOrdenesTrabajoSeleccionadas().revalidate();
-				vista.getTablaOrdenesTrabajoSeleccionadas().repaint();
 				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesTrabajoSeleccionadas());
 				getPedidosPendientesDeEntrarEnUnaOT();
 			}
@@ -499,6 +495,14 @@ public class AlmaceneroController {
 				model.ponLaWorkOrderAEmpaquetada(ordenTrabajoEnEmpaquetado);
 				vista.getTablaOrdenesTrabajoPendientesEmpaquetado().setEnabled(true);
 				JOptionPane.showMessageDialog(null, model.creaEtiqueta(ordenTrabajoEnEmpaquetado));
+			}
+		};
+	}
+	public ActionListener getActionListenerMostrarAlbaran() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				vista.getTaAlbaran().setText(model.creaAlbaran(ordenTrabajoEnEmpaquetado));
+				JOptionPane.showMessageDialog(null, vista.getTaAlbaran(),"Albaran", JOptionPane.INFORMATION_MESSAGE);
 			}
 		};
 	}

@@ -2,7 +2,6 @@ package giis.ui;
 
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
 
@@ -21,7 +20,10 @@ import javax.swing.SwingConstants;
 import javax.swing.table.TableModel;
 
 import giis.controller.AlmaceneroController;
+import giis.util.Database;
 import giis.util.SwingUtil;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class AlmaceneroView {
 
@@ -74,29 +76,14 @@ public class AlmaceneroView {
 	private JSpinner spnCantidadElementosAEmpaquetar;
 	private JButton btnEscanearYeEmpaquetar;
 	private JButton btnFinalizarEmpaquetadoDeLaOt;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AlmaceneroView window = new AlmaceneroView();
-					window.frameTerminalPortatil.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-
-	}
+	private JButton btnNewButton;
 
 	/**
 	 * Create the application.
+	 * @param db 
 	 */
-	public AlmaceneroView() {
-		initialize();
+	public AlmaceneroView(Database db) {
+		initialize(db);
 
 	}
 
@@ -107,8 +94,8 @@ public class AlmaceneroView {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
-		controller = new AlmaceneroController(this);
+	private void initialize(Database db) {
+		controller = new AlmaceneroController(this,db);
 		frameTerminalPortatil = new JFrame();
 		frameTerminalPortatil.setBounds(100, 100, 429, 463);
 		frameTerminalPortatil.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -524,6 +511,7 @@ public class AlmaceneroView {
 			pnEmpaquetadoOrden.add(getSpnCantidadElementosAEmpaquetar());
 			pnEmpaquetadoOrden.add(getBtnEscanearYeEmpaquetar());
 			pnEmpaquetadoOrden.add(getBtnFinalizarEmpaquetadoDeLaOt());
+			pnEmpaquetadoOrden.add(getBtnNewButton());
 		}
 		return pnEmpaquetadoOrden;
 	}
@@ -577,5 +565,13 @@ public class AlmaceneroView {
 			btnFinalizarEmpaquetadoDeLaOt.setBounds(227, 375, 178, 41);
 		}
 		return btnFinalizarEmpaquetadoDeLaOt;
+	}
+	private JButton getBtnNewButton() {
+		if (btnNewButton == null) {
+			btnNewButton = new JButton("Visualizar albaran");
+			btnNewButton.addActionListener(controller.getActionListenerMostrarAlbaran());
+			btnNewButton.setBounds(29, 375, 188, 41);
+		}
+		return btnNewButton;
 	}
 }
