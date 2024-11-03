@@ -15,15 +15,13 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableModel;
 
 import giis.controller.AlmaceneroController;
 import giis.util.SwingUtil;
-import javax.swing.ScrollPaneConstants;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class AlmaceneroView {
 
@@ -71,6 +69,11 @@ public class AlmaceneroView {
 	private JLabel lblEmpaquetadoProductos;
 	private JButton btnVolverDesdeEmpaquetadoDeproductosDeOt;
 	private JScrollPane scrpProductosAEmpaquetar;
+	private JTable tablaElementosProcesoEmpaquetadoDeUnaOt;
+	private JLabel lblCantidadAEmpaquetar;
+	private JSpinner spnCantidadElementosAEmpaquetar;
+	private JButton btnEscanearYeEmpaquetar;
+	private JButton btnFinalizarEmpaquetadoDeLaOt;
 
 	/**
 	 * Launch the application.
@@ -117,7 +120,7 @@ public class AlmaceneroView {
 				"pnOrdenesDeTrabajoSeleccionadas");
 		frameTerminalPortatil.getContentPane().add(getPnRecogida(), "pnRecogida");
 		frameTerminalPortatil.getContentPane().add(getPnVisualizarOrdenesPendientesEmpaquetado(), "pnEmpaquetado");
-		frameTerminalPortatil.getContentPane().add(getPnEmpaquetadoOrden(), "name_1837872369179200");
+		frameTerminalPortatil.getContentPane().add(getPnEmpaquetadoOrden(), "pnEmpaquetadoProductos");
 		frameTerminalPortatil.setLocationRelativeTo(null);
 	}
 
@@ -290,6 +293,18 @@ public class AlmaceneroView {
 		return tablaOrdenesTrabajoPendeientesEmpaquetado;
 	}
 
+	public JTable getTablaElementosProcesoEmpaquetadoDeUnaOt() {
+		if (tablaElementosProcesoEmpaquetadoDeUnaOt == null) {
+			tablaElementosProcesoEmpaquetadoDeUnaOt = new JTable();
+			tablaElementosProcesoEmpaquetadoDeUnaOt.setShowHorizontalLines(false);
+			tablaElementosProcesoEmpaquetadoDeUnaOt.setFillsViewportHeight(true);
+			tablaElementosProcesoEmpaquetadoDeUnaOt.setName("tabElementosEnProcesoEmpaquetado");
+			tablaElementosProcesoEmpaquetadoDeUnaOt.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tablaElementosProcesoEmpaquetadoDeUnaOt.setDefaultEditor(Object.class, null); // readonly
+		}
+		return tablaElementosProcesoEmpaquetadoDeUnaOt;
+	}
+	
 	private JButton getBtnVolverAtrasVerOrdenesTrabajo() {
 		if (btnVolverAtrasVerOrdenesTrabajo == null) {
 			btnVolverAtrasVerOrdenesTrabajo = new JButton("Volver");
@@ -440,6 +455,7 @@ public class AlmaceneroView {
 	private JButton getBtnNewButton_1() {
 		if (btnNewButton_1 == null) {
 			btnNewButton_1 = new JButton("En proceso de empaquetado");
+			btnNewButton_1.addActionListener(controller.getActionPerformedMuestraPanelEmpaquetadoProductos());
 		}
 		return btnNewButton_1;
 	}
@@ -478,9 +494,20 @@ public class AlmaceneroView {
 		}
 		return scrpOrdenesPendientesEmpaquetado;
 	}
+	
+	private JScrollPane getScrpProductosAEmpaquetar() {
+		if (scrpProductosAEmpaquetar == null) {
+			scrpProductosAEmpaquetar = new JScrollPane();
+			scrpProductosAEmpaquetar.setBounds(10, 106, 395, 176);
+			scrpProductosAEmpaquetar.setViewportView(getTablaElementosProcesoEmpaquetadoDeUnaOt());
+		}
+		return scrpProductosAEmpaquetar;
+	}
+	
 	public JButton getBtnIniciarEmpaquetado() {
 		if (btnIniciarEmpaquetado == null) {
 			btnIniciarEmpaquetado = new JButton("Iniciar empaquetado");
+			btnIniciarEmpaquetado.addActionListener(controller.getActionPerformedIniciarProcesoEmpaquetado());
 			btnIniciarEmpaquetado.setEnabled(false);
 			btnIniciarEmpaquetado.setBounds(225, 334, 180, 40);
 		}
@@ -493,6 +520,10 @@ public class AlmaceneroView {
 			pnEmpaquetadoOrden.add(getLblEmpaquetadoProductos());
 			pnEmpaquetadoOrden.add(getBtnVolverDesdeEmpaquetadoDeproductosDeOt());
 			pnEmpaquetadoOrden.add(getScrpProductosAEmpaquetar());
+			pnEmpaquetadoOrden.add(getLblCantidadAEmpaquetar());
+			pnEmpaquetadoOrden.add(getSpnCantidadElementosAEmpaquetar());
+			pnEmpaquetadoOrden.add(getBtnEscanearYeEmpaquetar());
+			pnEmpaquetadoOrden.add(getBtnFinalizarEmpaquetadoDeLaOt());
 		}
 		return pnEmpaquetadoOrden;
 	}
@@ -508,15 +539,43 @@ public class AlmaceneroView {
 	private JButton getBtnVolverDesdeEmpaquetadoDeproductosDeOt() {
 		if (btnVolverDesdeEmpaquetadoDeproductosDeOt == null) {
 			btnVolverDesdeEmpaquetadoDeproductosDeOt = new JButton("Volver");
+			btnVolverDesdeEmpaquetadoDeproductosDeOt.addActionListener(controller.getActionListenerVolverPaginaPrincipal());
 			btnVolverDesdeEmpaquetadoDeproductosDeOt.setBounds(10, 66, 105, 30);
 		}
 		return btnVolverDesdeEmpaquetadoDeproductosDeOt;
 	}
-	private JScrollPane getScrpProductosAEmpaquetar() {
-		if (scrpProductosAEmpaquetar == null) {
-			scrpProductosAEmpaquetar = new JScrollPane();
-			scrpProductosAEmpaquetar.setBounds(10, 106, 395, 239);
+	
+	private JLabel getLblCantidadAEmpaquetar() {
+		if (lblCantidadAEmpaquetar == null) {
+			lblCantidadAEmpaquetar = new JLabel("Cantidad a empaquetar:");
+			lblCantidadAEmpaquetar.setBounds(20, 292, 130, 24);
 		}
-		return scrpProductosAEmpaquetar;
+		return lblCantidadAEmpaquetar;
+	}
+	public JSpinner getSpnCantidadElementosAEmpaquetar() {
+		if (spnCantidadElementosAEmpaquetar == null) {
+			spnCantidadElementosAEmpaquetar = new JSpinner();
+			spnCantidadElementosAEmpaquetar.setModel(new SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
+			spnCantidadElementosAEmpaquetar.setFont(new Font("Tahoma", Font.PLAIN, 12));
+			spnCantidadElementosAEmpaquetar.setBounds(160, 292, 47, 31);
+		}
+		return spnCantidadElementosAEmpaquetar;
+	}
+	private JButton getBtnEscanearYeEmpaquetar() {
+		if (btnEscanearYeEmpaquetar == null) {
+			btnEscanearYeEmpaquetar = new JButton("Escanear y empaquetar");
+			btnEscanearYeEmpaquetar.addActionListener(controller.getActionPerformedEscanearUnProductoAEmpaquetar());
+			btnEscanearYeEmpaquetar.setBounds(217, 292, 188, 41);
+		}
+		return btnEscanearYeEmpaquetar;
+	}
+	public JButton getBtnFinalizarEmpaquetadoDeLaOt() {
+		if (btnFinalizarEmpaquetadoDeLaOt == null) {
+			btnFinalizarEmpaquetadoDeLaOt = new JButton("Finalizar empaquetado");
+			btnFinalizarEmpaquetadoDeLaOt.addActionListener(controller.getActionPerformedFinalizarProcesoEmpaquetado());
+			btnFinalizarEmpaquetadoDeLaOt.setEnabled(false);
+			btnFinalizarEmpaquetadoDeLaOt.setBounds(227, 375, 178, 41);
+		}
+		return btnFinalizarEmpaquetadoDeLaOt;
 	}
 }

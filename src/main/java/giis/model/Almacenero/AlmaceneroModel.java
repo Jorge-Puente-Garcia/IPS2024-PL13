@@ -69,9 +69,9 @@ public class AlmaceneroModel {
 		String sacarInfoEtiquetaEnvio = "SELECT Cliente.nombre, Cliente.apellidos, Cliente.direccion, Cliente.numeroTelefono "
 				+ "FROM OrdenTrabajo JOIN Pedido ON Pedido.orden_trabajo_id = OrdenTrabajo.id JOIN Cliente "
 				+ "ON Pedido.cliente_id = Cliente.id WHERE OrdenTrabajo.id = ?;";
-		String actualizarCodigoBarras="UPDATE Paquete SET codigoBarrasPaquete = ? WHERE id = ? ;";
-		String codigoBarras=UUID.randomUUID().toString();
-		db.executeUpdate(actualizarCodigoBarras,codigoBarras,otr.getId());
+		String sacaCodigoBarras="SELECT MAX(id) FROM Paquete";
+		List<Object[]> codigoBarrasl=db.executeQueryArray(sacaCodigoBarras);
+		String codigoBarras=codigoBarrasl.get(0)[0].toString();
 		List<EtiquetaRecord> li=db.executeQueryPojo(EtiquetaRecord.class, sacarInfoEtiquetaEnvio,otr.getId());
 		EtiquetaRecord edto = li.get(0);
 
@@ -184,9 +184,45 @@ public class AlmaceneroModel {
 	}
 
 	public List<OrdenTrabajoRecord> getOrdenesDeTrabajoPendientesEmpaquetado() {
-		String pedidosPendientesEmpaquetado="SELECT id, fecha_creacion, estado, incidencia, almacenero_id FROM OrdenTrabajo WHERE estado='Pendiente de empaquetado' AND incidencia='' or incidencia is null;";
+		String pedidosPendientesEmpaquetado="SELECT id, fecha_creacion, estado, incidencia, almacenero_id FROM OrdenTrabajo WHERE estado='Pendiente de empaquetado' AND (incidencia='' or incidencia is null);";
 		List<OrdenTrabajoRecord> li=db.executeQueryPojo(OrdenTrabajoRecord.class, pedidosPendientesEmpaquetado);
 		return li;
+	}
+
+	public List<ElementoARecogerDto> getElementosAEmpaquetarDeLaOrdenDeTrabajo(
+			OrdenTrabajoRecord ordenTrabajoRecord) {
+		System.out.println(ordenTrabajoRecord.getId());
+		String sql = "SELECT Producto.id AS codigoBarras,Producto.nombre, OrdenTrabajoProducto.cantidad AS cantidad, Localizacion.pasillo, Localizacion.posicion, "
+				+ "Localizacion.estanteria , Localizacion.altura FROM OrdenTrabajoProducto JOIN Producto ON OrdenTrabajoProducto.producto_id = Producto.id JOIN Localizacion"
+				+ " ON Producto.localizacion_id = Localizacion.id WHERE OrdenTrabajoProducto.orden_trabajo_id = ?  ORDER BY Localizacion.pasillo ASC, "
+				+ "Localizacion.posicion ASC, CASE WHEN Localizacion.estanteria = 'Izquierda' THEN 0 ELSE 1 END;";
+		List<ElementoARecogerDto> li=db.executeQueryPojo(ElementoARecogerDto.class, sql,ordenTrabajoRecord.getId());
+		return li;
+	}
+
+	public int creaPaqueteParaElProcesoEmpaquetado() {
+		String creacionPaquete="Insert into Caja DEFAULT VALUES;";
+		db.executeUpdate(creacionPaquete);
+		String sacaNumeroPaquete="SELECT MAX(id) FROM Caja";
+		List<Object[]>idCaja=db.executeQueryArray(sacaNumeroPaquete);
+		
+		return Integer.parseInt(idCaja.get(0)[0].toString());
+	}
+
+	public void empaquetaProducto(ElementoARecogerDto elemento, OrdenTrabajoRecord ordenTrabajoEnEmpaquetado, int idCaja) {
+		String addAlPaquete="INSERT INTO Paquete (caja_id, producto_id) VALUES (?, ?);";
+		db.executeUpdate(addAlPaquete, idCaja,elemento.getCodigoBarras());
+		
+	}
+
+	public void ponLaWorkOrderAEmpaquetada(OrdenTrabajoRecord ordenTrabajoEnEmpaquetado) {
+		String marcaComoEmpaquetada="UPDATE OrdenTrabajo SET estado='Empaquetado' WHERE id=?;";
+		db.executeUpdate(marcaComoEmpaquetada, ordenTrabajoEnEmpaquetado.getId());
+	}
+
+	public void PonEnProcesoEmpaquetadoLaOt(OrdenTrabajoRecord ordenTrabajoEnEmpaquetado) {
+		String marcaComoEmpaquetada="UPDATE OrdenTrabajo SET estado='En empaquetado' WHERE id=?;";
+		db.executeUpdate(marcaComoEmpaquetada, ordenTrabajoEnEmpaquetado.getId());
 	}
 
 	

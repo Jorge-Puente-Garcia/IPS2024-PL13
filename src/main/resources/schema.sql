@@ -25,10 +25,10 @@ CREATE TABLE Carrito (id INTEGER PRIMARY KEY AUTOINCREMENT, dni TEXT NOT NULL, r
 CREATE TABLE ProductosPedido (id INTEGER PRIMARY KEY AUTOINCREMENT, pedido_id INTEGER NOT NULL, producto_id INTEGER NOT NULL, cantidad INTEGER NOT NULL, FOREIGN KEY (pedido_id) REFERENCES Pedido(id), FOREIGN KEY (producto_id) REFERENCES Producto(id));
 CREATE TABLE Pedido (id INTEGER PRIMARY KEY AUTOINCREMENT, cliente_id int NOT NULL, fecha DATE NOT NULL, total DECIMAL(10, 2) NOT NULL, estado TEXT CHECK (estado IN ('Pendiente de recogida', 'Recogido','PendienteDePago')) NOT NULL, orden_trabajo_id INTEGER, FOREIGN KEY (cliente_id) REFERENCES Cliente(id), FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id));
 CREATE TABLE Almacenero (id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT NOT NULL, apellido TEXT NOT NULL);
-CREATE TABLE OrdenTrabajo (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha_creacion DATE NOT NULL, estado TEXT CHECK(estado IN ('Pendiente de recogida','En recogida', 'Pendiente de empaquetado')),almacenero_id INTEGER NOT NULL, incidencia TEXT, FOREIGN KEY (almacenero_id) REFERENCES Almacenero(id));
+CREATE TABLE OrdenTrabajo (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha_creacion DATE NOT NULL, estado TEXT CHECK(estado IN ('Pendiente de recogida','En recogida', 'Pendiente de empaquetado','En empaquetado','Empaquetado')),almacenero_id INTEGER NOT NULL, incidencia TEXT, FOREIGN KEY (almacenero_id) REFERENCES Almacenero(id));
 CREATE TABLE OrdenTrabajoProducto (id INTEGER PRIMARY KEY AUTOINCREMENT, orden_trabajo_id INTEGER NOT NULL, producto_id INTEGER NOT NULL, cantidad INTEGER NOT NULL, FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id), FOREIGN KEY (producto_id) REFERENCES Producto(id));
 CREATE TABLE Incidencia (id INTEGER PRIMARY KEY AUTOINCREMENT, orden_trabajo_id INTEGER NOT NULL, descripcion TEXT NOT NULL, fecha DATE NOT NULL, FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id));
 CREATE TABLE Localizacion (id INTEGER PRIMARY KEY AUTOINCREMENT, pasillo INTEGER NOT NULL, estanteria TEXT CHECK(estanteria IN ('Izquierda', 'Derecha')),posicion integer not null, altura integer not null);
 CREATE TABLE Caja(id INTEGER PRIMARY KEY AUTOINCREMENT);
-CREATE TABLE Paquete(id INTEGER PRIMARY KEY AUTOINCREMENT,codigoBarrasPaquete TEXT );
+CREATE TABLE Paquete(id INTEGER PRIMARY KEY AUTOINCREMENT, caja_id integer not null, producto_id integer not null, FOREIGN KEY (caja_id) REFERENCES Caja(id),FOREIGN KEY (producto_id) REFERENCES Producto(id));
 CREATE TABLE Albaran(id INTEGER PRIMARY KEY AUTOINCREMENT);

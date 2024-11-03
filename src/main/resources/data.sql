@@ -8,6 +8,7 @@ delete from Localizacion;
 delete from OrdenTrabajo;
 delete from OrdenTrabajoProducto;
 delete from Cliente;
+delete from Paquete;
 
 INSERT INTO Localizacion (pasillo, estanteria, posicion, altura) VALUES
     (1, 'Izquierda', 5, 2),
