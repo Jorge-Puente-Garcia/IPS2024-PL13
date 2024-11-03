@@ -23,6 +23,7 @@ public class Main extends JFrame {
 
     private static Database db = new Database();
     private JButton btnAbrirAlmacen;
+    private JButton btnResetBD;
 
     /**
      * Launch the application.
@@ -31,11 +32,7 @@ public class Main extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                try {
-
-                    //db.createDatabase(true);
-                    //db.loadDatabase();
-
+                try {                   
                     Main frame = new Main();
                     frame.setVisible(true);
                 } catch (Exception e) {
@@ -58,6 +55,7 @@ public class Main extends JFrame {
         contentPane.setLayout(new GridLayout(3, 0, 0, 0));
         contentPane.add(getBtAbrirTienda());
         contentPane.add(getBtnAbrirAlmacen());
+        contentPane.add(getBtnResetBD());
 
         setLocationRelativeTo(null);
     }
@@ -101,4 +99,16 @@ public class Main extends JFrame {
         }
         return btnAbrirAlmacen;
     }
+	private JButton getBtnResetBD() {
+		if (btnResetBD == null) {
+			btnResetBD = new JButton("Establecer BD a modo legacy");
+			btnResetBD.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					db.createDatabase(false);
+                    db.loadDatabase();
+				}
+			});
+		}
+		return btnResetBD;
+	}
 }
