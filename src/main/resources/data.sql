@@ -27,42 +27,57 @@ INSERT INTO Localizacion (pasillo, estanteria, posicion, altura) VALUES
     (7, 'Derecha', 2, 4),
     (8, 'Izquierda', 5, 2);
 
+-- Inserta categorías principales primero
 INSERT INTO Categoria (nombre, id_padre) VALUES
     ('Electrónica', NULL),
     ('Ropa', NULL),
-    ('Computadoras', 1),
-    ('Teléfonos Móviles', 1),
-    ('Televisores', 1),
-    ('Tablets', 1),
-    ('Portátiles', 3),
-    ('Sobremesa', 3),
-    ('Camisas', 2),
-    ('Pantalones', 2),
-    ('Calzado', 2);
+    ('Electrodomésticos', NULL),
+    ('Muebles', NULL);
+
+-- Inserta subcategorías
+INSERT INTO Categoria (nombre, id_padre) VALUES
+    ('Computadoras', (SELECT id FROM Categoria WHERE nombre = 'Electrónica')),
+    ('Teléfonos Móviles', (SELECT id FROM Categoria WHERE nombre = 'Electrónica')),
+    ('Televisores', (SELECT id FROM Categoria WHERE nombre = 'Electrónica')),
+    ('Tablets', (SELECT id FROM Categoria WHERE nombre = 'Electrónica')),    
+    ('Camisas', (SELECT id FROM Categoria WHERE nombre = 'Ropa')),
+    ('Pantalones', (SELECT id FROM Categoria WHERE nombre = 'Ropa')),
+    ('Calzado', (SELECT id FROM Categoria WHERE nombre = 'Ropa')),
+    ('Pequeños Electrodomésticos de Cocina', (SELECT id FROM Categoria WHERE nombre = 'Electrodomésticos')),
+    ('Electrodomésticos de Cuidado Personal', (SELECT id FROM Categoria WHERE nombre = 'Electrodomésticos')),
+    ('Aspiración y Limpieza', (SELECT id FROM Categoria WHERE nombre = 'Electrodomésticos')),
+    ('Muebles de Oficina', (SELECT id FROM Categoria WHERE nombre = 'Muebles')),
+    ('Muebles de Hogar', (SELECT id FROM Categoria WHERE nombre = 'Muebles'));
     
+--Inserta subcategoría de subcategoria    
+INSERT INTO Categoria (nombre, id_padre) VALUES
+	('Portátiles', (SELECT id FROM Categoria WHERE nombre = 'Computadoras')),
+    ('Sobremesa', (SELECT id FROM Categoria WHERE nombre = 'Computadoras'));
+    
+-- Inserta productos
 INSERT INTO Producto (nombre, referencia, datosBasicos, precio, unidades, localizacion_id, id_categoria) VALUES
-    ('Smartphone AMOLED', 'REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento', 699.99, 10, 1, 4),
-    ('Laptop Ultraligera', 'REF002', 'Laptop ultraligera de 14 pulgadas, procesador Intel Core i7, 16GB RAM y 512GB SSD', 1199.99, 5, 2, 7),
-    ('Auriculares Inalámbricos', 'REF003', 'Auriculares inalámbricos con cancelación de ruido, duración de batería de 24 horas', 199.99, 15, 3, 1),
-    ('Cámara Fotográfica', 'REF004', 'Cámara fotográfica profesional de 24MP con lente de 50mm y estabilización óptica', 1499.99, 8, 4, 1),
-    ('Reloj Inteligente', 'REF005', 'Reloj inteligente con monitor de frecuencia cardíaca, GPS integrado y resistente al agua', 249.99, 20, 5, 1),
-    ('Tablet Full HD', 'REF006', 'Tablet de 10 pulgadas con pantalla Full HD, 64GB de almacenamiento y batería de larga duración', 329.99, 12, 6, 6),
-    ('PC de Escritorio', 'REF007', 'PC de Escritorio Lenovo con 8GB RAM y 1TB HDD', 650.00, 7, 2, 8),
-    ('iPhone 256GB', 'REF008', 'iPhone con 256GB de almacenamiento y cámara avanzada', 999.00, 15, 1, 4),
-    ('Televisor 4K', 'REF009', 'Televisor Samsung de 55 pulgadas, 4K UHD', 1200.00, 4, 3, 5),
-    ('Camisa Polo', 'REF010', 'Camisa Polo de algodón para hombre', 45.00, 25, 5, 9),
-    ('Jeans Clásicos', 'REF011', 'Jeans Levis clásicos para hombre', 60.00, 18, 5, 10),
-    ('Zapatos Deportivos', 'REF012', 'Zapatos deportivos Nike para correr', 90.00, 20, 5, 11),
-    ('Cafetera de goteo', 'REF013', 'Cafetera eléctrica de goteo, 12 tazas, con filtro reutilizable.', 49.99, 50, 1, 2),
-	('Tostadora de pan', 'REF014', 'Tostadora de 2 rebanadas, con control de dorado y bandeja extraíble.', 29.99, 30, 1, 2),
-	('Batidora de mano', 'REF015', 'Batidora de mano con 5 velocidades y accesorios de mezcla.', 35.50, 25, 1, 2),
-	('Aspiradora ciclónica', 'REF016', 'Aspiradora sin bolsa, potente y fácil de manejar.', 89.99, 15, 1, 3),
-	('Plancha de vapor', 'REF017', 'Plancha de vapor con suela de cerámica y sistema anti-goteo.', 39.95, 40, 1, 2),
-	('Televisor LED 50"', 'REF018', 'Televisor LED de 50 pulgadas, 4K UHD, Smart TV.', 499.99, 10, 1, 1),
-	('Laptop portátil', 'REF019', 'Laptop 15.6" con procesador i5, 8GB RAM, 256GB SSD.', 699.99, 20, 1, 4),
-	('Smartphone Android', 'REF020', 'Smartphone de 6.5", 128GB almacenamiento, cámara triple.', 299.99, 100, 1, 4),
-	('Silla ergonómica', 'REF021', 'Silla de oficina ergonómica con ajuste de altura y soporte lumbar.', 149.99, 25, 1, 5),
-	('Mesa de comedor', 'REF022', 'Mesa de comedor de madera, 6 plazas, diseño moderno.', 399.99, 10, 1, 5);
+    ('Smartphone AMOLED', 'REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento', 699.99, 10, 1, (SELECT id FROM Categoria WHERE nombre = 'Teléfonos Móviles')),
+    ('Laptop Ultraligera', 'REF002', 'Laptop ultraligera de 14 pulgadas, procesador Intel Core i7, 16GB RAM y 512GB SSD', 1199.99, 5, 2, (SELECT id FROM Categoria WHERE nombre = 'Portátiles')),
+    ('Auriculares Inalámbricos', 'REF003', 'Auriculares inalámbricos con cancelación de ruido, duración de batería de 24 horas', 199.99, 15, 3, (SELECT id FROM Categoria WHERE nombre = 'Televisores')),
+    ('Cámara Fotográfica', 'REF004', 'Cámara fotográfica profesional de 24MP con lente de 50mm y estabilización óptica', 1499.99, 8, 4, (SELECT id FROM Categoria WHERE nombre = 'Televisores')),
+    ('Reloj Inteligente', 'REF005', 'Reloj inteligente con monitor de frecuencia cardíaca, GPS integrado y resistente al agua', 249.99, 20, 5, (SELECT id FROM Categoria WHERE nombre = 'Televisores')),
+    ('Tablet Full HD', 'REF006', 'Tablet de 10 pulgadas con pantalla Full HD, 64GB de almacenamiento y batería de larga duración', 329.99, 12, 6, (SELECT id FROM Categoria WHERE nombre = 'Tablets')),
+    ('PC de Escritorio', 'REF007', 'PC de Escritorio Lenovo con 8GB RAM y 1TB HDD', 650.00, 7, 2, (SELECT id FROM Categoria WHERE nombre = 'Sobremesa')),
+    ('iPhone 256GB', 'REF008', 'iPhone con 256GB de almacenamiento y cámara avanzada', 999.00, 15, 1, (SELECT id FROM Categoria WHERE nombre = 'Teléfonos Móviles')),
+    ('Televisor 4K', 'REF009', 'Televisor Samsung de 55 pulgadas, 4K UHD', 1200.00, 4, 3, (SELECT id FROM Categoria WHERE nombre = 'Televisores')),
+    ('Camisa Polo', 'REF010', 'Camisa Polo de algodón para hombre', 45.00, 25, 5, (SELECT id FROM Categoria WHERE nombre = 'Camisas')),
+    ('Jeans Clásicos', 'REF011', 'Jeans Levis clásicos para hombre', 60.00, 18, 5, (SELECT id FROM Categoria WHERE nombre = 'Pantalones')),
+    ('Zapatos Deportivos', 'REF012', 'Zapatos deportivos Nike para correr', 90.00, 20, 5, (SELECT id FROM Categoria WHERE nombre = 'Calzado')),
+    ('Cafetera de goteo', 'REF013', 'Cafetera eléctrica de goteo, 12 tazas, con filtro reutilizable.', 49.99, 50, 1, (SELECT id FROM Categoria WHERE nombre = 'Pequeños Electrodomésticos de Cocina')),
+    ('Tostadora de pan', 'REF014', 'Tostadora de 2 rebanadas, con control de dorado y bandeja extraíble.', 29.99, 30, 1, (SELECT id FROM Categoria WHERE nombre = 'Pequeños Electrodomésticos de Cocina')),
+    ('Batidora de mano', 'REF015', 'Batidora de mano con 5 velocidades y accesorios de mezcla.', 35.50, 25, 1, (SELECT id FROM Categoria WHERE nombre = 'Pequeños Electrodomésticos de Cocina')),
+    ('Aspiradora ciclónica', 'REF016', 'Aspiradora sin bolsa, potente y fácil de manejar.', 89.99, 15, 1, (SELECT id FROM Categoria WHERE nombre = 'Aspiración y Limpieza')),
+    ('Plancha de vapor', 'REF017', 'Plancha de vapor con suela de cerámica y sistema anti-goteo.', 39.95, 40, 1, (SELECT id FROM Categoria WHERE nombre = 'Electrodomésticos de Cuidado Personal')),
+    ('Televisor LED 50"', 'REF018', 'Televisor LED de 50 pulgadas, 4K UHD, Smart TV.', 499.99, 10, 1, (SELECT id FROM Categoria WHERE nombre = 'Televisores')),
+    ('Laptop portátil', 'REF019', 'Laptop 15.6" con procesador i5, 8GB RAM, 256GB SSD.', 699.99, 20, 1, (SELECT id FROM Categoria WHERE nombre = 'Portátiles')),
+    ('Smartphone Android', 'REF020', 'Smartphone de 6.5", 128GB almacenamiento, cámara triple.', 299.99, 100, 1, (SELECT id FROM Categoria WHERE nombre = 'Teléfonos Móviles')),
+    ('Silla ergonómica', 'REF021', 'Silla de oficina ergonómica con ajuste de altura y soporte lumbar.', 149.99, 25, 1, (SELECT id FROM Categoria WHERE nombre = 'Muebles de Oficina')),
+    ('Mesa de comedor', 'REF022', 'Mesa de comedor de madera, 6 plazas, diseño moderno.', 399.99, 10, 1, (SELECT id FROM Categoria WHERE nombre = 'Muebles de Hogar'));
     
 
     
@@ -116,7 +131,7 @@ INSERT INTO Pedido (cliente_id, fecha, total, estado, orden_trabajo_id) VALUES
 INSERT INTO ProductosPedido (pedido_id, producto_id, cantidad) VALUES 
 (1, 1, 5), (2, 2, 10), (3, 3, 7), (4, 4, 8), (5, 5, 3), (6, 6, 6), 
 (7, 7, 4), (8, 8, 9), (9, 9, 2), (10, 10, 11), (11, 11, 5), (12, 12, 7), 
-(13, 13, 10), (14, 14, 4), (15, 15, 12);
+(13, 13, 10), (14, 14, 4), (15, 15, 12), (15,14,2), (15,13,2);
 
 -- Tabla OrdenTrabajoProducto
 INSERT INTO OrdenTrabajoProducto (orden_trabajo_id, producto_id, cantidad) VALUES 

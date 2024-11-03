@@ -16,7 +16,7 @@ public class ClienteBuscador {
         JPanel panel = new JPanel(new GridLayout(3, 2, 10, 10));
 
         // Etiquetas y campos de texto
-        JLabel labelDni = new JLabel("DNI:");
+        JLabel labelDni = new JLabel("*DNI:");
         JTextField campoDni = new JTextField();
 
         JLabel labelNombre = new JLabel("Nombre:");

@@ -23,6 +23,9 @@ import giis.ui.AlmaceneroView;
 import giis.util.SwingUtil;
 
 public class AlmaceneroController {
+	
+	private static final int TAMAÑO_WORKORDER = 5;
+	
 	private AlmaceneroModel model;
 	private AlmaceneroView vista;
 	private List<PedidoARecogerRecord> pedidosSinRecoger;
@@ -92,9 +95,24 @@ public class AlmaceneroController {
 		return l;
 	}
 	public void ponEnRecogidaElPedido(int selectedRow) {
-		PedidoARecogerRecord par=pedidosSinRecoger.get(selectedRow);
-		model.creaOrdenDeTrabajo(almaceneroId,par);
-		model.ponEnRecogidaElPedido(par);
+		List<PedidoARecogerRecord> pars = new ArrayList<>();
+		PedidoARecogerRecord par=pedidosSinRecoger.get(selectedRow);		
+		pars.add(par);
+		pedidosSinRecoger.remove(par);
+		
+		int tamaño = par.getTamaño();
+	
+		if(tamaño < TAMAÑO_WORKORDER) {
+			for (PedidoARecogerRecord parr : pedidosSinRecoger) {
+				int tamañoTot = tamaño + parr.getTamaño();
+				if(tamañoTot <= 5) {
+					pars.add(parr);
+					tamaño = tamañoTot;
+				}
+			}
+		}
+		
+		model.creaOrdenDeTrabajo(almaceneroId,pars);
 	}
 	
 	private List<PedidoARecogerDto> pedidoRecordToDtoList() {
@@ -292,12 +310,17 @@ public class AlmaceneroController {
 			public void actionPerformed(ActionEvent e) {
 				vista.getTablaOrdenesTrabajoDisponibles().setEnabled(false);
 				vista.getBtnCrearOT().setEnabled(false);
+				
+				
 				ponEnRecogidaElPedido(vista.getTablaOrdenesTrabajoDisponibles().getSelectedRow());
+				
 				TableModel tmodel = SwingUtil.getTableModelFromPojos(getPedidosPendientesDeEntrarEnUnaOT(),
 						new String[] { "fecha", "tamaño", "estado" });
+				
 				vista.getTablaOrdenesTrabajoDisponibles().setModel(tmodel);
 				vista.getTablaOrdenesTrabajoDisponibles().revalidate();
 				vista.getTablaOrdenesTrabajoDisponibles().repaint();
+				
 				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesTrabajoDisponibles());
 				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
 				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnOrdenesDeTrabajoSeleccionadas");
