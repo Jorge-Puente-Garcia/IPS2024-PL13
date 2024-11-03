@@ -31,4 +31,5 @@ CREATE TABLE Incidencia (id INTEGER PRIMARY KEY AUTOINCREMENT, orden_trabajo_id 
 CREATE TABLE Localizacion (id INTEGER PRIMARY KEY AUTOINCREMENT, pasillo INTEGER NOT NULL, estanteria TEXT CHECK(estanteria IN ('Izquierda', 'Derecha')),posicion integer not null, altura integer not null);
 CREATE TABLE Caja(id INTEGER PRIMARY KEY AUTOINCREMENT);
 CREATE TABLE Paquete(id INTEGER PRIMARY KEY AUTOINCREMENT, caja_id integer not null, producto_id integer not null, FOREIGN KEY (caja_id) REFERENCES Caja(id),FOREIGN KEY (producto_id) REFERENCES Producto(id));
+CREATE TABLE AlbaranPedido(id INTEGER PRIMARY KEY AUTOINCREMENT, id_Albaran integer not null, id_Pedido integer not null, FOREIGN KEY (id_Albaran) REFERENCES Albaran(id), FOREIGN KEY (id_Pedido) REFERENCES Pedido(id));
 CREATE TABLE Albaran(id INTEGER PRIMARY KEY AUTOINCREMENT);
