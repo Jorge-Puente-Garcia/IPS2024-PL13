@@ -8,6 +8,7 @@ delete from Localizacion;
 delete from OrdenTrabajo;
 delete from OrdenTrabajoProducto;
 delete from Cliente;
+delete from Paquete;
 
 INSERT INTO Localizacion (pasillo, estanteria, posicion, altura) VALUES
     (1, 'Izquierda', 5, 2),
@@ -138,6 +139,11 @@ INSERT INTO OrdenTrabajoProducto (orden_trabajo_id, producto_id, cantidad) VALUE
 (7, 7, 2), (8, 8, 7), (9, 9, 8), (10, 10, 3), (11, 11, 9), (12, 12, 10), 
 (13, 13, 3), (14, 14, 12), (15, 15, 4),(1, 2, 3), (1, 3, 2), (2, 4, 5), (2, 5, 1), (3, 6, 4), (3, 7, 6), 
 (4, 8, 3), (4, 9, 2), (5, 10, 7), (5, 11, 1), (6, 12, 5), (6, 13, 8), 
-(7, 14, 2), (7, 15, 9), (8, 1, 4);
+(7, 14, 2), (7, 15, 9), (8, 1, 4),(1, 1, 1), (1, 1, 3), (1, 1, 4), (1, 1, 5), (1, 1, 6),
+(1, 1, 7), (1, 1, 8), (1, 1, 9), (1, 1, 10), (1, 1, 11),
+(1, 1, 12), (1, 1, 13), (1, 1, 14), (1, 1, 15), (1, 2, 1),
+(1, 2, 2), (1, 2, 4), (1, 2, 5), (1, 2, 6), (1, 2, 7),
+(1, 2, 8), (1, 2, 9), (1, 2, 10), (1, 2, 11), (1, 2, 12),
+(1, 2, 13), (1, 2, 14), (1, 2, 15), (1, 3, 1), (1, 3, 3);
 
 	

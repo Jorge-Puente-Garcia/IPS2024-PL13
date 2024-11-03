@@ -20,6 +20,7 @@ import giis.model.Almacenero.OrdenTrabajoRecord;
 import giis.model.Almacenero.PedidoARecogerDto;
 import giis.model.Almacenero.PedidoARecogerRecord;
 import giis.ui.AlmaceneroView;
+import giis.util.Database;
 import giis.util.SwingUtil;
 
 public class AlmaceneroController {
@@ -35,13 +36,16 @@ public class AlmaceneroController {
 	private List<OrdenTrabajoDto> pedidosAsignadosParaImprimir;
 	private List<OrdenTrabajoDto> pedidosPendientesEmpaquetadoParaImprimir;
 	private List<ElementoARecogerDto> elementosARecoger;
+	private List<ElementoARecogerDto> elementosAEmpaquetar;
 	private OrdenTrabajoRecord ordenTrabajoEnRecogida;
+	private OrdenTrabajoRecord ordenTrabajoEnEmpaquetado;
+	private int codigoBarrasCaja;
 	private int almaceneroId;
 	
 	
-	public AlmaceneroController(AlmaceneroView almaceneroView) {
+	public AlmaceneroController(AlmaceneroView almaceneroView, Database db) {
 		this.vista=almaceneroView;
-		this.model = new AlmaceneroModel();
+		this.model = new AlmaceneroModel(db);
 	}
 	public List<PedidoARecogerDto> getPedidosPendientesDeEntrarEnUnaOT(){
 		pedidosSinRecoger=model.getPedidosPendientesRecogida();
@@ -64,6 +68,11 @@ public class AlmaceneroController {
 		ordenTrabajoEnRecogida=pedidosAsignados.get(vista.getTablaOrdenesTrabajoSeleccionadas().getSelectedRow());
 		this.elementosARecoger =model.getElementosARecogerDeLaOrdenDeTrabajo(ordenTrabajoEnRecogida);
 		return elementosARecoger;
+	}
+	private List<ElementoARecogerDto> getElementosAEmpaquetarDeLaWorkorderSeleccionada() {
+		ordenTrabajoEnEmpaquetado=pedidosAPendientesEmpaquetado.get(vista.getTablaOrdenesTrabajoPendientesEmpaquetado().getSelectedRow());
+		this.elementosAEmpaquetar =model.getElementosAEmpaquetarDeLaOrdenDeTrabajo(ordenTrabajoEnEmpaquetado);
+		return elementosAEmpaquetar;
 	}
 	
 	
@@ -240,6 +249,11 @@ public class AlmaceneroController {
 		return tmodel;
 	}
 	
+	public TableModel getTableModelElementosAEmpaquetarDeUnaOt() {
+		TableModel tmodel =SwingUtil.getTableModelFromPojos(getElementosAEmpaquetarDeLaWorkorderSeleccionada(),
+				new String[] { "nombre", "cantidad"});
+		return tmodel;
+	}
 	
 	public ActionListener getActionListenerVolverAtrasHaciaOrdenesTrabajo() {
 		return new ActionListener() {
@@ -263,7 +277,7 @@ public class AlmaceneroController {
 			public void actionPerformed(ActionEvent e) {
 			vista.getTablaOrdenesTrabajoDisponibles().setEnabled(true);
 			vista.getTablaOrdenesTrabajoSeleccionadas().setEnabled(true);
-				model.updateToPendienteDeEmpaquetadoElProducto(ordenTrabajoEnRecogida);
+			model.updateToPendienteDeEmpaquetadoElProducto(ordenTrabajoEnRecogida);
 			}
 		};
 	}
@@ -304,18 +318,13 @@ public class AlmaceneroController {
 				TableModel tmodel = SwingUtil.getTableModelFromPojos(getPedidosPendientesDeEntrarEnUnaOT(),
 						new String[] { "fecha", "tamaño", "estado" });
 				
-				vista.getTablaOrdenesTrabajoDisponibles().setModel(tmodel);
-				vista.getTablaOrdenesTrabajoDisponibles().revalidate();
-				vista.getTablaOrdenesTrabajoDisponibles().repaint();
-				
+				vista.getTablaOrdenesTrabajoDisponibles().setModel(tmodel);				
 				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesTrabajoDisponibles());
 				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
 				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnOrdenesDeTrabajoSeleccionadas");
 				TableModel tmodel2 = SwingUtil.getTableModelFromPojos(getOrdenesDeTrabajoSeleccionadas(),
 						new String[] { "fechaCreacion", "estado", "incidencias", "almaceneroId" });
 				vista.getTablaOrdenesTrabajoSeleccionadas().setModel(tmodel2);
-				vista.getTablaOrdenesTrabajoSeleccionadas().revalidate();
-				vista.getTablaOrdenesTrabajoSeleccionadas().repaint();
 				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesTrabajoSeleccionadas());
 				getPedidosPendientesDeEntrarEnUnaOT();
 			}
@@ -355,9 +364,9 @@ public class AlmaceneroController {
 						.showInputDialog("Escanea el codigo de barras: ");
 				if(codigoBarras.isBlank()) {
 					JOptionPane.showMessageDialog(null, "No has escaneado un código correcto");
-				}else if(!isAValidCodeOfWO(codigoBarras)) {
+				}else if(!isAValidCodeOfWO(codigoBarras,elementosARecoger)) {
 					JOptionPane.showMessageDialog(null, "Ese código de barras no pertenece a esta OT");
-				}else if(!isValidUnits((int)vista.getSpinner().getValue(),codigoBarras)) {
+				}else if(!isValidUnits((int)vista.getSpinner().getValue(),codigoBarras,elementosARecoger)) {
 					JOptionPane.showMessageDialog(null, "La cantidad a recoger es incorrecta");
 				}else {
 					List<ElementoARecogerDto> elementosNoEliminados=new ArrayList<ElementoARecogerDto>();
@@ -380,7 +389,40 @@ public class AlmaceneroController {
 		};
 	}
 	
-	private boolean isAValidCodeOfWO(String codigoBarras) {
+	public ActionListener getActionPerformedEscanearUnProductoAEmpaquetar() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String codigoBarras = JOptionPane
+						.showInputDialog("Escanea el codigo de barras: ");
+				if(codigoBarras.isBlank()) {
+					JOptionPane.showMessageDialog(null, "No has escaneado un código correcto");
+				}else if(!isAValidCodeOfWO(codigoBarras,elementosAEmpaquetar)) {
+					JOptionPane.showMessageDialog(null, "Ese código de barras no pertenece a esta OT");
+				}else if(!isValidUnits((int)vista.getSpnCantidadElementosAEmpaquetar().getValue(),codigoBarras,elementosAEmpaquetar)) {
+					JOptionPane.showMessageDialog(null, "La cantidad a recoger es incorrecta");
+				}else {
+					List<ElementoARecogerDto> elementosNoEliminados=new ArrayList<ElementoARecogerDto>();
+					for(ElementoARecogerDto elemento:elementosAEmpaquetar) {
+						if(!String.valueOf(elemento.getCodigoBarras()).equals(codigoBarras)) {
+							elementosNoEliminados.add(elemento);
+						}else {
+							model.empaquetaProducto(elemento,ordenTrabajoEnEmpaquetado,codigoBarrasCaja);
+						}
+					}
+					elementosAEmpaquetar=elementosNoEliminados;
+					TableModel tmodel =SwingUtil.getTableModelFromPojos(elementosAEmpaquetar,
+							new String[] { "nombre", "cantidad"});
+					vista.getTablaElementosProcesoEmpaquetadoDeUnaOt().setModel(tmodel);
+					SwingUtil.autoAdjustColumns(vista.getTablaElementosProcesoEmpaquetadoDeUnaOt());
+					if(elementosAEmpaquetar.size()==0){
+					vista.getBtnFinalizarEmpaquetadoDeLaOt().setEnabled(true); ;
+					}
+				}
+			}
+		};
+	}
+	
+	private boolean isAValidCodeOfWO(String codigoBarras,List<ElementoARecogerDto> elementosARecoger) {
 		for(ElementoARecogerDto elemento:elementosARecoger) {
 			if(String.valueOf(elemento.getCodigoBarras()).equals(codigoBarras)) {
 				return true;
@@ -388,7 +430,7 @@ public class AlmaceneroController {
 		}
 		return false;
 	}
-	private boolean isValidUnits(int unidades,String codigoBarras) {
+	private boolean isValidUnits(int unidades,String codigoBarras,List<ElementoARecogerDto> elementosARecoger) {
 		for(ElementoARecogerDto elemento:elementosARecoger) {
 			if(elemento.cantidad==unidades && String.valueOf(elemento.getCodigoBarras()).equals(codigoBarras)) {
 				return true;
@@ -420,6 +462,52 @@ public class AlmaceneroController {
 			}
 		};
 	}
+	public ActionListener getActionPerformedMuestraPanelEmpaquetadoProductos() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnEmpaquetadoProductos");
+			}
+		};
+	}
+	public ActionListener getActionPerformedIniciarProcesoEmpaquetado() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				vista.getTablaOrdenesTrabajoPendientesEmpaquetado().setEnabled(false);
+				TableModel tmodel = getTableModelElementosAEmpaquetarDeUnaOt();
+				vista.getTablaElementosProcesoEmpaquetadoDeUnaOt().setModel(tmodel);
+				SwingUtil.autoAdjustColumns(vista.getTablaElementosProcesoEmpaquetadoDeUnaOt());
+				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnEmpaquetadoProductos");
+				vista.getBtnIniciarEmpaquetado().setEnabled(false);
+				codigoBarrasCaja= model.creaPaqueteParaElProcesoEmpaquetado();
+				model.PonEnProcesoEmpaquetadoLaOt(ordenTrabajoEnEmpaquetado);
+				TableModel tmodel2 = getTableModelPrdenesTrabajoPendientesEmpaquetado();
+				vista.getTablaOrdenesTrabajoPendientesEmpaquetado().setModel(tmodel2);
+				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesTrabajoPendientesEmpaquetado());
+			}
+		};
+	}
+	public ActionListener getActionPerformedFinalizarProcesoEmpaquetado() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				vista.getBtnFinalizarEmpaquetadoDeLaOt().setEnabled(false);
+				model.ponLaWorkOrderAEmpaquetada(ordenTrabajoEnEmpaquetado);
+				vista.getTablaOrdenesTrabajoPendientesEmpaquetado().setEnabled(true);
+				JOptionPane.showMessageDialog(null, model.creaEtiqueta(ordenTrabajoEnEmpaquetado));
+			}
+		};
+	}
+	public ActionListener getActionListenerMostrarAlbaran() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				vista.getTaAlbaran().setText(model.creaAlbaran(ordenTrabajoEnEmpaquetado));
+				JOptionPane.showMessageDialog(null, vista.getTaAlbaran(),"Albaran", JOptionPane.INFORMATION_MESSAGE);
+			}
+		};
+	}
+	
+	
 	
 	
 }

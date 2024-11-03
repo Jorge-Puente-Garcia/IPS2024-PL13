@@ -86,7 +86,7 @@ public class Main extends JFrame {
                         @Override
                         public void run() {
                             try {
-                                AlmaceneroView window = new AlmaceneroView();
+                                AlmaceneroView window = new AlmaceneroView(db);
                                 window.getFrameTerminalPortatil()
                                     .setVisible(true);
                             } catch (Exception e) {
