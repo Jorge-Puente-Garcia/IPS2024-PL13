@@ -10,6 +10,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+
 import giis.controller.TiendaController;
 import giis.ui.AlmaceneroView;
 import giis.ui.ClienteBuscador;
@@ -32,7 +37,15 @@ public class Main extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                try {                   
+                try {                	
+                	/*
+                	 * FlatLightLaf
+					 * FlatDarkLaf
+					 * FlatIntelliJLaf
+					 * FlatDarculaLaf
+                	 */
+                	FlatIntelliJLaf.setup();
+                	
                     Main frame = new Main();
                     frame.setVisible(true);
                 } catch (Exception e) {
