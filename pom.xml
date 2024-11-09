@@ -99,7 +99,12 @@
 	        <artifactId>flatlaf</artifactId>
 	        <version>3.1</version> <!-- Verifica la versión más reciente en https://mvnrepository.com/artifact/com.formdev/flatlaf -->
 	    </dependency>
-    
+    	<dependency>
+		    <groupId>com.formdev</groupId>
+		    <artifactId>flatlaf-intellij-themes</artifactId>
+		    <version>3.1</version> <!-- Reemplaza con la última versión disponible, verifica en https://mvnrepository.com/artifact/com.formdev/flatlaf-themes -->
+		</dependency>
+
 	</dependencies>
 
 	<build>

@@ -14,6 +14,12 @@ import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes;
+import com.formdev.flatlaf.intellijthemes.FlatArcDarkOrangeIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatCarbonIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatGradiantoDarkFuchsiaIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatGradiantoDeepOceanIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatNordIJTheme;
 
 import giis.controller.TiendaController;
 import giis.ui.AlmaceneroView;
@@ -44,7 +50,7 @@ public class Main extends JFrame {
 					 * FlatIntelliJLaf
 					 * FlatDarculaLaf
                 	 */
-                	FlatIntelliJLaf.setup();
+                	FlatNordIJTheme.setup();
                 	
                     Main frame = new Main();
                     frame.setVisible(true);
