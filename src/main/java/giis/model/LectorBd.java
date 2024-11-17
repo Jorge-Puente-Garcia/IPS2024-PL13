@@ -3,6 +3,7 @@ package giis.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import giis.model.Almacenero.Producto;
 import giis.util.Database;
 
 public class LectorBd {
