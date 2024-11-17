@@ -50,7 +50,7 @@ public class Main extends JFrame {
 					 * FlatIntelliJLaf
 					 * FlatDarculaLaf
                 	 */
-                	FlatNordIJTheme.setup();
+                	//FlatNordIJTheme.setup();
                 	
                     Main frame = new Main();
                     frame.setVisible(true);
