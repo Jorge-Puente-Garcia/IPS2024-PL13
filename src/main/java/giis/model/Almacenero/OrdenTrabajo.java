@@ -1,10 +1,9 @@
-package giis.model;
+package giis.model.Almacenero;
 
 import java.util.Comparator;
 import java.util.List;
 
-import giis.model.Almacenero.Almacenero;
-import giis.model.Almacenero.Incidencia;
+import giis.model.Localizacion;
 
 public class OrdenTrabajo {
     List<Producto> productos;

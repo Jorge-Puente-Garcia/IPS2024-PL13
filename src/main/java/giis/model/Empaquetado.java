@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Scanner;
 
 import giis.model.Almacenero.Almacenero;
+import giis.model.Almacenero.OrdenTrabajo;
+import giis.model.Almacenero.Producto;
 
 public class Empaquetado {
 	private Almacenero a;

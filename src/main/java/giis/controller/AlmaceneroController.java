@@ -12,9 +12,9 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
 
-import giis.model.Estado;
 import giis.model.Almacenero.AlmaceneroModel;
 import giis.model.Almacenero.ElementoARecogerDto;
+import giis.model.Almacenero.Estado;
 import giis.model.Almacenero.OrdenTrabajoDto;
 import giis.model.Almacenero.OrdenTrabajoRecord;
 import giis.model.Almacenero.PedidoARecogerDto;

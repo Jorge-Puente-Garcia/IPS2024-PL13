@@ -1,4 +1,6 @@
-package giis.model;
+package giis.model.Almacenero;
+
+import giis.model.Localizacion;
 
 public class Producto {
     private String referencia;

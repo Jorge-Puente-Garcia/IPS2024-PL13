@@ -3,8 +3,7 @@ package giis.model.Tienda;
 import java.util.ArrayList;
 import java.util.List;
 
-import giis.model.Cliente;
-import giis.model.Estado;
+import giis.model.Almacenero.Estado;
 import giis.util.Database;
 
 public class PedidoCarrito {
