@@ -243,7 +243,7 @@ public class AlmaceneroController {
 		return tmodel;
 	}
 	
-	public TableModel getTableModerElemetosRecogidos() {
+	public TableModel getTableModelElemetosParaRecoger() {
 		TableModel tmodel =SwingUtil.getTableModelFromPojos(getElementosARecogerDeLaWorkorderSeleccionada(),
 				new String[] { "nombre", "cantidad","pasillo","posicion","estanteria","altura"});
 		return tmodel;
@@ -275,23 +275,25 @@ public class AlmaceneroController {
 	public ActionListener getActionListenerFinalizarRecogida() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			vista.getTablaOrdenesTrabajoDisponibles().setEnabled(true);
-			vista.getTablaOrdenesTrabajoSeleccionadas().setEnabled(true);
 			model.updateToPendienteDeEmpaquetadoElProducto(ordenTrabajoEnRecogida);
+			
 			}
 		};
 	}
 	public ActionListener getActionListenerEmpezarARecoger() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int fila=vista.getTablaOrdenesTrabajoSeleccionadas().getSelectedRow();
-				model.updateWorkOrderParaQuePaseAEnProcesoDeRecogida(pedidosAsignados.get(fila));
-				vista.getTablaOrdenesTrabajoSeleccionadas().setEnabled(false);
-				TableModel tmodel = getTableModerElemetosRecogidos();
-				vista.getTablaOrdenesElementosRecogidos().setModel(tmodel);
-				vista.getTablaOrdenesElementosRecogidos().revalidate();
+				//int fila=vista.getTablaOrdenesTrabajoSeleccionadas().getSelectedRow();
+				//Lo comento porque no quiero que desaparezca de la ventaa de OTs para recoger(funcionalida de poner en pausa)
+				//model.updateWorkOrderParaQuePaseAEnProcesoDeRecogida(pedidosAsignados.get(fila));
+				
+				//No quiero que se impida que se puedan seleccionar otras 
+				//vista.getTablaOrdenesTrabajoSeleccionadas().setEnabled(false);
+				TableModel tmodel = getTableModelElemetosParaRecoger();
+				vista.getTablaOrdenesElementParaRecoger().setModel(tmodel);
+				vista.getTablaOrdenesElementParaRecoger().revalidate();
 				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
-				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesElementosRecogidos());
+				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesElementParaRecoger());
 				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnRecogida");
 				pedidosAsignados=model.getOrdenesDeTrabajoDelAlmaceneroPorId(almaceneroId);
 				vista.getLblOTid().setText("OT id: "+ordenTrabajoEnRecogida.getId());
@@ -309,7 +311,7 @@ public class AlmaceneroController {
 	public ActionListener getActionListenerCrearOrdenTrabajo() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				vista.getTablaOrdenesTrabajoDisponibles().setEnabled(false);
+				//vista.getTablaOrdenesTrabajoDisponibles().setEnabled(false);
 				vista.getBtnCrearOT().setEnabled(false);
 				
 				
@@ -373,13 +375,25 @@ public class AlmaceneroController {
 					for(ElementoARecogerDto elemento:elementosARecoger) {
 						if(!String.valueOf(elemento.getCodigoBarras()).equals(codigoBarras)) {
 							elementosNoEliminados.add(elemento);
+						}else  {
+							if(elemento.cantidad>=(int)vista.getSpinner().getValue()) {
+							//Se le resta la cantidad que ya se ha recogido
+							int recogido=(int)vista.getSpinner().getValue();
+							if(elemento.cantidad==recogido) {
+								model.eliminaElOrdenTrabajoProductoYActualizaOrdenTrabajoProductoRecogido(ordenTrabajoEnRecogida,elemento,recogido);
+							}else{
+								elemento.cantidad-=recogido;
+								model.actualizaCantidadYaRecogidaDeUnProducto(ordenTrabajoEnRecogida,elemento,recogido);
+								elementosNoEliminados.add(elemento);
+							}
+							}
 						}
 					}
 					elementosARecoger=elementosNoEliminados;
-					TableModel tmodel =SwingUtil.getTableModelFromPojos(elementosARecoger,
+					TableModel tmodel =SwingUtil.getTableModelFromPojos(getElementosARecogerDeLaWorkorderSeleccionada(),
 							new String[] { "nombre", "cantidad","pasillo","posicion","estanteria","altura"});
-					vista.getTablaOrdenesElementosRecogidos().setModel(tmodel);
-					SwingUtil.autoAdjustColumns(vista.getTablaOrdenesElementosRecogidos());
+					vista.getTablaOrdenesElementParaRecoger().setModel(tmodel);
+					SwingUtil.autoAdjustColumns(vista.getTablaOrdenesElementParaRecoger());
 					if(elementosARecoger.size()==0){
 					vista.getBtnFinalizarRecogida().setEnabled(true); ;
 					}
@@ -406,11 +420,24 @@ public class AlmaceneroController {
 						if(!String.valueOf(elemento.getCodigoBarras()).equals(codigoBarras)) {
 							elementosNoEliminados.add(elemento);
 						}else {
-							model.empaquetaProducto(elemento,ordenTrabajoEnEmpaquetado,codigoBarrasCaja);
+							if(elemento.cantidad>=(int)vista.getSpinner().getValue()) {
+								//Se le resta la cantidad que ya se ha recogido
+								int recogido=(int)vista.getSpnCantidadElementosAEmpaquetar().getValue();
+								if(elemento.cantidad==recogido) {
+									model.empaquetaProducto(elemento,ordenTrabajoEnEmpaquetado,codigoBarrasCaja);
+									model.eliminaElOrdenTrabajoProductoYActualizaPaqueteProducto(ordenTrabajoEnEmpaquetado,elemento,recogido);
+								}else{
+									elemento.cantidad-=recogido;
+									model.actualizaCantidadYaEmpaquetadaDeUnProducto(ordenTrabajoEnEmpaquetado,elemento,recogido);
+									elementosNoEliminados.add(elemento);
+								}
+								}
+							
+							
 						}
 					}
 					elementosAEmpaquetar=elementosNoEliminados;
-					TableModel tmodel =SwingUtil.getTableModelFromPojos(elementosAEmpaquetar,
+					TableModel tmodel =SwingUtil.getTableModelFromPojos(model.getElementosAEmpaquetarDeLaOrdenDeTrabajo(ordenTrabajoEnEmpaquetado),
 							new String[] { "nombre", "cantidad"});
 					vista.getTablaElementosProcesoEmpaquetadoDeUnaOt().setModel(tmodel);
 					SwingUtil.autoAdjustColumns(vista.getTablaElementosProcesoEmpaquetadoDeUnaOt());
@@ -432,12 +459,13 @@ public class AlmaceneroController {
 	}
 	private boolean isValidUnits(int unidades,String codigoBarras,List<ElementoARecogerDto> elementosARecoger) {
 		for(ElementoARecogerDto elemento:elementosARecoger) {
-			if(elemento.cantidad==unidades && String.valueOf(elemento.getCodigoBarras()).equals(codigoBarras)) {
+			if(elemento.cantidad>=unidades && String.valueOf(elemento.getCodigoBarras()).equals(codigoBarras)) {
 				return true;
 			}
 		}
 		return false;
 	}
+	
 	public ActionListener getActionPerformedNotificaIncidencia() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -457,6 +485,9 @@ public class AlmaceneroController {
 	public ActionListener getActionPerformedMuestraPanelEmpaquetado() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				TableModel tmodel = getTableModelPrdenesTrabajoPendientesEmpaquetado();
+				vista.getTablaOrdenesTrabajoPendientesEmpaquetado().setModel(tmodel);
+				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesTrabajoPendientesEmpaquetado());
 				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
 				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnEmpaquetado");
 			}
@@ -473,7 +504,6 @@ public class AlmaceneroController {
 	public ActionListener getActionPerformedIniciarProcesoEmpaquetado() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				vista.getTablaOrdenesTrabajoPendientesEmpaquetado().setEnabled(false);
 				TableModel tmodel = getTableModelElementosAEmpaquetarDeUnaOt();
 				vista.getTablaElementosProcesoEmpaquetadoDeUnaOt().setModel(tmodel);
 				SwingUtil.autoAdjustColumns(vista.getTablaElementosProcesoEmpaquetadoDeUnaOt());
@@ -481,7 +511,7 @@ public class AlmaceneroController {
 				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnEmpaquetadoProductos");
 				vista.getBtnIniciarEmpaquetado().setEnabled(false);
 				codigoBarrasCaja= model.creaPaqueteParaElProcesoEmpaquetado();
-				model.PonEnProcesoEmpaquetadoLaOt(ordenTrabajoEnEmpaquetado);
+				//model.PonEnProcesoEmpaquetadoLaOt(ordenTrabajoEnEmpaquetado);
 				TableModel tmodel2 = getTableModelPrdenesTrabajoPendientesEmpaquetado();
 				vista.getTablaOrdenesTrabajoPendientesEmpaquetado().setModel(tmodel2);
 				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesTrabajoPendientesEmpaquetado());
