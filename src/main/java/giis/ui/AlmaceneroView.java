@@ -107,7 +107,7 @@ public class AlmaceneroView {
 		controller = new AlmaceneroController(this,db);
 		frameTerminalPortatil = new JFrame();
 		frameTerminalPortatil.setBounds(100, 100, 429, 463);
-		frameTerminalPortatil.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frameTerminalPortatil.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frameTerminalPortatil.getContentPane().setLayout(new CardLayout(0, 0));
 		frameTerminalPortatil.getContentPane().add(getPnIdentificación(), "pnIdentificación");
 		frameTerminalPortatil.getContentPane().add(getPnPaginaPrincipal(), "pnPaginaPrincipal");
