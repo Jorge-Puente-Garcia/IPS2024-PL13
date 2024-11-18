@@ -29,6 +29,8 @@ import giis.model.Tienda.CarritoProductos;
 import giis.model.Tienda.Categorias;
 import giis.model.Tienda.ProductosDto;
 import giis.util.TableColumnAdjuster;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Tienda extends JFrame {
 
@@ -66,12 +68,11 @@ public class Tienda extends JFrame {
     private JButton btEditar;
     private JSpinner spCantidadEditar;
     private JPanel panelAñadirCarrito;
-    private JButton btAñadirCarrito;
     private JSpinner spCantidad;
     private JPanel panel;
     private JButton btAnteriorCategoria;
     private JButton btVolverRaiz;
-    private JButton btSiguienteCategoria;
+    private JLabel lbUnidadesProductos;
 
     public Tienda(TiendaController tdc) {
         this.tdc = tdc;
@@ -142,6 +143,13 @@ public class Tienda extends JFrame {
                 tableModel.addRow(new Object[] { c.getNombre() });
             }
             tbProductos = new JTable(tableModel);
+            tbProductos.addMouseListener(new MouseAdapter() {
+            	@Override
+            	public void mouseClicked(MouseEvent e) {
+            		ActualizarTablaProductos();
+            		añadirAlCarrito();
+            	}
+            });
             tbProductos.setFont(new Font("Arial", Font.PLAIN, 14));
             tbProductos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         }
@@ -407,36 +415,26 @@ public class Tienda extends JFrame {
     private JPanel getPanel_1() {
         if (panelAñadirCarrito == null) {
             panelAñadirCarrito = new JPanel();
-            panelAñadirCarrito.add(getBtAñadirCarrito());
+            panelAñadirCarrito.add(getLbUnidadesProductos());
             panelAñadirCarrito.add(getSpCantidad());
         }
         return panelAñadirCarrito;
     }
 
-    private JButton getBtAñadirCarrito() {
-        if (btAñadirCarrito == null) {
-            btAñadirCarrito = new JButton("Añadir al carrito");
-            btAñadirCarrito.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (tbProductos.getModel().getColumnCount() == 3) {
-                        int row = tbProductos.getSelectedRow();
-                        if (row >= 0) {
-                            tdc.agregarAlCarrito(
-                                tbProductos.getValueAt(row, 0).toString(),
-                                Integer.parseInt(
-                                    spCantidad.getValue().toString()));
-                            spCantidad.setValue(1);
-                            ActualizarComponentesCarrito();
-                        }
-                    }
-                }
-            });
-            btAñadirCarrito.setFont(new Font("Arial Black", Font.PLAIN, 14));
+    private void añadirAlCarrito() {
+    	if (tbProductos.getModel().getColumnCount() == 3) {
+            int row = tbProductos.getSelectedRow();
+            if (row >= 0) {
+                tdc.agregarAlCarrito(
+                    tbProductos.getValueAt(row, 0).toString(),
+                    Integer.parseInt(
+                        spCantidad.getValue().toString()));
+                spCantidad.setValue(1);
+                ActualizarComponentesCarrito();
+            }
         }
-        return btAñadirCarrito;
     }
-
+    
     private JSpinner getSpCantidad() {
         if (spCantidad == null) {
             spCantidad = new JSpinner();
@@ -451,7 +449,6 @@ public class Tienda extends JFrame {
         if (panel == null) {
             panel = new JPanel();
             panel.add(getBtAnteriorCategoria());
-            panel.add(getBtSiguienteCategoria());
             panel.add(getBtVolverRaiz());
         }
         return panel;
@@ -571,19 +568,11 @@ public class Tienda extends JFrame {
         }
 
     }
-
-    private JButton getBtSiguienteCategoria() {
-        if (btSiguienteCategoria == null) {
-            btSiguienteCategoria = new JButton("Siguiente");
-            btSiguienteCategoria.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    ActualizarTablaProductos();
-                }
-            });
-            btSiguienteCategoria
-                .setFont(new Font("Arial Black", Font.PLAIN, 14));
-        }
-        return btSiguienteCategoria;
-    }
+	private JLabel getLbUnidadesProductos() {
+		if (lbUnidadesProductos == null) {
+			lbUnidadesProductos = new JLabel("Unidades a añadir");
+			lbUnidadesProductos.setFont(new Font("Arial Black", Font.PLAIN, 14));
+		}
+		return lbUnidadesProductos;
+	}
 }

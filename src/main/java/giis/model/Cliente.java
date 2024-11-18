@@ -1,4 +1,4 @@
-package giis.model.Tienda;
+package giis.model;
 
 public class Cliente {
     private String dni;
@@ -10,12 +10,12 @@ public class Cliente {
         this.nombre = nombre;
         this.apellidos = apellidos;
     }
+    
+    public Cliente (String dni) {
+    	this(dni, "no-name","no-surname");
+    }
 
-    public Cliente(String dni) {
-		this(dni,"noName","noSurname");
-	}
-
-	// Getters y Setters
+    // Getters y Setters
     public String getDni() {
         return dni;
     }
