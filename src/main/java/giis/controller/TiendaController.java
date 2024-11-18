@@ -30,7 +30,7 @@ public class TiendaController {
 
         this.model = new TiendaModel(db);
         this.carrito = new CarritoModel(db,
-            new Cliente(clienteData[0], clienteData[1], clienteData[2]));
+            new Cliente(clienteData[0]));
         this.tienda = new Tienda(this);
         initView();
     }

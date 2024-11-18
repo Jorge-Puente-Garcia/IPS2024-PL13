@@ -10,6 +10,10 @@ public class Cliente {
         this.nombre = nombre;
         this.apellidos = apellidos;
     }
+    
+    public Cliente (String dni) {
+    	this(dni, "no-name","no-surname");
+    }
 
     // Getters y Setters
     public String getDni() {
