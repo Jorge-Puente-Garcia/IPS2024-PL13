@@ -7,12 +7,14 @@ drop table Pedido;
 drop table Almacenero;
 drop table OrdenTrabajo;
 drop table OrdenTrabajoProducto;
+drop table OrdenTrabajoProductoRecogido;
 drop table Incidencia;
 drop table Localizacion;
 drop table Caja;
 drop table Paquete;
 drop table Albaran;
 drop table AlbaranPedido;
+drop table PaqueteProducto;
 
 CREATE TABLE Categoria (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,6 +30,8 @@ CREATE TABLE Pedido (id INTEGER PRIMARY KEY AUTOINCREMENT, cliente_id int NOT NU
 CREATE TABLE Almacenero (id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT NOT NULL, apellido TEXT NOT NULL);
 CREATE TABLE OrdenTrabajo (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha_creacion DATE NOT NULL, estado TEXT CHECK(estado IN ('Pendiente de recogida','En recogida', 'Pendiente de empaquetado','En empaquetado','Empaquetado')),almacenero_id INTEGER NOT NULL, incidencia TEXT, FOREIGN KEY (almacenero_id) REFERENCES Almacenero(id));
 CREATE TABLE OrdenTrabajoProducto (id INTEGER PRIMARY KEY AUTOINCREMENT, orden_trabajo_id INTEGER NOT NULL, producto_id INTEGER NOT NULL, cantidad INTEGER NOT NULL, FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id), FOREIGN KEY (producto_id) REFERENCES Producto(id));
+CREATE TABLE OrdenTrabajoProductoRecogido (id INTEGER PRIMARY KEY AUTOINCREMENT, orden_trabajo_id INTEGER NOT NULL, producto_id INTEGER NOT NULL, cantidad INTEGER NOT NULL, FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id), FOREIGN KEY (producto_id) REFERENCES Producto(id));
+CREATE TABLE PaqueteProducto (id INTEGER PRIMARY KEY AUTOINCREMENT, orden_trabajo_id INTEGER NOT NULL, producto_id INTEGER NOT NULL, cantidad INTEGER NOT NULL, FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id), FOREIGN KEY (producto_id) REFERENCES Producto(id));
 CREATE TABLE Incidencia (id INTEGER PRIMARY KEY AUTOINCREMENT, orden_trabajo_id INTEGER NOT NULL, descripcion TEXT NOT NULL, fecha DATE NOT NULL, FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id));
 CREATE TABLE Localizacion (id INTEGER PRIMARY KEY AUTOINCREMENT, pasillo INTEGER NOT NULL, estanteria TEXT CHECK(estanteria IN ('Izquierda', 'Derecha')),posicion integer not null, altura integer not null);
 CREATE TABLE Caja(id INTEGER PRIMARY KEY AUTOINCREMENT);
