@@ -23,7 +23,7 @@ CREATE TABLE Categoria (
     FOREIGN KEY (id_padre) REFERENCES categoria(id) ON DELETE CASCADE
 );
 CREATE TABLE Producto (id INTEGER PRIMARY KEY AUTOINCREMENT,nombre TEXT NOT NULL,referencia TEXT NOT NULL UNIQUE, datosBasicos TEXT NOT NULL, precio INTEGER NOT NULL,unidades INTEGER NOT NULL,localizacion_id INTEGER,id_categoria INTEGER NOT NULL, FOREIGN KEY (localizacion_id) REFERENCES Localizacion(id));
-CREATE TABLE Cliente (id INTEGER PRIMARY KEY AUTOINCREMENT,dni TEXT NOT NULL, nombre TEXT NOT NULL, apellidos TEXT NOT NULL,direccion TEXT,numeroTelefono INTEGER, UNIQUE(dni));
+CREATE TABLE Cliente (id INTEGER PRIMARY KEY AUTOINCREMENT,dni TEXT NOT NULL, nombre TEXT NOT NULL, apellidos TEXT NOT NULL,direccion TEXT,numeroTelefono INTEGER,empresa BOOLEAN UNIQUE(dni));
 CREATE TABLE Carrito (id INTEGER PRIMARY KEY AUTOINCREMENT, dni TEXT NOT NULL, referencia TEXT NOT NULL, cantidad INTEGER NOT NULL, precio INTEGER NOT NULL, FOREIGN KEY (referencia) REFERENCES Producto(referencia),FOREIGN KEY (dni) REFERENCES Cliente(dni));
 CREATE TABLE ProductosPedido (id INTEGER PRIMARY KEY AUTOINCREMENT, pedido_id INTEGER NOT NULL, producto_id INTEGER NOT NULL, cantidad INTEGER NOT NULL, FOREIGN KEY (pedido_id) REFERENCES Pedido(id), FOREIGN KEY (producto_id) REFERENCES Producto(id));
 CREATE TABLE Pedido (id INTEGER PRIMARY KEY AUTOINCREMENT, cliente_id int NOT NULL, fecha DATE NOT NULL, total DECIMAL(10, 2) NOT NULL, estado TEXT CHECK (estado IN ('Pendiente de recogida', 'Recogido','PendienteDePago','En empaquetado')) NOT NULL, orden_trabajo_id INTEGER, FOREIGN KEY (cliente_id) REFERENCES Cliente(id), FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id));
@@ -38,3 +38,5 @@ CREATE TABLE Caja(id INTEGER PRIMARY KEY AUTOINCREMENT);
 CREATE TABLE Paquete(id INTEGER PRIMARY KEY AUTOINCREMENT, caja_id integer not null, producto_id integer not null, FOREIGN KEY (caja_id) REFERENCES Caja(id),FOREIGN KEY (producto_id) REFERENCES Producto(id));
 CREATE TABLE AlbaranPedido(id INTEGER PRIMARY KEY AUTOINCREMENT, id_Albaran integer not null, id_Pedido integer not null, FOREIGN KEY (id_Albaran) REFERENCES Albaran(id), FOREIGN KEY (id_Pedido) REFERENCES Pedido(id));
 CREATE TABLE Albaran(id INTEGER PRIMARY KEY AUTOINCREMENT);
+CREATE TABLE VehiculoPaquete(id INTEGER PRIMARY KEY AUTOINCREMENT, vehiculo_id INTEGER, paquete_id INTEGER,FOREIGN KEY (vehiculo_id) REFERENCES Vehiculo(id), FOREIGN KEY (paquete_id) REFERENCES Paquete(id));
+CREATE TABLE Vehiculo(id INTEGER PRIMARY KEY AUTOINCREMENT, matricula TEXT NOT NULL, tipo TEXT CHECK(estado IN ('Regional','Nacional'));

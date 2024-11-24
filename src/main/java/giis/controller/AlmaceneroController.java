@@ -15,6 +15,7 @@ import javax.swing.table.TableModel;
 import giis.model.Almacenero.AlmaceneroModel;
 import giis.model.Almacenero.ElementoARecogerDto;
 import giis.model.Almacenero.Estado;
+import giis.model.Almacenero.FilaInformeVentasUsuarioDia;
 import giis.model.Almacenero.OrdenTrabajoDto;
 import giis.model.Almacenero.OrdenTrabajoRecord;
 import giis.model.Almacenero.PedidoARecogerDto;
@@ -73,6 +74,9 @@ public class AlmaceneroController {
 		ordenTrabajoEnEmpaquetado=pedidosAPendientesEmpaquetado.get(vista.getTablaOrdenesTrabajoPendientesEmpaquetado().getSelectedRow());
 		this.elementosAEmpaquetar =model.getElementosAEmpaquetarDeLaOrdenDeTrabajo(ordenTrabajoEnEmpaquetado);
 		return elementosAEmpaquetar;
+	}
+	private List<FilaInformeVentasUsuarioDia> getImportesVestasPorTipoUsuarioYDía() {
+		return model.getInformeVentasPorUsuarioYDia();
 	}
 	
 	
@@ -254,6 +258,13 @@ public class AlmaceneroController {
 				new String[] { "nombre", "cantidad"});
 		return tmodel;
 	}
+	
+	protected TableModel getTableModelInformeVentasUsuarioDia() {
+		TableModel tmodel =SwingUtil.getTableModelFromPojos(getImportesVestasPorTipoUsuarioYDía(),
+				new String[] { "dia, particular", "empresa, total de los dias"});
+		return null;
+	}
+	
 	
 	public ActionListener getActionListenerVolverAtrasHaciaOrdenesTrabajo() {
 		return new ActionListener() {
@@ -536,6 +547,58 @@ public class AlmaceneroController {
 			}
 		};
 	}
+	public ActionListener getActionListenerVisualizarPantallaInformes() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnInformesDisponibles");
+			}
+		};
+	}
+	public ActionListener getActionListnerMostrarInformeVentasUsuariDia() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TableModel tmodel = getTableModelInformeVentasUsuarioDia();
+				vista.getTbInfoInformes().setModel(tmodel);
+				SwingUtil.autoAdjustColumns(vista.getTbInfoInformes());
+				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnInfoInformes");
+			}
+		};
+	}
+	public ActionListener getActionListenerEntrarVentanaDeRecivirVehiculo() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnRecepcionVehiculo");
+			}
+		};
+	}
+	public ActionListener getActionListenerRecepcionarVehiculo() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String matricula= vista.getTfMatículaVehiculo().getText();
+				if(matricula.isBlank()) {
+					JOptionPane.showMessageDialog(null, "La matrícula no puede estar vacía");
+				}else {
+					if(vista.getRdbtnRegional().isSelected()) {
+						//Se crea de tipo regioonal
+						model.reciveVehiculo(matricula,"Regional");
+					}else if(vista.getRdbtnNacional().isSelected()) {
+						//Se crea de tipo nacional
+						model.reciveVehiculo(matricula,"Nacional");
+					}
+					//Se lleva automaticamente a la pantalla de lanzar los paquetes
+					CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+					cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnSeleccionPaquetes");
+					
+					
+				}
+				
+			}
+		};
+	}
+	
 	
 	
 	

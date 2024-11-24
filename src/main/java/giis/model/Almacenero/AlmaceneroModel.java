@@ -285,6 +285,16 @@ public class AlmaceneroModel {
 		
 	}
 
+	public List<FilaInformeVentasUsuarioDia> getInformeVentasPorUsuarioYDia() {
+		//TODO lo dejo antes de sacar de la bd.
+		return null;
+	}
+
+	public void reciveVehiculo(String matricula, String tipo) {
+		String creaVehiculo="INSERT INTO Vehiculo (matricula, tipo) VALUES (?, ?);";
+		db.executeUpdate(creaVehiculo, matricula,tipo);
+	}
+
 	
 
 	

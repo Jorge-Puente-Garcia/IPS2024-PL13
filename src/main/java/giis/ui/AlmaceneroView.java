@@ -28,6 +28,9 @@ import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
+import javax.swing.JTextField;
 
 public class AlmaceneroView {
 
@@ -86,6 +89,28 @@ public class AlmaceneroView {
 	private JLabel lblPedidosDisponiblesParaCrearOts;
 	private JLabel lblVerOTsSeleccionadas;
 	private JLabel lblOTsPendientesDeEmpaquetado;
+	private JButton btnVisualizarInformesDisponibles;
+	private JPanel pnInformesDisponibles;
+	private JButton btnVisualizarInformeVentasPorUsuarioYDia;
+	private JButton btnInformePorEmpresaYDia;
+	private JButton btnInformeNumeroOTsEmpleadoYDia;
+	private JButton btnInformeCantidaProductosEmpleadoYDia;
+	private JPanel pnInformacionInformes;
+	private JButton btnVolverALaPantallaDeInformes;
+	private JScrollPane scrpInfoInformes;
+	private JLabel lblTituloPanelMostrarInfoInformes;
+	private JTable tbInfoInformes;
+	private JButton btnRecepcionVehiculo;
+	private JPanel pnRecepcionVehiculo;
+	private JButton btnVolverPaginaPrincipalDesdeRecepcionVehiculo;
+	private JLabel lblRecepcionVehiculo;
+	private JLabel lblMatriculaVehículo;
+	private JLabel lblTipoDelVehiculo;
+	private JRadioButton rdbtnRegional;
+	private JRadioButton rdbtnNacional;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private JTextField tfMatículaVehiculo;
+	private JButton btnRecepcionarElVehiculo;
 
 	/**
 	 * Create the application.
@@ -117,6 +142,9 @@ public class AlmaceneroView {
 		frameTerminalPortatil.getContentPane().add(getPnRecogida(), "pnRecogida");
 		frameTerminalPortatil.getContentPane().add(getPnVisualizarOrdenesPendientesEmpaquetado(), "pnEmpaquetado");
 		frameTerminalPortatil.getContentPane().add(getPnEmpaquetadoOrden(), "pnEmpaquetadoProductos");
+		frameTerminalPortatil.getContentPane().add(getPnInformesDisponibles(), "pnInformesDisponibles");
+		frameTerminalPortatil.getContentPane().add(getPnInformacionInformes(), "pnInfoInformes");
+		frameTerminalPortatil.getContentPane().add(getPnRecepcionVehiculo(), "pnRecepcionVehiculo");
 		frameTerminalPortatil.setLocationRelativeTo(null);
 	}
 
@@ -130,6 +158,8 @@ public class AlmaceneroView {
 			pnPaginaPrincipal.add(getBtnEnProcesoRecogida());
 			pnPaginaPrincipal.add(getBtnVerOrdenesParaEmpaquetar());
 			pnPaginaPrincipal.add(getBtnNewButton_1());
+			pnPaginaPrincipal.add(getBtnRecepcionVehiculo());
+			pnPaginaPrincipal.add(getBtnVisualizarInformesDisponibles());
 		}
 		return pnPaginaPrincipal;
 	}
@@ -632,5 +662,188 @@ public class AlmaceneroView {
 			lblOTsPendientesDeEmpaquetado.setBounds(10, 10, 395, 52);
 		}
 		return lblOTsPendientesDeEmpaquetado;
+	}
+	private JButton getBtnVisualizarInformesDisponibles() {
+		if (btnVisualizarInformesDisponibles == null) {
+			btnVisualizarInformesDisponibles = new JButton("Informes ");
+			btnVisualizarInformesDisponibles.addActionListener(controller.getActionListenerVisualizarPantallaInformes());
+		}
+		return btnVisualizarInformesDisponibles;
+	}
+	private JPanel getPnInformesDisponibles() {
+		if (pnInformesDisponibles == null) {
+			pnInformesDisponibles = new JPanel();
+			pnInformesDisponibles.setLayout(new GridLayout(0, 1, 0, 0));
+			pnInformesDisponibles.add(getBtnVisualizarInformeVentasPorUsuarioYDia());
+			pnInformesDisponibles.add(getBtnInformePorEmpresaYDia());
+			pnInformesDisponibles.add(getBtnInformeNumeroOTsEmpleadoYDia());
+			pnInformesDisponibles.add(getBtnInformeCantidaProductosEmpleadoYDia());
+		}
+		return pnInformesDisponibles;
+	}
+	private JButton getBtnVisualizarInformeVentasPorUsuarioYDia() {
+		if (btnVisualizarInformeVentasPorUsuarioYDia == null) {
+			btnVisualizarInformeVentasPorUsuarioYDia = new JButton("Informe de ventas porusuario y dia");
+			btnVisualizarInformeVentasPorUsuarioYDia.addActionListener(controller.getActionListnerMostrarInformeVentasUsuariDia());
+		}
+		return btnVisualizarInformeVentasPorUsuarioYDia;
+	}
+	private JButton getBtnInformePorEmpresaYDia() {
+		if (btnInformePorEmpresaYDia == null) {
+			btnInformePorEmpresaYDia = new JButton("Informe de ventas por empresa y día");
+			btnInformePorEmpresaYDia.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
+		}
+		return btnInformePorEmpresaYDia;
+	}
+	private JButton getBtnInformeNumeroOTsEmpleadoYDia() {
+		if (btnInformeNumeroOTsEmpleadoYDia == null) {
+			btnInformeNumeroOTsEmpleadoYDia = new JButton("Informe de OT's recogidas por empleado y día");
+		}
+		return btnInformeNumeroOTsEmpleadoYDia;
+	}
+	private JButton getBtnInformeCantidaProductosEmpleadoYDia() {
+		if (btnInformeCantidaProductosEmpleadoYDia == null) {
+			btnInformeCantidaProductosEmpleadoYDia = new JButton("Informe de productos recogidos por empleado y día");
+		}
+		return btnInformeCantidaProductosEmpleadoYDia;
+	}
+	private JPanel getPnInformacionInformes() {
+		if (pnInformacionInformes == null) {
+			pnInformacionInformes = new JPanel();
+			pnInformacionInformes.setLayout(null);
+			pnInformacionInformes.add(getBtnVolverALaPantallaDeInformes());
+			pnInformacionInformes.add(getScrpInfoInformes());
+			pnInformacionInformes.add(getLblTituloPanelMostrarInfoInformes());
+		}
+		return pnInformacionInformes;
+	}
+	private JButton getBtnVolverALaPantallaDeInformes() {
+		if (btnVolverALaPantallaDeInformes == null) {
+			btnVolverALaPantallaDeInformes = new JButton("Volver");
+			btnVolverALaPantallaDeInformes.setFont(new Font("Tahoma", Font.PLAIN, 20));
+			btnVolverALaPantallaDeInformes.setBounds(86, 370, 241, 46);
+		}
+		return btnVolverALaPantallaDeInformes;
+	}
+	private JScrollPane getScrpInfoInformes() {
+		if (scrpInfoInformes == null) {
+			scrpInfoInformes = new JScrollPane();
+			scrpInfoInformes.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			scrpInfoInformes.setBounds(10, 86, 395, 274);
+			scrpInfoInformes.setViewportView(getTbInfoInformes());
+		}
+		return scrpInfoInformes;
+	}
+	private JLabel getLblTituloPanelMostrarInfoInformes() {
+		if (lblTituloPanelMostrarInfoInformes == null) {
+			lblTituloPanelMostrarInfoInformes = new JLabel("New label");
+			lblTituloPanelMostrarInfoInformes.setHorizontalAlignment(SwingConstants.CENTER);
+			lblTituloPanelMostrarInfoInformes.setFont(new Font("Arial Black", Font.PLAIN, 20));
+			lblTituloPanelMostrarInfoInformes.setBounds(10, 10, 395, 61);
+		}
+		return lblTituloPanelMostrarInfoInformes;
+	}
+	public JTable getTbInfoInformes() {
+		if (tbInfoInformes == null) {
+			tbInfoInformes = new JTable();
+			tbInfoInformes.setShowHorizontalLines(false);
+			tbInfoInformes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tbInfoInformes.setName("tabElementosEnProcesoEmpaquetado");
+			tbInfoInformes.setFillsViewportHeight(true);
+		}
+		return tbInfoInformes;
+	}
+	private JButton getBtnRecepcionVehiculo() {
+		if (btnRecepcionVehiculo == null) {
+			btnRecepcionVehiculo = new JButton("Recepción de vehículo");
+			btnRecepcionVehiculo.addActionListener(controller.getActionListenerEntrarVentanaDeRecivirVehiculo());
+		}
+		return btnRecepcionVehiculo;
+	}
+	private JPanel getPnRecepcionVehiculo() {
+		if (pnRecepcionVehiculo == null) {
+			pnRecepcionVehiculo = new JPanel();
+			pnRecepcionVehiculo.setLayout(null);
+			pnRecepcionVehiculo.add(getBtnVolverPaginaPrincipalDesdeRecepcionVehiculo());
+			pnRecepcionVehiculo.add(getLblRecepcionVehiculo());
+			pnRecepcionVehiculo.add(getLblMatriculaVehículo());
+			pnRecepcionVehiculo.add(getLblTipoDelVehiculo());
+			pnRecepcionVehiculo.add(getRdbtnRegional());
+			pnRecepcionVehiculo.add(getRdbtnNacional());
+			pnRecepcionVehiculo.add(getTfMatículaVehiculo());
+			pnRecepcionVehiculo.add(getBtnRecepcionarElVehiculo());
+		}
+		return pnRecepcionVehiculo;
+	}
+	private JButton getBtnVolverPaginaPrincipalDesdeRecepcionVehiculo() {
+		if (btnVolverPaginaPrincipalDesdeRecepcionVehiculo == null) {
+			btnVolverPaginaPrincipalDesdeRecepcionVehiculo = new JButton("Volver");
+			btnVolverPaginaPrincipalDesdeRecepcionVehiculo.addActionListener(controller.getActionListenerVolverPaginaPrincipal());
+			btnVolverPaginaPrincipalDesdeRecepcionVehiculo.setBounds(10, 76, 116, 34);
+		}
+		return btnVolverPaginaPrincipalDesdeRecepcionVehiculo;
+	}
+	private JLabel getLblRecepcionVehiculo() {
+		if (lblRecepcionVehiculo == null) {
+			lblRecepcionVehiculo = new JLabel("Recepcion de vehículo");
+			lblRecepcionVehiculo.setFont(new Font("Arial Black", Font.PLAIN, 20));
+			lblRecepcionVehiculo.setHorizontalAlignment(SwingConstants.CENTER);
+			lblRecepcionVehiculo.setBounds(10, 10, 395, 51);
+		}
+		return lblRecepcionVehiculo;
+	}
+	private JLabel getLblMatriculaVehículo() {
+		if (lblMatriculaVehículo == null) {
+			lblMatriculaVehículo = new JLabel("Matrícula del vehículo:");
+			lblMatriculaVehículo.setFont(new Font("Tahoma", Font.PLAIN, 12));
+			lblMatriculaVehículo.setBounds(10, 190, 125, 34);
+		}
+		return lblMatriculaVehículo;
+	}
+	private JLabel getLblTipoDelVehiculo() {
+		if (lblTipoDelVehiculo == null) {
+			lblTipoDelVehiculo = new JLabel("Tipo del vehículo:");
+			lblTipoDelVehiculo.setFont(new Font("Tahoma", Font.PLAIN, 12));
+			lblTipoDelVehiculo.setBounds(10, 257, 125, 34);
+		}
+		return lblTipoDelVehiculo;
+	}
+	public JRadioButton getRdbtnRegional() {
+		if (rdbtnRegional == null) {
+			rdbtnRegional = new JRadioButton("Regional");
+			rdbtnRegional.setFont(new Font("Tahoma", Font.PLAIN, 12));
+			buttonGroup.add(rdbtnRegional);
+			rdbtnRegional.setSelected(true);
+			rdbtnRegional.setBounds(139, 261, 132, 27);
+		}
+		return rdbtnRegional;
+	}
+	public JRadioButton getRdbtnNacional() {
+		if (rdbtnNacional == null) {
+			rdbtnNacional = new JRadioButton("Nacional");
+			rdbtnNacional.setFont(new Font("Tahoma", Font.PLAIN, 12));
+			buttonGroup.add(rdbtnNacional);
+			rdbtnNacional.setBounds(273, 257, 132, 34);
+		}
+		return rdbtnNacional;
+	}
+	public JTextField getTfMatículaVehiculo() {
+		if (tfMatículaVehiculo == null) {
+			tfMatículaVehiculo = new JTextField();
+			tfMatículaVehiculo.setBounds(145, 190, 260, 34);
+			tfMatículaVehiculo.setColumns(10);
+		}
+		return tfMatículaVehiculo;
+	}
+	private JButton getBtnRecepcionarElVehiculo() {
+		if (btnRecepcionarElVehiculo == null) {
+			btnRecepcionarElVehiculo = new JButton("Recepcionar");
+			btnRecepcionarElVehiculo.addActionListener(controller.getActionListenerRecepcionarVehiculo());
+			btnRecepcionarElVehiculo.setBounds(88, 316, 233, 51);
+		}
+		return btnRecepcionarElVehiculo;
 	}
 }
