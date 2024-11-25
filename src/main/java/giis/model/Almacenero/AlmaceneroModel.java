@@ -234,9 +234,13 @@ public class AlmaceneroModel {
 		return Integer.parseInt(idCaja.get(0)[0].toString());
 	}
 
-	public void empaquetaProducto(ElementoARecogerDto elemento, OrdenTrabajoRecord ordenTrabajoEnEmpaquetado, int idCaja) {
-		String addAlPaquete="INSERT INTO Paquete (caja_id, producto_id) VALUES (?, ?);";
-		db.executeUpdate(addAlPaquete, idCaja,elemento.getCodigoBarras());
+	public void empaquetaProducto( OrdenTrabajoRecord ordenTrabajoEnEmpaquetado, int idCaja) {
+		 String addAlPaquete = "INSERT INTO Paquete (caja_id, ordentrabajo_id, tipo) "
+		            + "SELECT ?, ?, CASE WHEN Cliente.empresa = 1 THEN 'Nacional' ELSE 'Regional' END "
+		            + "FROM Pedido "
+		            + "JOIN Cliente ON Pedido.cliente_id = Cliente.id "
+		            + "WHERE Pedido.orden_trabajo_id = ?;";
+		db.executeUpdate(addAlPaquete, idCaja,ordenTrabajoEnEmpaquetado.getId(),ordenTrabajoEnEmpaquetado.getId());
 		
 	}
 
@@ -293,6 +297,37 @@ public class AlmaceneroModel {
 	public void reciveVehiculo(String matricula, String tipo) {
 		String creaVehiculo="INSERT INTO Vehiculo (matricula, tipo) VALUES (?, ?);";
 		db.executeUpdate(creaVehiculo, matricula,tipo);
+	}
+
+	public List<PaqueteAExpedirDto> getPaquetesSegunElTipo(String tipo) {
+		String sacaPaquetes="SELECT Paquete.id AS codigoBarras, Paquete.tipo, "
+				+ "Cliente.nombre || ' ' || Cliente.apellidos AS destinatario "
+				+ "FROM Paquete JOIN OrdenTrabajo ON Paquete.ordentrabajo_id = OrdenTrabajo.id "
+				+ "JOIN Pedido ON OrdenTrabajo.id = Pedido.orden_trabajo_id JOIN Cliente ON Pedido.cliente_id = Cliente.id"
+				+ " WHERE Paquete.tipo=?;";
+		return db.executeQueryPojo(PaqueteAExpedirDto.class, sacaPaquetes, tipo);
+	}
+
+	public boolean esUnTipoDePaqueteValido(String codigoBarras) {
+		String sacaSiEsta="SELECT "
+				+ "Paquete.id AS paquete_id, "
+				+ "Paquete.tipo AS tipo_paquete, "
+				+ "Vehiculo.tipo AS tipo_vehiculo "
+				+ "FROM Paquete "
+				+ "JOIN Vehiculo ON Paquete.tipo = Vehiculo.tipo "
+				+ "WHERE Paquete.id = ?;";
+		List<Object[]> res=db.executeQueryArray(sacaSiEsta, codigoBarras);
+		return !(res.size()==0 || res.get(0).length==0);
+	}
+
+	public void eliminaPaqueteYaEmpaquetado(String codigo) {
+		String elimina="DELETE FROM Paquete WHERE id = ?;";
+		db.executeUpdate(elimina,codigo);
+	}
+
+	public void eliminaElVehiculo(String tipoVehiculo) {
+		String eliminaVehiculo="Delete from Vehiculo where tipo=?";
+		db.executeUpdate(eliminaVehiculo, tipoVehiculo);
 	}
 
 	

@@ -111,6 +111,19 @@ public class AlmaceneroView {
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTextField tfMatículaVehiculo;
 	private JButton btnRecepcionarElVehiculo;
+	private JPanel pnExpediciónPaquetes;
+	private JLabel lblTituloExpedicionPaquetes;
+	private JScrollPane scrpPaquetesParaExpedir;
+	private JButton btnVolverPaginaPrincipalDesdeExpedicionPaquetes;
+	private JTable tbPaquetesParaExpedicion;
+	private JButton btnEscanearPaqueteAExpedir;
+	private JLabel lblTipoVehiculoRecepcionado;
+	private JLabel lblMatriculaVehiculo;
+	private JLabel lblParaElTipoDeVehiculo;
+	private JLabel lblParaLaMatriculaDelVehiculo;
+	private JButton btnFinalizarExpedicion;
+	private JButton btnVolverPantallaPrincipalDesdeInformes;
+	private JButton btnVerPantallaExpedicionDePaquetes;
 
 	/**
 	 * Create the application.
@@ -145,6 +158,7 @@ public class AlmaceneroView {
 		frameTerminalPortatil.getContentPane().add(getPnInformesDisponibles(), "pnInformesDisponibles");
 		frameTerminalPortatil.getContentPane().add(getPnInformacionInformes(), "pnInfoInformes");
 		frameTerminalPortatil.getContentPane().add(getPnRecepcionVehiculo(), "pnRecepcionVehiculo");
+		frameTerminalPortatil.getContentPane().add(getPnExpediciónPaquetes(), "pnExpedicionPaquetes");
 		frameTerminalPortatil.setLocationRelativeTo(null);
 	}
 
@@ -159,6 +173,7 @@ public class AlmaceneroView {
 			pnPaginaPrincipal.add(getBtnVerOrdenesParaEmpaquetar());
 			pnPaginaPrincipal.add(getBtnNewButton_1());
 			pnPaginaPrincipal.add(getBtnRecepcionVehiculo());
+			pnPaginaPrincipal.add(getBtnVerPantallaExpedicionDePaquetes());
 			pnPaginaPrincipal.add(getBtnVisualizarInformesDisponibles());
 		}
 		return pnPaginaPrincipal;
@@ -334,6 +349,17 @@ public class AlmaceneroView {
 			tablaElementosProcesoEmpaquetadoDeUnaOt.setDefaultEditor(Object.class, null); // readonly
 		}
 		return tablaElementosProcesoEmpaquetadoDeUnaOt;
+	}
+	
+	public JTable getTbPaquetesParaExpedicion() {
+		if (tbPaquetesParaExpedicion == null) {
+			tbPaquetesParaExpedicion = new JTable();
+			tbPaquetesParaExpedicion.setShowHorizontalLines(false);
+			tbPaquetesParaExpedicion.setFillsViewportHeight(true);
+			tbPaquetesParaExpedicion.setName("tabPaquetesAExpedir");
+			tbPaquetesParaExpedicion.setDefaultEditor(Object.class, null); // readonly
+		}
+		return tbPaquetesParaExpedicion;
 	}
 	
 	private JButton getBtnVolverAtrasVerOrdenesTrabajo() {
@@ -674,6 +700,7 @@ public class AlmaceneroView {
 		if (pnInformesDisponibles == null) {
 			pnInformesDisponibles = new JPanel();
 			pnInformesDisponibles.setLayout(new GridLayout(0, 1, 0, 0));
+			pnInformesDisponibles.add(getBtnVolverPantallaPrincipalDesdeInformes());
 			pnInformesDisponibles.add(getBtnVisualizarInformeVentasPorUsuarioYDia());
 			pnInformesDisponibles.add(getBtnInformePorEmpresaYDia());
 			pnInformesDisponibles.add(getBtnInformeNumeroOTsEmpleadoYDia());
@@ -788,7 +815,7 @@ public class AlmaceneroView {
 	}
 	private JLabel getLblRecepcionVehiculo() {
 		if (lblRecepcionVehiculo == null) {
-			lblRecepcionVehiculo = new JLabel("Recepcion de vehículo");
+			lblRecepcionVehiculo = new JLabel("Recepción del vehículo");
 			lblRecepcionVehiculo.setFont(new Font("Arial Black", Font.PLAIN, 20));
 			lblRecepcionVehiculo.setHorizontalAlignment(SwingConstants.CENTER);
 			lblRecepcionVehiculo.setBounds(10, 10, 395, 51);
@@ -838,12 +865,114 @@ public class AlmaceneroView {
 		}
 		return tfMatículaVehiculo;
 	}
-	private JButton getBtnRecepcionarElVehiculo() {
+	public JButton getBtnRecepcionarElVehiculo() {
 		if (btnRecepcionarElVehiculo == null) {
 			btnRecepcionarElVehiculo = new JButton("Recepcionar");
 			btnRecepcionarElVehiculo.addActionListener(controller.getActionListenerRecepcionarVehiculo());
 			btnRecepcionarElVehiculo.setBounds(88, 316, 233, 51);
 		}
 		return btnRecepcionarElVehiculo;
+	}
+	private JPanel getPnExpediciónPaquetes() {
+		if (pnExpediciónPaquetes == null) {
+			pnExpediciónPaquetes = new JPanel();
+			pnExpediciónPaquetes.setLayout(null);
+			pnExpediciónPaquetes.add(getLblTituloExpedicionPaquetes());
+			pnExpediciónPaquetes.add(getScrpPaquetesParaExpedir());
+			pnExpediciónPaquetes.add(getBtnVolverPaginaPrincipalDesdeExpedicionPaquetes());
+			pnExpediciónPaquetes.add(getBtnEscanearPaqueteAExpedir());
+			pnExpediciónPaquetes.add(getLblTipoVehiculoRecepcionado());
+			pnExpediciónPaquetes.add(getLblMatriculaVehiculo());
+			pnExpediciónPaquetes.add(getLblParaElTipoDeVehiculo());
+			pnExpediciónPaquetes.add(getLblParaLaMatriculaDelVehiculo());
+			pnExpediciónPaquetes.add(getBtnFinalizarExpedicion());
+		}
+		return pnExpediciónPaquetes;
+	}
+	private JLabel getLblTituloExpedicionPaquetes() {
+		if (lblTituloExpedicionPaquetes == null) {
+			lblTituloExpedicionPaquetes = new JLabel("Expedición de paquetes");
+			lblTituloExpedicionPaquetes.setFont(new Font("Arial Black", Font.PLAIN, 20));
+			lblTituloExpedicionPaquetes.setHorizontalAlignment(SwingConstants.CENTER);
+			lblTituloExpedicionPaquetes.setBounds(10, 10, 395, 47);
+		}
+		return lblTituloExpedicionPaquetes;
+	}
+	private JScrollPane getScrpPaquetesParaExpedir() {
+		if (scrpPaquetesParaExpedir == null) {
+			scrpPaquetesParaExpedir = new JScrollPane();
+			scrpPaquetesParaExpedir.setBounds(10, 143, 395, 182);
+			scrpPaquetesParaExpedir.setViewportView(getTbPaquetesParaExpedicion());
+		}
+		return scrpPaquetesParaExpedir;
+	}
+	private JButton getBtnVolverPaginaPrincipalDesdeExpedicionPaquetes() {
+		if (btnVolverPaginaPrincipalDesdeExpedicionPaquetes == null) {
+			btnVolverPaginaPrincipalDesdeExpedicionPaquetes = new JButton("Volver");
+			btnVolverPaginaPrincipalDesdeExpedicionPaquetes.addActionListener(controller.getActionListenerVolverPaginaPrincipal());
+			btnVolverPaginaPrincipalDesdeExpedicionPaquetes.setBounds(10, 67, 122, 36);
+		}
+		return btnVolverPaginaPrincipalDesdeExpedicionPaquetes;
+	}
+	
+	public JButton getBtnEscanearPaqueteAExpedir() {
+		if (btnEscanearPaqueteAExpedir == null) {
+			btnEscanearPaqueteAExpedir = new JButton("Escanear y cargar ");
+			btnEscanearPaqueteAExpedir.setEnabled(false);
+			btnEscanearPaqueteAExpedir.addActionListener(controller.getActionPerformedEscanearUnPaqueteAExpedir());
+			btnEscanearPaqueteAExpedir.setBounds(181, 335, 224, 36);
+		}
+		return btnEscanearPaqueteAExpedir;
+	}
+	private JLabel getLblTipoVehiculoRecepcionado() {
+		if (lblTipoVehiculoRecepcionado == null) {
+			lblTipoVehiculoRecepcionado = new JLabel("Tipo de vehículo:");
+			lblTipoVehiculoRecepcionado.setBounds(180, 67, 107, 29);
+		}
+		return lblTipoVehiculoRecepcionado;
+	}
+	private JLabel getLblMatriculaVehiculo() {
+		if (lblMatriculaVehiculo == null) {
+			lblMatriculaVehiculo = new JLabel("Matrícula:");
+			lblMatriculaVehiculo.setBounds(180, 106, 107, 29);
+		}
+		return lblMatriculaVehiculo;
+	}
+	public JLabel getLblParaElTipoDeVehiculo() {
+		if (lblParaElTipoDeVehiculo == null) {
+			lblParaElTipoDeVehiculo = new JLabel("");
+			lblParaElTipoDeVehiculo.setBounds(297, 67, 108, 29);
+		}
+		return lblParaElTipoDeVehiculo;
+	}
+	public JLabel getLblParaLaMatriculaDelVehiculo() {
+		if (lblParaLaMatriculaDelVehiculo == null) {
+			lblParaLaMatriculaDelVehiculo = new JLabel("");
+			lblParaLaMatriculaDelVehiculo.setBounds(297, 106, 108, 29);
+		}
+		return lblParaLaMatriculaDelVehiculo;
+	}
+	public JButton getBtnFinalizarExpedicion() {
+		if (btnFinalizarExpedicion == null) {
+			btnFinalizarExpedicion = new JButton("Finalizar");
+			btnFinalizarExpedicion.setEnabled(false);
+			btnFinalizarExpedicion.addActionListener(controller.getActionListenerFinalizarExpedicionPaquetes());
+			btnFinalizarExpedicion.setBounds(181, 381, 224, 35);
+		}
+		return btnFinalizarExpedicion;
+	}
+	private JButton getBtnVolverPantallaPrincipalDesdeInformes() {
+		if (btnVolverPantallaPrincipalDesdeInformes == null) {
+			btnVolverPantallaPrincipalDesdeInformes = new JButton("Volver");
+			btnVolverPantallaPrincipalDesdeInformes.addActionListener(controller.getActionListenerVolverPaginaPrincipal());
+		}
+		return btnVolverPantallaPrincipalDesdeInformes;
+	}
+	private JButton getBtnVerPantallaExpedicionDePaquetes() {
+		if (btnVerPantallaExpedicionDePaquetes == null) {
+			btnVerPantallaExpedicionDePaquetes = new JButton("Expedición de paquetes");
+			btnVerPantallaExpedicionDePaquetes.addActionListener(controller.getActionListenerVerVentanaExpedicion());
+		}
+		return btnVerPantallaExpedicionDePaquetes;
 	}
 }
