@@ -2,6 +2,9 @@ package giis.model;
 
 import java.util.ArrayList;
 
+import giis.model.Almacenero.OrdenTrabajo;
+import giis.model.Almacenero.Producto;
+
 public class Paquete {
 	OrdenTrabajo orden;
 	ArrayList<Producto> productos;

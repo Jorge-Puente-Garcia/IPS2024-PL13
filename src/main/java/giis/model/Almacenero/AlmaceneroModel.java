@@ -49,7 +49,8 @@ public class AlmaceneroModel {
 	    String ordenTrabajoId = idWoList.get(0)[0].toString();
 	    String sacaProductosPedido = "SELECT pp.producto_id, pp.cantidad FROM Pedido ped JOIN ProductosPedido pp ON ped.id = pp.pedido_id WHERE ped.id = ?;";
 	    String insertaOrdenTrabajoProducto = "INSERT INTO OrdenTrabajoProducto (orden_trabajo_id, producto_id, cantidad) VALUES (?, ?, ?);";
-
+	    String insertaOrdenTrabajoProductoRecogidos = "INSERT INTO OrdenTrabajoProductoRecogido (orden_trabajo_id, producto_id, cantidad) VALUES (?, ?, ?);";
+	    String insertaPaqueteProducto = "INSERT INTO OrdenTrabajoProductoRecogido (orden_trabajo_id, producto_id, cantidad) VALUES (?, ?, ?);";
 	    int cargaActual = 0; // Carga actual de la orden de trabajo
 
 	    for (PedidoARecogerRecord par : pars) {
@@ -64,7 +65,10 @@ public class AlmaceneroModel {
 	            while (cantidad > 0) {
 	                int lote = Math.min(cantidad, 5 - cargaActual); // Tamaño del lote restante para completar 5
 	                db.executeUpdate(insertaOrdenTrabajoProducto, ordenTrabajoId, productoId, lote);
-
+	                //AñadidoParaPermitirLaRecolección
+	                db.executeUpdate(insertaOrdenTrabajoProductoRecogidos, ordenTrabajoId, productoId, 0);
+	                //AñadidoParaPermitiEmpaquetado
+	                db.executeUpdate(insertaPaqueteProducto, ordenTrabajoId, productoId, 0);
 	                // Actualiza el contador de carga actual y la cantidad restante
 	                cargaActual += lote;
 	                cantidad -= lote;
@@ -113,9 +117,11 @@ public class AlmaceneroModel {
 	}
 
 	public String creaAlbaran(OrdenTrabajoRecord otr) {
-		String sacarInfoParaElAlbaran = "SELECT Producto.datosBasicos AS nombre, Producto.referencia, OrdenTrabajoProducto.cantidad "
-				+ "FROM OrdenTrabajo JOIN OrdenTrabajoProducto ON OrdenTrabajo.id = OrdenTrabajoProducto.orden_trabajo_id "
-				+ "JOIN Producto ON OrdenTrabajoProducto.producto_id = Producto.id WHERE OrdenTrabajo.id =?;";
+		//Mirar porque se va a generar mal¡¡¡¡
+		//TODO
+		String sacarInfoParaElAlbaran = "SELECT Producto.datosBasicos AS nombre, Producto.referencia, PaqueteProducto.cantidad "
+				+ "FROM OrdenTrabajo JOIN PaqueteProducto ON OrdenTrabajo.id = PaqueteProducto.orden_trabajo_id "
+				+ "JOIN Producto ON PaqueteProducto.producto_id = Producto.id WHERE OrdenTrabajo.id =?;";
 
 		List<Object[]> lista = db.executeQueryArray(sacarInfoParaElAlbaran,otr.getId()); //CAMBIO
 		
@@ -166,7 +172,6 @@ public class AlmaceneroModel {
 	}
 	
 	public List<ElementoARecogerDto> getElementosARecogerDeLaOrdenDeTrabajo(OrdenTrabajoRecord ordenTrabajoRecord) {
-		System.out.println(ordenTrabajoRecord.getId());
 		String sql = "SELECT Producto.id AS codigoBarras,Producto.nombre, OrdenTrabajoProducto.cantidad AS cantidad, Localizacion.pasillo, Localizacion.posicion, "
 				+ "Localizacion.estanteria , Localizacion.altura FROM OrdenTrabajoProducto JOIN Producto ON OrdenTrabajoProducto.producto_id = Producto.id JOIN Localizacion"
 				+ " ON Producto.localizacion_id = Localizacion.id WHERE OrdenTrabajoProducto.orden_trabajo_id = ? ORDER BY Localizacion.pasillo ASC, "
@@ -211,10 +216,10 @@ public class AlmaceneroModel {
 
 	public List<ElementoARecogerDto> getElementosAEmpaquetarDeLaOrdenDeTrabajo(
 			OrdenTrabajoRecord ordenTrabajoRecord) {
-		System.out.println(ordenTrabajoRecord.getId());
-		String sql = "SELECT Producto.id AS codigoBarras,Producto.nombre, OrdenTrabajoProducto.cantidad AS cantidad, Localizacion.pasillo, Localizacion.posicion, "
-				+ "Localizacion.estanteria , Localizacion.altura FROM OrdenTrabajoProducto JOIN Producto ON OrdenTrabajoProducto.producto_id = Producto.id JOIN Localizacion"
-				+ " ON Producto.localizacion_id = Localizacion.id WHERE OrdenTrabajoProducto.orden_trabajo_id = ?  ORDER BY Localizacion.pasillo ASC, "
+		
+		String sql = "SELECT Producto.id AS codigoBarras,Producto.nombre, OrdenTrabajoProductoRecogido.cantidad AS cantidad, Localizacion.pasillo, Localizacion.posicion, "
+				+ "Localizacion.estanteria , Localizacion.altura FROM OrdenTrabajoProductoRecogido JOIN Producto ON OrdenTrabajoProductoRecogido.producto_id = Producto.id JOIN Localizacion"
+				+ " ON Producto.localizacion_id = Localizacion.id WHERE OrdenTrabajoProductoRecogido.orden_trabajo_id = ?  ORDER BY Localizacion.pasillo ASC, "
 				+ "Localizacion.posicion ASC, CASE WHEN Localizacion.estanteria = 'Izquierda' THEN 0 ELSE 1 END;";
 		List<ElementoARecogerDto> li=db.executeQueryPojo(ElementoARecogerDto.class, sql,ordenTrabajoRecord.getId());
 		return li;
@@ -244,6 +249,43 @@ public class AlmaceneroModel {
 		String marcaComoEmpaquetada="UPDATE OrdenTrabajo SET estado='En empaquetado' WHERE id=?;";
 		db.executeUpdate(marcaComoEmpaquetada, ordenTrabajoEnEmpaquetado.getId());
 	}
+
+	public void actualizaCantidadYaRecogidaDeUnProducto(OrdenTrabajoRecord ordenTrabajoEnRecogida,
+			ElementoARecogerDto elemento, int recogido) {
+		String cambiarCantidadARecoger="UPDATE OrdenTrabajoProducto SET cantidad=cantidad-? WHERE orden_trabajo_id=? AND producto_id=?;";
+		db.executeUpdate(cambiarCantidadARecoger,recogido, ordenTrabajoEnRecogida.getId(), elemento.getCodigoBarras());
+		String cambiarCantidadRecogidos="UPDATE OrdenTrabajoProductoRecogido SET cantidad=cantidad+? WHERE orden_trabajo_id=? AND producto_id=?;";
+		db.executeUpdate(cambiarCantidadRecogidos,recogido, ordenTrabajoEnRecogida.getId(), elemento.getCodigoBarras());
+		
+	}
+	public void actualizaCantidadYaEmpaquetadaDeUnProducto(OrdenTrabajoRecord ordenTrabajoEnEmpaquetado,
+			ElementoARecogerDto elemento, int recogido) {
+		String cambiarCantidadARecoger="UPDATE OrdenTrabajoProductoRecogido SET cantidad=cantidad-? WHERE orden_trabajo_id=? AND producto_id=?;";
+		db.executeUpdate(cambiarCantidadARecoger,recogido, ordenTrabajoEnEmpaquetado.getId(), elemento.getCodigoBarras());
+		String cambiarCantidadRecogidos="UPDATE PaqueteProducto SET cantidad=cantidad+? WHERE orden_trabajo_id=? AND producto_id=?;";
+		db.executeUpdate(cambiarCantidadRecogidos,recogido, ordenTrabajoEnEmpaquetado.getId(), elemento.getCodigoBarras());
+		
+	}
+
+	public void eliminaElOrdenTrabajoProductoYActualizaOrdenTrabajoProductoRecogido(
+			OrdenTrabajoRecord ordenTrabajoEnRecogida, ElementoARecogerDto elemento, int recogido) {
+		String eliminaDeOTProducto="DELETE FROM OrdenTrabajoProducto WHERE orden_trabajo_id = ? AND producto_id = ?;";
+		db.executeUpdate(eliminaDeOTProducto, ordenTrabajoEnRecogida.getId(), elemento.getCodigoBarras());
+		String cambiarCantidadRecogidos="UPDATE OrdenTrabajoProductoRecogido SET cantidad=cantidad+? WHERE orden_trabajo_id=? AND producto_id=?;";
+		db.executeUpdate(cambiarCantidadRecogidos,recogido, ordenTrabajoEnRecogida.getId(), elemento.getCodigoBarras());
+		
+	}
+
+	public void eliminaElOrdenTrabajoProductoYActualizaPaqueteProducto(OrdenTrabajoRecord ordenTrabajoEnEmpaquetado,
+			ElementoARecogerDto elemento, int recogido) {
+		String eliminaDeOTProducto="DELETE FROM OrdenTrabajoProductoRecogido WHERE orden_trabajo_id = ? AND producto_id = ?;";
+		db.executeUpdate(eliminaDeOTProducto, ordenTrabajoEnEmpaquetado.getId(), elemento.getCodigoBarras());
+		String cambiarCantidadRecogidos="UPDATE PaqueteProducto SET cantidad=cantidad+? WHERE orden_trabajo_id=? AND producto_id=?;";
+		db.executeUpdate(cambiarCantidadRecogidos,recogido, ordenTrabajoEnEmpaquetado.getId(), elemento.getCodigoBarras());
+		
+	}
+
+	
 
 	
 

@@ -1,7 +1,5 @@
 package giis.model.Almacenero;
 
-import giis.model.Estado;
-
 public class PedidoARecogerRecord {
 
 	private String id;

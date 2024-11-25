@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import giis.model.OrdenTrabajo;
-import giis.model.Producto;
-
 public class Almacenero {
     private String nombre;
     private String apellido;

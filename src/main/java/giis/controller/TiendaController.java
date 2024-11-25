@@ -6,10 +6,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import giis.model.Cliente;
 import giis.model.Tienda.CarritoModel;
 import giis.model.Tienda.CarritoProductos;
 import giis.model.Tienda.Categorias;
+import giis.model.Tienda.Cliente;
 import giis.model.Tienda.PedidoCarrito;
 import giis.model.Tienda.ProductosDto;
 import giis.model.Tienda.TiendaModel;
