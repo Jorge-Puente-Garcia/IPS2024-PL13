@@ -15,8 +15,10 @@ import javax.swing.table.TableModel;
 import giis.model.Almacenero.AlmaceneroModel;
 import giis.model.Almacenero.ElementoARecogerDto;
 import giis.model.Almacenero.Estado;
+import giis.model.Almacenero.FilaInformeVentasUsuarioDia;
 import giis.model.Almacenero.OrdenTrabajoDto;
 import giis.model.Almacenero.OrdenTrabajoRecord;
+import giis.model.Almacenero.PaqueteAExpedirDto;
 import giis.model.Almacenero.PedidoARecogerDto;
 import giis.model.Almacenero.PedidoARecogerRecord;
 import giis.ui.AlmaceneroView;
@@ -41,6 +43,7 @@ public class AlmaceneroController {
 	private OrdenTrabajoRecord ordenTrabajoEnEmpaquetado;
 	private int codigoBarrasCaja;
 	private int almaceneroId;
+	private String tipoVehiculo="";
 	
 	
 	public AlmaceneroController(AlmaceneroView almaceneroView, Database db) {
@@ -73,6 +76,12 @@ public class AlmaceneroController {
 		ordenTrabajoEnEmpaquetado=pedidosAPendientesEmpaquetado.get(vista.getTablaOrdenesTrabajoPendientesEmpaquetado().getSelectedRow());
 		this.elementosAEmpaquetar =model.getElementosAEmpaquetarDeLaOrdenDeTrabajo(ordenTrabajoEnEmpaquetado);
 		return elementosAEmpaquetar;
+	}
+	private List<FilaInformeVentasUsuarioDia> getImportesVestasPorTipoUsuarioYDía() {
+		return model.getInformeVentasPorUsuarioYDia();
+	}
+	private List<PaqueteAExpedirDto> getPaquetesSegunTipo(String tipo) {
+		return model.getPaquetesSegunElTipo(tipo);
 	}
 	
 	
@@ -255,6 +264,19 @@ public class AlmaceneroController {
 		return tmodel;
 	}
 	
+	protected TableModel getTableModelInformeVentasUsuarioDia() {
+		TableModel tmodel =SwingUtil.getTableModelFromPojos(getImportesVestasPorTipoUsuarioYDía(),
+				new String[] { "dia, particular", "empresa, total de los dias"});
+		return null;
+	}
+	
+	protected TableModel getTableModelPaquetesSegunTipoDeVehiculo(String tipo) {
+		TableModel tmodel =SwingUtil.getTableModelFromPojos(getPaquetesSegunTipo(tipo),
+				new String[] { "tipo", "destinatario","codigoBarras"});
+		return tmodel;
+	}
+	
+	
 	public ActionListener getActionListenerVolverAtrasHaciaOrdenesTrabajo() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -424,7 +446,9 @@ public class AlmaceneroController {
 								//Se le resta la cantidad que ya se ha recogido
 								int recogido=(int)vista.getSpnCantidadElementosAEmpaquetar().getValue();
 								if(elemento.cantidad==recogido) {
-									model.empaquetaProducto(elemento,ordenTrabajoEnEmpaquetado,codigoBarrasCaja);
+									if(elementosAEmpaquetar.size()==1) {
+										model.empaquetaProducto(ordenTrabajoEnEmpaquetado,codigoBarrasCaja);
+									}
 									model.eliminaElOrdenTrabajoProductoYActualizaPaqueteProducto(ordenTrabajoEnEmpaquetado,elemento,recogido);
 								}else{
 									elemento.cantidad-=recogido;
@@ -449,6 +473,30 @@ public class AlmaceneroController {
 		};
 	}
 	
+	public ActionListener getActionPerformedEscanearUnPaqueteAExpedir() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String codigoBarras ="";
+				codigoBarras+=JOptionPane
+						.showInputDialog("Escanea el codigo de barras: ");
+				
+				if(codigoBarras.isBlank()) {
+					JOptionPane.showMessageDialog(null, "No has escaneado un código correcto");
+				}else if(!isValidParaElTipoExpedicion(codigoBarras)) {
+					JOptionPane.showMessageDialog(null, "Ese código de barras pertenece a un paquete que no es del tipo adecuado para el vehículo");
+				}else {
+					model.eliminaPaqueteYaEmpaquetado(codigoBarras);
+					TableModel tmodel = getTableModelPaquetesSegunTipoDeVehiculo(tipoVehiculo);
+					vista.getTbPaquetesParaExpedicion().setModel(tmodel);
+					SwingUtil.autoAdjustColumns(vista.getTbPaquetesParaExpedicion());
+				}
+			}
+		};
+	}
+	
+	protected boolean isValidParaElTipoExpedicion(String codigoBarras) {
+		return model.esUnTipoDePaqueteValido(codigoBarras);
+	}
 	private boolean isAValidCodeOfWO(String codigoBarras,List<ElementoARecogerDto> elementosARecoger) {
 		for(ElementoARecogerDto elemento:elementosARecoger) {
 			if(String.valueOf(elemento.getCodigoBarras()).equals(codigoBarras)) {
@@ -536,6 +584,97 @@ public class AlmaceneroController {
 			}
 		};
 	}
+	public ActionListener getActionListenerVisualizarPantallaInformes() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnInformesDisponibles");
+			}
+		};
+	}
+	public ActionListener getActionListnerMostrarInformeVentasUsuariDia() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TableModel tmodel = getTableModelInformeVentasUsuarioDia();
+				vista.getTbInfoInformes().setModel(tmodel);
+				SwingUtil.autoAdjustColumns(vista.getTbInfoInformes());
+				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnInfoInformes");
+			}
+		};
+	}
+	public ActionListener getActionListenerEntrarVentanaDeRecivirVehiculo() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnRecepcionVehiculo");
+			}
+		};
+	}
+	public ActionListener getActionListenerRecepcionarVehiculo() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String matricula= vista.getTfMatículaVehiculo().getText();
+				if(matricula.isBlank()) {
+					JOptionPane.showMessageDialog(null, "La matrícula no puede estar vacía");
+				}else {
+					String tipo="";
+					if(vista.getRdbtnRegional().isSelected()) {
+						tipo="Regional";
+					}else if(vista.getRdbtnNacional().isSelected()) {
+						tipo="Nacional";
+					}
+					model.reciveVehiculo(matricula,tipo);
+					//Tiene que marcar las etiquetas del tipo de vehículo y de la matrícula
+					vista.getLblParaElTipoDeVehiculo().setText(tipo);
+					vista.getLblParaLaMatriculaDelVehiculo().setText(matricula);
+					//Se pondra el modelo de tabla correspondiente
+					tipoVehiculo=tipo;
+					TableModel tmodel = getTableModelPaquetesSegunTipoDeVehiculo(tipo);
+					vista.getTbPaquetesParaExpedicion().setModel(tmodel);
+					SwingUtil.autoAdjustColumns(vista.getTbPaquetesParaExpedicion());
+					//Se lleva automaticamente a la pantalla de lanzar los paquetes
+					CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+					cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnExpedicionPaquetes");
+					//Se bloquea la recepción de otros vehiculos por parte de este almacenero hasta que no acabe con el otro
+					vista.getBtnRecepcionarElVehiculo().setEnabled(false);
+					vista.getBtnFinalizarExpedicion().setEnabled(true);
+					vista.getBtnEscanearPaqueteAExpedir().setEnabled(true);
+				}
+				
+			}
+		};
+	}
+	public ActionListener getActionListenerVerVentanaExpedicion() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnExpedicionPaquetes");
+			}
+		};
+	}
+	public ActionListener getActionListenerFinalizarExpedicionPaquetes() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//Hay que quitar el vehículo y vaciar la tabla.
+				model.eliminaElVehiculo(tipoVehiculo);
+				tipoVehiculo="";
+				TableModel tmodel = getTableModelPaquetesSegunTipoDeVehiculo(tipoVehiculo);
+				vista.getTbPaquetesParaExpedicion().setModel(tmodel);
+				SwingUtil.autoAdjustColumns(vista.getTbPaquetesParaExpedicion());
+				//Hay que poner enabled el boton de recepcionar
+				vista.getBtnRecepcionarElVehiculo().setEnabled(true);
+				vista.getBtnFinalizarExpedicion().setEnabled(false);
+				vista.getBtnEscanearPaqueteAExpedir().setEnabled(false);
+				//Tiene que marcar las etiquetas como vacias
+				vista.getLblParaElTipoDeVehiculo().setText("");
+				vista.getLblParaLaMatriculaDelVehiculo().setText("");
+			}
+		};
+	}
+	
+	
+	
 	
 	
 	

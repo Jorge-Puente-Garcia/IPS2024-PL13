@@ -28,6 +28,9 @@ import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
+import javax.swing.JTextField;
 
 public class AlmaceneroView {
 
@@ -86,6 +89,41 @@ public class AlmaceneroView {
 	private JLabel lblPedidosDisponiblesParaCrearOts;
 	private JLabel lblVerOTsSeleccionadas;
 	private JLabel lblOTsPendientesDeEmpaquetado;
+	private JButton btnVisualizarInformesDisponibles;
+	private JPanel pnInformesDisponibles;
+	private JButton btnVisualizarInformeVentasPorUsuarioYDia;
+	private JButton btnInformePorEmpresaYDia;
+	private JButton btnInformeNumeroOTsEmpleadoYDia;
+	private JButton btnInformeCantidaProductosEmpleadoYDia;
+	private JPanel pnInformacionInformes;
+	private JButton btnVolverALaPantallaDeInformes;
+	private JScrollPane scrpInfoInformes;
+	private JLabel lblTituloPanelMostrarInfoInformes;
+	private JTable tbInfoInformes;
+	private JButton btnRecepcionVehiculo;
+	private JPanel pnRecepcionVehiculo;
+	private JButton btnVolverPaginaPrincipalDesdeRecepcionVehiculo;
+	private JLabel lblRecepcionVehiculo;
+	private JLabel lblMatriculaVehículo;
+	private JLabel lblTipoDelVehiculo;
+	private JRadioButton rdbtnRegional;
+	private JRadioButton rdbtnNacional;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private JTextField tfMatículaVehiculo;
+	private JButton btnRecepcionarElVehiculo;
+	private JPanel pnExpediciónPaquetes;
+	private JLabel lblTituloExpedicionPaquetes;
+	private JScrollPane scrpPaquetesParaExpedir;
+	private JButton btnVolverPaginaPrincipalDesdeExpedicionPaquetes;
+	private JTable tbPaquetesParaExpedicion;
+	private JButton btnEscanearPaqueteAExpedir;
+	private JLabel lblTipoVehiculoRecepcionado;
+	private JLabel lblMatriculaVehiculo;
+	private JLabel lblParaElTipoDeVehiculo;
+	private JLabel lblParaLaMatriculaDelVehiculo;
+	private JButton btnFinalizarExpedicion;
+	private JButton btnVolverPantallaPrincipalDesdeInformes;
+	private JButton btnVerPantallaExpedicionDePaquetes;
 
 	/**
 	 * Create the application.
@@ -117,6 +155,10 @@ public class AlmaceneroView {
 		frameTerminalPortatil.getContentPane().add(getPnRecogida(), "pnRecogida");
 		frameTerminalPortatil.getContentPane().add(getPnVisualizarOrdenesPendientesEmpaquetado(), "pnEmpaquetado");
 		frameTerminalPortatil.getContentPane().add(getPnEmpaquetadoOrden(), "pnEmpaquetadoProductos");
+		frameTerminalPortatil.getContentPane().add(getPnInformesDisponibles(), "pnInformesDisponibles");
+		frameTerminalPortatil.getContentPane().add(getPnInformacionInformes(), "pnInfoInformes");
+		frameTerminalPortatil.getContentPane().add(getPnRecepcionVehiculo(), "pnRecepcionVehiculo");
+		frameTerminalPortatil.getContentPane().add(getPnExpediciónPaquetes(), "pnExpedicionPaquetes");
 		frameTerminalPortatil.setLocationRelativeTo(null);
 	}
 
@@ -130,6 +172,9 @@ public class AlmaceneroView {
 			pnPaginaPrincipal.add(getBtnEnProcesoRecogida());
 			pnPaginaPrincipal.add(getBtnVerOrdenesParaEmpaquetar());
 			pnPaginaPrincipal.add(getBtnNewButton_1());
+			pnPaginaPrincipal.add(getBtnRecepcionVehiculo());
+			pnPaginaPrincipal.add(getBtnVerPantallaExpedicionDePaquetes());
+			pnPaginaPrincipal.add(getBtnVisualizarInformesDisponibles());
 		}
 		return pnPaginaPrincipal;
 	}
@@ -304,6 +349,17 @@ public class AlmaceneroView {
 			tablaElementosProcesoEmpaquetadoDeUnaOt.setDefaultEditor(Object.class, null); // readonly
 		}
 		return tablaElementosProcesoEmpaquetadoDeUnaOt;
+	}
+	
+	public JTable getTbPaquetesParaExpedicion() {
+		if (tbPaquetesParaExpedicion == null) {
+			tbPaquetesParaExpedicion = new JTable();
+			tbPaquetesParaExpedicion.setShowHorizontalLines(false);
+			tbPaquetesParaExpedicion.setFillsViewportHeight(true);
+			tbPaquetesParaExpedicion.setName("tabPaquetesAExpedir");
+			tbPaquetesParaExpedicion.setDefaultEditor(Object.class, null); // readonly
+		}
+		return tbPaquetesParaExpedicion;
 	}
 	
 	private JButton getBtnVolverAtrasVerOrdenesTrabajo() {
@@ -632,5 +688,291 @@ public class AlmaceneroView {
 			lblOTsPendientesDeEmpaquetado.setBounds(10, 10, 395, 52);
 		}
 		return lblOTsPendientesDeEmpaquetado;
+	}
+	private JButton getBtnVisualizarInformesDisponibles() {
+		if (btnVisualizarInformesDisponibles == null) {
+			btnVisualizarInformesDisponibles = new JButton("Informes ");
+			btnVisualizarInformesDisponibles.addActionListener(controller.getActionListenerVisualizarPantallaInformes());
+		}
+		return btnVisualizarInformesDisponibles;
+	}
+	private JPanel getPnInformesDisponibles() {
+		if (pnInformesDisponibles == null) {
+			pnInformesDisponibles = new JPanel();
+			pnInformesDisponibles.setLayout(new GridLayout(0, 1, 0, 0));
+			pnInformesDisponibles.add(getBtnVolverPantallaPrincipalDesdeInformes());
+			pnInformesDisponibles.add(getBtnVisualizarInformeVentasPorUsuarioYDia());
+			pnInformesDisponibles.add(getBtnInformePorEmpresaYDia());
+			pnInformesDisponibles.add(getBtnInformeNumeroOTsEmpleadoYDia());
+			pnInformesDisponibles.add(getBtnInformeCantidaProductosEmpleadoYDia());
+		}
+		return pnInformesDisponibles;
+	}
+	private JButton getBtnVisualizarInformeVentasPorUsuarioYDia() {
+		if (btnVisualizarInformeVentasPorUsuarioYDia == null) {
+			btnVisualizarInformeVentasPorUsuarioYDia = new JButton("Informe de ventas porusuario y dia");
+			btnVisualizarInformeVentasPorUsuarioYDia.addActionListener(controller.getActionListnerMostrarInformeVentasUsuariDia());
+		}
+		return btnVisualizarInformeVentasPorUsuarioYDia;
+	}
+	private JButton getBtnInformePorEmpresaYDia() {
+		if (btnInformePorEmpresaYDia == null) {
+			btnInformePorEmpresaYDia = new JButton("Informe de ventas por empresa y día");
+			btnInformePorEmpresaYDia.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
+		}
+		return btnInformePorEmpresaYDia;
+	}
+	private JButton getBtnInformeNumeroOTsEmpleadoYDia() {
+		if (btnInformeNumeroOTsEmpleadoYDia == null) {
+			btnInformeNumeroOTsEmpleadoYDia = new JButton("Informe de OT's recogidas por empleado y día");
+		}
+		return btnInformeNumeroOTsEmpleadoYDia;
+	}
+	private JButton getBtnInformeCantidaProductosEmpleadoYDia() {
+		if (btnInformeCantidaProductosEmpleadoYDia == null) {
+			btnInformeCantidaProductosEmpleadoYDia = new JButton("Informe de productos recogidos por empleado y día");
+		}
+		return btnInformeCantidaProductosEmpleadoYDia;
+	}
+	private JPanel getPnInformacionInformes() {
+		if (pnInformacionInformes == null) {
+			pnInformacionInformes = new JPanel();
+			pnInformacionInformes.setLayout(null);
+			pnInformacionInformes.add(getBtnVolverALaPantallaDeInformes());
+			pnInformacionInformes.add(getScrpInfoInformes());
+			pnInformacionInformes.add(getLblTituloPanelMostrarInfoInformes());
+		}
+		return pnInformacionInformes;
+	}
+	private JButton getBtnVolverALaPantallaDeInformes() {
+		if (btnVolverALaPantallaDeInformes == null) {
+			btnVolverALaPantallaDeInformes = new JButton("Volver");
+			btnVolverALaPantallaDeInformes.setFont(new Font("Tahoma", Font.PLAIN, 20));
+			btnVolverALaPantallaDeInformes.setBounds(86, 370, 241, 46);
+		}
+		return btnVolverALaPantallaDeInformes;
+	}
+	private JScrollPane getScrpInfoInformes() {
+		if (scrpInfoInformes == null) {
+			scrpInfoInformes = new JScrollPane();
+			scrpInfoInformes.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+			scrpInfoInformes.setBounds(10, 86, 395, 274);
+			scrpInfoInformes.setViewportView(getTbInfoInformes());
+		}
+		return scrpInfoInformes;
+	}
+	private JLabel getLblTituloPanelMostrarInfoInformes() {
+		if (lblTituloPanelMostrarInfoInformes == null) {
+			lblTituloPanelMostrarInfoInformes = new JLabel("New label");
+			lblTituloPanelMostrarInfoInformes.setHorizontalAlignment(SwingConstants.CENTER);
+			lblTituloPanelMostrarInfoInformes.setFont(new Font("Arial Black", Font.PLAIN, 20));
+			lblTituloPanelMostrarInfoInformes.setBounds(10, 10, 395, 61);
+		}
+		return lblTituloPanelMostrarInfoInformes;
+	}
+	public JTable getTbInfoInformes() {
+		if (tbInfoInformes == null) {
+			tbInfoInformes = new JTable();
+			tbInfoInformes.setShowHorizontalLines(false);
+			tbInfoInformes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tbInfoInformes.setName("tabElementosEnProcesoEmpaquetado");
+			tbInfoInformes.setFillsViewportHeight(true);
+		}
+		return tbInfoInformes;
+	}
+	private JButton getBtnRecepcionVehiculo() {
+		if (btnRecepcionVehiculo == null) {
+			btnRecepcionVehiculo = new JButton("Recepción de vehículo");
+			btnRecepcionVehiculo.addActionListener(controller.getActionListenerEntrarVentanaDeRecivirVehiculo());
+		}
+		return btnRecepcionVehiculo;
+	}
+	private JPanel getPnRecepcionVehiculo() {
+		if (pnRecepcionVehiculo == null) {
+			pnRecepcionVehiculo = new JPanel();
+			pnRecepcionVehiculo.setLayout(null);
+			pnRecepcionVehiculo.add(getBtnVolverPaginaPrincipalDesdeRecepcionVehiculo());
+			pnRecepcionVehiculo.add(getLblRecepcionVehiculo());
+			pnRecepcionVehiculo.add(getLblMatriculaVehículo());
+			pnRecepcionVehiculo.add(getLblTipoDelVehiculo());
+			pnRecepcionVehiculo.add(getRdbtnRegional());
+			pnRecepcionVehiculo.add(getRdbtnNacional());
+			pnRecepcionVehiculo.add(getTfMatículaVehiculo());
+			pnRecepcionVehiculo.add(getBtnRecepcionarElVehiculo());
+		}
+		return pnRecepcionVehiculo;
+	}
+	private JButton getBtnVolverPaginaPrincipalDesdeRecepcionVehiculo() {
+		if (btnVolverPaginaPrincipalDesdeRecepcionVehiculo == null) {
+			btnVolverPaginaPrincipalDesdeRecepcionVehiculo = new JButton("Volver");
+			btnVolverPaginaPrincipalDesdeRecepcionVehiculo.addActionListener(controller.getActionListenerVolverPaginaPrincipal());
+			btnVolverPaginaPrincipalDesdeRecepcionVehiculo.setBounds(10, 76, 116, 34);
+		}
+		return btnVolverPaginaPrincipalDesdeRecepcionVehiculo;
+	}
+	private JLabel getLblRecepcionVehiculo() {
+		if (lblRecepcionVehiculo == null) {
+			lblRecepcionVehiculo = new JLabel("Recepción del vehículo");
+			lblRecepcionVehiculo.setFont(new Font("Arial Black", Font.PLAIN, 20));
+			lblRecepcionVehiculo.setHorizontalAlignment(SwingConstants.CENTER);
+			lblRecepcionVehiculo.setBounds(10, 10, 395, 51);
+		}
+		return lblRecepcionVehiculo;
+	}
+	private JLabel getLblMatriculaVehículo() {
+		if (lblMatriculaVehículo == null) {
+			lblMatriculaVehículo = new JLabel("Matrícula del vehículo:");
+			lblMatriculaVehículo.setFont(new Font("Tahoma", Font.PLAIN, 12));
+			lblMatriculaVehículo.setBounds(10, 190, 125, 34);
+		}
+		return lblMatriculaVehículo;
+	}
+	private JLabel getLblTipoDelVehiculo() {
+		if (lblTipoDelVehiculo == null) {
+			lblTipoDelVehiculo = new JLabel("Tipo del vehículo:");
+			lblTipoDelVehiculo.setFont(new Font("Tahoma", Font.PLAIN, 12));
+			lblTipoDelVehiculo.setBounds(10, 257, 125, 34);
+		}
+		return lblTipoDelVehiculo;
+	}
+	public JRadioButton getRdbtnRegional() {
+		if (rdbtnRegional == null) {
+			rdbtnRegional = new JRadioButton("Regional");
+			rdbtnRegional.setFont(new Font("Tahoma", Font.PLAIN, 12));
+			buttonGroup.add(rdbtnRegional);
+			rdbtnRegional.setSelected(true);
+			rdbtnRegional.setBounds(139, 261, 132, 27);
+		}
+		return rdbtnRegional;
+	}
+	public JRadioButton getRdbtnNacional() {
+		if (rdbtnNacional == null) {
+			rdbtnNacional = new JRadioButton("Nacional");
+			rdbtnNacional.setFont(new Font("Tahoma", Font.PLAIN, 12));
+			buttonGroup.add(rdbtnNacional);
+			rdbtnNacional.setBounds(273, 257, 132, 34);
+		}
+		return rdbtnNacional;
+	}
+	public JTextField getTfMatículaVehiculo() {
+		if (tfMatículaVehiculo == null) {
+			tfMatículaVehiculo = new JTextField();
+			tfMatículaVehiculo.setBounds(145, 190, 260, 34);
+			tfMatículaVehiculo.setColumns(10);
+		}
+		return tfMatículaVehiculo;
+	}
+	public JButton getBtnRecepcionarElVehiculo() {
+		if (btnRecepcionarElVehiculo == null) {
+			btnRecepcionarElVehiculo = new JButton("Recepcionar");
+			btnRecepcionarElVehiculo.addActionListener(controller.getActionListenerRecepcionarVehiculo());
+			btnRecepcionarElVehiculo.setBounds(88, 316, 233, 51);
+		}
+		return btnRecepcionarElVehiculo;
+	}
+	private JPanel getPnExpediciónPaquetes() {
+		if (pnExpediciónPaquetes == null) {
+			pnExpediciónPaquetes = new JPanel();
+			pnExpediciónPaquetes.setLayout(null);
+			pnExpediciónPaquetes.add(getLblTituloExpedicionPaquetes());
+			pnExpediciónPaquetes.add(getScrpPaquetesParaExpedir());
+			pnExpediciónPaquetes.add(getBtnVolverPaginaPrincipalDesdeExpedicionPaquetes());
+			pnExpediciónPaquetes.add(getBtnEscanearPaqueteAExpedir());
+			pnExpediciónPaquetes.add(getLblTipoVehiculoRecepcionado());
+			pnExpediciónPaquetes.add(getLblMatriculaVehiculo());
+			pnExpediciónPaquetes.add(getLblParaElTipoDeVehiculo());
+			pnExpediciónPaquetes.add(getLblParaLaMatriculaDelVehiculo());
+			pnExpediciónPaquetes.add(getBtnFinalizarExpedicion());
+		}
+		return pnExpediciónPaquetes;
+	}
+	private JLabel getLblTituloExpedicionPaquetes() {
+		if (lblTituloExpedicionPaquetes == null) {
+			lblTituloExpedicionPaquetes = new JLabel("Expedición de paquetes");
+			lblTituloExpedicionPaquetes.setFont(new Font("Arial Black", Font.PLAIN, 20));
+			lblTituloExpedicionPaquetes.setHorizontalAlignment(SwingConstants.CENTER);
+			lblTituloExpedicionPaquetes.setBounds(10, 10, 395, 47);
+		}
+		return lblTituloExpedicionPaquetes;
+	}
+	private JScrollPane getScrpPaquetesParaExpedir() {
+		if (scrpPaquetesParaExpedir == null) {
+			scrpPaquetesParaExpedir = new JScrollPane();
+			scrpPaquetesParaExpedir.setBounds(10, 143, 395, 182);
+			scrpPaquetesParaExpedir.setViewportView(getTbPaquetesParaExpedicion());
+		}
+		return scrpPaquetesParaExpedir;
+	}
+	private JButton getBtnVolverPaginaPrincipalDesdeExpedicionPaquetes() {
+		if (btnVolverPaginaPrincipalDesdeExpedicionPaquetes == null) {
+			btnVolverPaginaPrincipalDesdeExpedicionPaquetes = new JButton("Volver");
+			btnVolverPaginaPrincipalDesdeExpedicionPaquetes.addActionListener(controller.getActionListenerVolverPaginaPrincipal());
+			btnVolverPaginaPrincipalDesdeExpedicionPaquetes.setBounds(10, 67, 122, 36);
+		}
+		return btnVolverPaginaPrincipalDesdeExpedicionPaquetes;
+	}
+	
+	public JButton getBtnEscanearPaqueteAExpedir() {
+		if (btnEscanearPaqueteAExpedir == null) {
+			btnEscanearPaqueteAExpedir = new JButton("Escanear y cargar ");
+			btnEscanearPaqueteAExpedir.setEnabled(false);
+			btnEscanearPaqueteAExpedir.addActionListener(controller.getActionPerformedEscanearUnPaqueteAExpedir());
+			btnEscanearPaqueteAExpedir.setBounds(181, 335, 224, 36);
+		}
+		return btnEscanearPaqueteAExpedir;
+	}
+	private JLabel getLblTipoVehiculoRecepcionado() {
+		if (lblTipoVehiculoRecepcionado == null) {
+			lblTipoVehiculoRecepcionado = new JLabel("Tipo de vehículo:");
+			lblTipoVehiculoRecepcionado.setBounds(180, 67, 107, 29);
+		}
+		return lblTipoVehiculoRecepcionado;
+	}
+	private JLabel getLblMatriculaVehiculo() {
+		if (lblMatriculaVehiculo == null) {
+			lblMatriculaVehiculo = new JLabel("Matrícula:");
+			lblMatriculaVehiculo.setBounds(180, 106, 107, 29);
+		}
+		return lblMatriculaVehiculo;
+	}
+	public JLabel getLblParaElTipoDeVehiculo() {
+		if (lblParaElTipoDeVehiculo == null) {
+			lblParaElTipoDeVehiculo = new JLabel("");
+			lblParaElTipoDeVehiculo.setBounds(297, 67, 108, 29);
+		}
+		return lblParaElTipoDeVehiculo;
+	}
+	public JLabel getLblParaLaMatriculaDelVehiculo() {
+		if (lblParaLaMatriculaDelVehiculo == null) {
+			lblParaLaMatriculaDelVehiculo = new JLabel("");
+			lblParaLaMatriculaDelVehiculo.setBounds(297, 106, 108, 29);
+		}
+		return lblParaLaMatriculaDelVehiculo;
+	}
+	public JButton getBtnFinalizarExpedicion() {
+		if (btnFinalizarExpedicion == null) {
+			btnFinalizarExpedicion = new JButton("Finalizar");
+			btnFinalizarExpedicion.setEnabled(false);
+			btnFinalizarExpedicion.addActionListener(controller.getActionListenerFinalizarExpedicionPaquetes());
+			btnFinalizarExpedicion.setBounds(181, 381, 224, 35);
+		}
+		return btnFinalizarExpedicion;
+	}
+	private JButton getBtnVolverPantallaPrincipalDesdeInformes() {
+		if (btnVolverPantallaPrincipalDesdeInformes == null) {
+			btnVolverPantallaPrincipalDesdeInformes = new JButton("Volver");
+			btnVolverPantallaPrincipalDesdeInformes.addActionListener(controller.getActionListenerVolverPaginaPrincipal());
+		}
+		return btnVolverPantallaPrincipalDesdeInformes;
+	}
+	private JButton getBtnVerPantallaExpedicionDePaquetes() {
+		if (btnVerPantallaExpedicionDePaquetes == null) {
+			btnVerPantallaExpedicionDePaquetes = new JButton("Expedición de paquetes");
+			btnVerPantallaExpedicionDePaquetes.addActionListener(controller.getActionListenerVerVentanaExpedicion());
+		}
+		return btnVerPantallaExpedicionDePaquetes;
 	}
 }

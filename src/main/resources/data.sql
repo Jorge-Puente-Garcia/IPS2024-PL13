@@ -11,6 +11,8 @@ delete from Cliente;
 delete from Paquete;
 delete from PaqueteProducto;
 delete from OrdenTrabajoProductoRecogido;
+delete from Vehiculo;
+delete from VehiculoPaquete;
 
 INSERT INTO Localizacion (pasillo, estanteria, posicion, altura) VALUES
     (1, 'Izquierda', 5, 2),
@@ -90,15 +92,22 @@ INSERT INTO Carrito (dni, referencia, cantidad, precio) VALUES
 	('23456789B', 'REF004', 2, 2999.98);
 
 -- Tabla Cliente
-INSERT INTO Cliente (dni, nombre, apellidos, direccion, numeroTelefono) VALUES 
-('12345678A', 'Juan', 'Perez', 'Calle Falsa 123', 600123456), ('23456789B', 'Maria', 'Lopez', 'Av. Siempreviva 742', 600234567), 
-('34567890C', 'Carlos', 'Garcia', 'Calle Larga 321', 600345678), ('45678901D', 'Laura', 'Martinez', 'Plaza Mayor 45', 600456789), 
-('56789012E', 'Ana', 'Hernandez', 'Calle Real 67', 600567890), ('67890123F', 'Jorge', 'Fernandez', 'Av. Libertad 89', 600678901), 
-('78901234G', 'Lucia', 'Gomez', 'Calle Central 101', 600789012), ('89012345H', 'Pedro', 'Diaz', 'Av. San Martin 111', 600890123), 
-('90123456I', 'Marta', 'Sanchez', 'Calle Norte 9', 600901234), ('01234567J', 'Luis', 'Romero', 'Av. Sur 15', 600012345), 
-('11234567K', 'Isabel', 'Vega', 'Calle del Sol 3', 600112345), ('21234567L', 'Pablo', 'Jimenez', 'Av. del Mar 20', 600212345), 
-('31234567M', 'Sofia', 'Ruiz', 'Calle de la Luna 8', 600312345), ('41234567N', 'Manuel', 'Torres', 'Av. del Norte 2', 600412345), 
-('51234567O', 'Sara', 'Morales', 'Calle del Este 14', 600512345);
+INSERT INTO Cliente (dni, nombre, apellidos, direccion, numeroTelefono, empresa) VALUES 
+('12345678A', 'Luis', 'Pérez García', 'Calle Mayor 10, Madrid', 600123456, 0),
+('87654321B', 'Ana', 'López Martín', 'Avenida Central 25, Barcelona', 654987321, 1),
+('11223344C', 'Carlos', 'Sánchez Ruiz', 'Calle Luna 15, Valencia', 671234567, 0),
+('22334455D', 'María', 'Gómez Fernández', 'Plaza Sol 5, Sevilla', 689654321, 1),
+('33445566E', 'Elena', 'Torres Pérez', 'Calle Verde 8, Bilbao', 678987654, 0),
+('44556677F', 'Javier', 'Hernández Gil', 'Calle Azul 12, Málaga', 612345678, 1),
+('55667788G', 'Clara', 'Navarro López', 'Paseo del Prado 7, Zaragoza', 679876543, 0),
+('66778899H', 'Pablo', 'Romero Díaz', 'Calle Naranja 19, Murcia', 634567890, 1),
+('77889900I', 'Laura', 'Méndez Ortiz', 'Avenida Sur 3, Granada', 610987654, 0),
+('88990011J', 'Miguel', 'Fernández Sánchez', 'Plaza Norte 1, Oviedo', 645678901, 1),
+('99001122K', 'Sofía', 'Vega Morales', 'Calle Blanca 4, Pamplona', 608765432, 0),
+('00112233L', 'Diego', 'Reyes Torres', 'Ronda Este 11, Salamanca', 623456789, 1),
+('11223344M', 'Lucía', 'Cabrera Álvarez', 'Calle Roja 6, Toledo', 657890123, 0),
+('22334455N', 'Adrián', 'Campos Romero', 'Plaza Dorada 22, Cádiz', 629876543, 1),
+('33445566O', 'Isabel', 'Iglesias León', 'Calle Gris 5, Burgos', 678123456, 0);
 
 -- Tabla Almacenero
 INSERT INTO Almacenero (nombre, apellido) VALUES 
@@ -167,3 +176,12 @@ INSERT INTO PaqueteProducto (orden_trabajo_id, producto_id, cantidad) VALUES
 (8, 8, 0), (8, 1, 0), (10, 10, 0),
 (12, 12, 0),(14, 14, 0);
 	
+INSERT INTO Paquete (caja_id, ordentrabajo_id, tipo) VALUES
+(1, 1, 'Nacional'), (2, 2, 'Regional'),  
+(3, 3, 'Nacional'), (4, 4, 'Regional'),
+(5, 5, 'Nacional'), (6, 6, 'Regional'), 
+(7, 7, 'Nacional'), (8, 8, 'Regional'), 
+(9, 9, 'Nacional'), (10, 10, 'Regional'), 
+(11, 11, 'Nacional'), (12, 12, 'Regional'),
+(13, 13, 'Nacional'), (14, 14, 'Regional'),
+(15, 15, 'Nacional'); 
