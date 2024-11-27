@@ -83,15 +83,20 @@ public class PedidoCarrito {
     public void cargarPedidoDb() {
         int id = obtenerSiguienteIdPedido() + 1;
         String sql = "INSERT INTO pedido (id, cliente_id, fecha, total, estado) VALUES ('"
-            + id + "', '" + cliente + "', '" + fecha + "', " + total + ", '"
+            + id + "', '" + cliente.getDni() + "', '" + fecha + "', " + total + ", '"
             + (estado == Estado.PendienteDeRecogida ? "Pendiente de recogida"
                 : "Recogido")
             + "');";
         db.executeUpdate(sql);
 
         for (ProductosPedido pd : productosPedido) {
-            pd.añadirProducto(id, db);
+            pd.añadirProducto(id, db, cliente.getDni());
+            restarStockProducto(pd.getReferencia(), pd.getCantidad());
         }
+        
+        String sqlD = "delete from carrito where dni = ?";
+		db.executeUpdate(sqlD, cliente.getDni());
+		
         ConfirmacionConsola(id);
     }
 
@@ -117,5 +122,20 @@ public class PedidoCarrito {
             System.out.print(String.format("->Referencia: %s, Unidades: %d\n",
                 pc.getReferencia(), pc.getCantidad()));
         }
+    }
+    
+    private void restarStockProducto(String referencia, int unidades) {
+    	String sql = "UPDATE Producto "
+    	           + "SET unidades = unidades - ? "
+    	           + "WHERE referencia = ?;";
+    	db.executeUpdate(sql, unidades, referencia);    	
+    	verUnidades(referencia);
+    }
+    
+    private void verUnidades(String referencia) {
+    	String sql = "select unidades  FROM Producto "
+                + "WHERE referencia = ?;";
+    	List<Object[]> a = db.executeQueryArray(sql, referencia);
+    	System.out.print(a.get(0).toString());
     }
 }

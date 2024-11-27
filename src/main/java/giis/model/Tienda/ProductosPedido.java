@@ -31,12 +31,13 @@ public class ProductosPedido {
 		this.cantidad = cantidad;
 	}
 	
-	public void añadirProducto(int idPedido, Database db) {
+	public void añadirProducto(int idPedido, Database db, String dni) {		
 		String sql = "INSERT INTO ProductosPedido (pedido_id, producto_id, cantidad) VALUES (" 
 	             + idPedido + ", " 
 	             + obtenerIdProducto(db) + ", " 
 	             + cantidad +")"; 		
-		db.executeUpdate(sql);
+		db.executeUpdate(sql);	
+		
 	}
 	
 	private int obtenerIdProducto(Database db) {

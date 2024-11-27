@@ -1,4 +1,4 @@
-package giis.ui;
+package giis.ui.tienda.util;
 
 import java.awt.GridLayout;
 
