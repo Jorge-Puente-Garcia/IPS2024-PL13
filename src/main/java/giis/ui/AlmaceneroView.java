@@ -755,7 +755,7 @@ public class AlmaceneroView {
 	private JScrollPane getScrpInfoInformes() {
 		if (scrpInfoInformes == null) {
 			scrpInfoInformes = new JScrollPane();
-			scrpInfoInformes.setBounds(10, 86, 395, 274);
+			scrpInfoInformes.setBounds(0, 86, 415, 274);
 			scrpInfoInformes.setViewportView(getTbInfoInformes());
 		}
 		return scrpInfoInformes;
