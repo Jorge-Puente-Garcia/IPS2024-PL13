@@ -98,7 +98,9 @@ public class CarritoModel {
     }
 
     public List<CarritoProductos> getCarrito() {
-        return carrito;
+    	actualizarCarrito();
+        actualizarTotal();    	
+    	return carrito;         
     }
 
 }

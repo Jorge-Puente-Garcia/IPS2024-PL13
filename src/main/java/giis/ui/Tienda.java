@@ -23,11 +23,13 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import giis.controller.TiendaController;
 import giis.model.Tienda.CarritoProductos;
 import giis.model.Tienda.Categorias;
 import giis.model.Tienda.ProductosDto;
+import giis.ui.tienda.util.TextAreaRenderer;
 import giis.util.TableColumnAdjuster;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -263,7 +265,10 @@ public class Tienda extends JFrame {
                         // Procesar la respuesta
                         if (respuesta == JOptionPane.YES_OPTION) {
                             tdc.crearPedido();
-                            ActualizarCarrito();
+                            table.setModel(ActualizarCarrito());
+                            actualizarTotal();
+                            irACategoriaRaiz();
+                            
                         } else if (respuesta == JOptionPane.NO_OPTION) {
 
                         }
@@ -273,9 +278,11 @@ public class Tienda extends JFrame {
                         JOptionPane.showMessageDialog(null, mensaje, titulo,
                             JOptionPane.WARNING_MESSAGE);
                     }
+                    
                 }
             });
             btPedido.setFont(new Font("Arial Black", Font.PLAIN, 12));
+            
         }
         return btPedido;
     }
@@ -422,7 +429,7 @@ public class Tienda extends JFrame {
     }
 
     private void añadirAlCarrito() {
-    	if (tbProductos.getModel().getColumnCount() == 3) {
+    	if (tbProductos.getModel().getColumnCount() == 4) {
             int row = tbProductos.getSelectedRow();
             if (row >= 0) {
                 tdc.agregarAlCarrito(
@@ -498,27 +505,31 @@ public class Tienda extends JFrame {
             btVolverRaiz.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    DefaultTableModel tableModel = new DefaultTableModel(
-                        new Object[] { "Categorias" }, 0) {
-                        private static final long serialVersionUID = 1L;
-
-                        @Override
-                        public boolean isCellEditable(int row, int column) {
-                            return false; // Deshabilita la edición de celdas
-                        }
-                    };
-                    // Rellenar la tabla con los productos
-                    for (Categorias c : tdc.getCategoriasIniciales()) {
-                        tableModel.addRow(new Object[] { c.getNombre() });
-                    }
-                    tbProductos.setModel(tableModel);
-                    tbProductos.revalidate();
-                    tbProductos.repaint();
+                	irACategoriaRaiz();
                 }
             });
             btVolverRaiz.setFont(new Font("Arial Black", Font.PLAIN, 14));
         }
         return btVolverRaiz;
+    }
+    
+    private void irACategoriaRaiz() {
+    	DefaultTableModel tableModel = new DefaultTableModel(
+                new Object[] { "Categorias" }, 0) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false; // Deshabilita la edición de celdas
+                }
+            };
+            // Rellenar la tabla con los productos
+            for (Categorias c : tdc.getCategoriasIniciales()) {
+                tableModel.addRow(new Object[] { c.getNombre() });
+            }
+            tbProductos.setModel(tableModel);
+            tbProductos.revalidate();
+            tbProductos.repaint();
     }
 
     private void ActualizarTablaProductos() {
@@ -528,7 +539,7 @@ public class Tienda extends JFrame {
             List<Categorias> categorias = tdc
                 .getSubCategorias(tbProductos.getValueAt(row, 0).toString());
 
-            if (categorias.size() != 0) {
+            if (categorias.size() != 0 && tbProductos.getModel().getColumnCount() == 1) {
                 tableModel = new DefaultTableModel(
                     new Object[] { "Categorias" }, 0) {
                     private static final long serialVersionUID = 1L;
@@ -543,31 +554,37 @@ public class Tienda extends JFrame {
                     tableModel.addRow(new Object[] { c.getNombre() });
                 }
                 tbProductos.setModel(tableModel);
-
+            
             } else {
-                tableModel = new DefaultTableModel(
-                    new Object[] { "Referencia", "Precio", "Descripción" }, 0) {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public boolean isCellEditable(int row, int column) {
-                        return false; // Deshabilita la edición de celdas
-                    }
-                };
-                for (ProductosDto pr : tdc
-                    .getProductos(tbProductos.getValueAt(row, 0).toString())) {
-                    tableModel.addRow(new Object[] { pr.getReferencia(),
-                        pr.getPrecioUnitario(), pr.getDatosbasicos() });
-                }
-                tbProductos.setModel(tableModel);
-                TableColumnAdjuster tca=new TableColumnAdjuster(tbProductos);
-        		tca.adjustColumns();
+            	actualizarProductosUI(row);
             }
             tbProductos.revalidate();
             tbProductos.repaint();
         }
-
     }
+    
+    private void actualizarProductosUI(int row) {
+    	DefaultTableModel tableModel;
+        tableModel = new DefaultTableModel(
+                new Object[] { "Referencia", "Precio","Disponibilidad", "Descripción"}, 0) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false; // Deshabilita la edición de celdas
+                }
+            };
+            for (ProductosDto pr : tdc
+                .getProductos(tbProductos.getValueAt(row, 0).toString())) {
+                tableModel.addRow(new Object[] { pr.getReferencia(),
+                    pr.getPrecioUnitario(), pr.hayPocasUnidades() ,pr.getDatosbasicos() });
+            }
+            tbProductos.setModel(tableModel);
+            tbProductos.getColumnModel().getColumn(3).setCellRenderer(new TextAreaRenderer());
+            TableColumnAdjuster tca=new TableColumnAdjuster(tbProductos);
+    		tca.adjustColumns();
+    }
+    
 	private JLabel getLbUnidadesProductos() {
 		if (lbUnidadesProductos == null) {
 			lbUnidadesProductos = new JLabel("Unidades a añadir");

@@ -59,30 +59,29 @@ INSERT INTO Categoria (nombre, id_padre) VALUES
     ('Sobremesa', (SELECT id FROM Categoria WHERE nombre = 'Computadoras'));
     
 -- Inserta productos
-INSERT INTO Producto (nombre, referencia, datosBasicos, precio, unidades, localizacion_id, id_categoria) VALUES
-    ('Smartphone AMOLED', 'REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento', 699.99, 10, 1, (SELECT id FROM Categoria WHERE nombre = 'Teléfonos Móviles')),
-    ('Laptop Ultraligera', 'REF002', 'Laptop ultraligera de 14 pulgadas, procesador Intel Core i7, 16GB RAM y 512GB SSD', 1199.99, 5, 2, (SELECT id FROM Categoria WHERE nombre = 'Portátiles')),
-    ('Auriculares Inalámbricos', 'REF003', 'Auriculares inalámbricos con cancelación de ruido, duración de batería de 24 horas', 199.99, 15, 3, (SELECT id FROM Categoria WHERE nombre = 'Televisores')),
-    ('Cámara Fotográfica', 'REF004', 'Cámara fotográfica profesional de 24MP con lente de 50mm y estabilización óptica', 1499.99, 8, 4, (SELECT id FROM Categoria WHERE nombre = 'Televisores')),
-    ('Reloj Inteligente', 'REF005', 'Reloj inteligente con monitor de frecuencia cardíaca, GPS integrado y resistente al agua', 249.99, 20, 5, (SELECT id FROM Categoria WHERE nombre = 'Televisores')),
-    ('Tablet Full HD', 'REF006', 'Tablet de 10 pulgadas con pantalla Full HD, 64GB de almacenamiento y batería de larga duración', 329.99, 12, 6, (SELECT id FROM Categoria WHERE nombre = 'Tablets')),
-    ('PC de Escritorio', 'REF007', 'PC de Escritorio Lenovo con 8GB RAM y 1TB HDD', 650.00, 7, 2, (SELECT id FROM Categoria WHERE nombre = 'Sobremesa')),
-    ('iPhone 256GB', 'REF008', 'iPhone con 256GB de almacenamiento y cámara avanzada', 999.00, 15, 1, (SELECT id FROM Categoria WHERE nombre = 'Teléfonos Móviles')),
-    ('Televisor 4K', 'REF009', 'Televisor Samsung de 55 pulgadas, 4K UHD', 1200.00, 4, 3, (SELECT id FROM Categoria WHERE nombre = 'Televisores')),
-    ('Camisa Polo', 'REF010', 'Camisa Polo de algodón para hombre', 45.00, 25, 5, (SELECT id FROM Categoria WHERE nombre = 'Camisas')),
-    ('Jeans Clásicos', 'REF011', 'Jeans Levis clásicos para hombre', 60.00, 18, 5, (SELECT id FROM Categoria WHERE nombre = 'Pantalones')),
-    ('Zapatos Deportivos', 'REF012', 'Zapatos deportivos Nike para correr', 90.00, 20, 5, (SELECT id FROM Categoria WHERE nombre = 'Calzado')),
-    ('Cafetera de goteo', 'REF013', 'Cafetera eléctrica de goteo, 12 tazas, con filtro reutilizable.', 49.99, 50, 1, (SELECT id FROM Categoria WHERE nombre = 'Pequeños Electrodomésticos de Cocina')),
-    ('Tostadora de pan', 'REF014', 'Tostadora de 2 rebanadas, con control de dorado y bandeja extraíble.', 29.99, 30, 1, (SELECT id FROM Categoria WHERE nombre = 'Pequeños Electrodomésticos de Cocina')),
-    ('Batidora de mano', 'REF015', 'Batidora de mano con 5 velocidades y accesorios de mezcla.', 35.50, 25, 1, (SELECT id FROM Categoria WHERE nombre = 'Pequeños Electrodomésticos de Cocina')),
-    ('Aspiradora ciclónica', 'REF016', 'Aspiradora sin bolsa, potente y fácil de manejar.', 89.99, 15, 1, (SELECT id FROM Categoria WHERE nombre = 'Aspiración y Limpieza')),
-    ('Plancha de vapor', 'REF017', 'Plancha de vapor con suela de cerámica y sistema anti-goteo.', 39.95, 40, 1, (SELECT id FROM Categoria WHERE nombre = 'Electrodomésticos de Cuidado Personal')),
-    ('Televisor LED 50"', 'REF018', 'Televisor LED de 50 pulgadas, 4K UHD, Smart TV.', 499.99, 10, 1, (SELECT id FROM Categoria WHERE nombre = 'Televisores')),
-    ('Laptop portátil', 'REF019', 'Laptop 15.6" con procesador i5, 8GB RAM, 256GB SSD.', 699.99, 20, 1, (SELECT id FROM Categoria WHERE nombre = 'Portátiles')),
-    ('Smartphone Android', 'REF020', 'Smartphone de 6.5", 128GB almacenamiento, cámara triple.', 299.99, 100, 1, (SELECT id FROM Categoria WHERE nombre = 'Teléfonos Móviles')),
-    ('Silla ergonómica', 'REF021', 'Silla de oficina ergonómica con ajuste de altura y soporte lumbar.', 149.99, 25, 1, (SELECT id FROM Categoria WHERE nombre = 'Muebles de Oficina')),
-    ('Mesa de comedor', 'REF022', 'Mesa de comedor de madera, 6 plazas, diseño moderno.', 399.99, 10, 1, (SELECT id FROM Categoria WHERE nombre = 'Muebles de Hogar'));
-    
+INSERT INTO Producto (nombre, referencia, datosBasicos, precio, unidades, localizacion_id, id_categoria,unidadesMinimas, unidadesReposicion) VALUES
+     ('Smartphone AMOLED', 'REF001', 'Smartphone de última generación con pantalla AMOLED de 6.5 pulgadas y 128GB de almacenamiento', 699.99, 10, 1, (SELECT id FROM Categoria WHERE nombre = 'Teléfonos Móviles'), 5, 10),
+    ('Laptop Ultraligera', 'REF002', 'Laptop ultraligera de 14 pulgadas, procesador Intel Core i7, 16GB RAM y 512GB SSD', 1199.99, 5, 2, (SELECT id FROM Categoria WHERE nombre = 'Portátiles'), 5, 10),
+    ('Auriculares Inalámbricos', 'REF003', 'Auriculares inalámbricos con cancelación de ruido, duración de batería de 24 horas', 199.99, 15, 3, (SELECT id FROM Categoria WHERE nombre = 'Televisores'), 5, 10),
+    ('Cámara Fotográfica', 'REF004', 'Cámara fotográfica profesional de 24MP con lente de 50mm y estabilización óptica', 1499.99, 8, 4, (SELECT id FROM Categoria WHERE nombre = 'Televisores'), 5, 10),
+    ('Reloj Inteligente', 'REF005', 'Reloj inteligente con monitor de frecuencia cardíaca, GPS integrado y resistente al agua', 249.99, 20, 5, (SELECT id FROM Categoria WHERE nombre = 'Televisores'), 5, 10),
+    ('Tablet Full HD', 'REF006', 'Tablet de 10 pulgadas con pantalla Full HD, 64GB de almacenamiento y batería de larga duración', 329.99, 12, 6, (SELECT id FROM Categoria WHERE nombre = 'Tablets'), 5, 10),
+    ('PC de Escritorio', 'REF007', 'PC de Escritorio Lenovo con 8GB RAM y 1TB HDD', 650.00, 7, 2, (SELECT id FROM Categoria WHERE nombre = 'Sobremesa'), 5, 10),
+    ('iPhone 256GB', 'REF008', 'iPhone con 256GB de almacenamiento y cámara avanzada', 999.00, 15, 1, (SELECT id FROM Categoria WHERE nombre = 'Teléfonos Móviles'), 5, 10),
+    ('Televisor 4K', 'REF009', 'Televisor Samsung de 55 pulgadas, 4K UHD', 1200.00, 4, 3, (SELECT id FROM Categoria WHERE nombre = 'Televisores'), 5, 10),
+    ('Camisa Polo', 'REF010', 'Camisa Polo de algodón para hombre', 45.00, 25, 5, (SELECT id FROM Categoria WHERE nombre = 'Camisas'), 5, 10),
+    ('Jeans Clásicos', 'REF011', 'Jeans Levis clásicos para hombre', 60.00, 18, 5, (SELECT id FROM Categoria WHERE nombre = 'Pantalones'), 5, 10),
+    ('Zapatos Deportivos', 'REF012', 'Zapatos deportivos Nike para correr', 90.00, 20, 5, (SELECT id FROM Categoria WHERE nombre = 'Calzado'), 5, 10),
+    ('Cafetera de goteo', 'REF013', 'Cafetera eléctrica de goteo, 12 tazas, con filtro reutilizable.', 49.99, 50, 1, (SELECT id FROM Categoria WHERE nombre = 'Pequeños Electrodomésticos de Cocina'), 5, 10),
+    ('Tostadora de pan', 'REF014', 'Tostadora de 2 rebanadas, con control de dorado y bandeja extraíble.', 29.99, 30, 1, (SELECT id FROM Categoria WHERE nombre = 'Pequeños Electrodomésticos de Cocina'), 5, 10),
+    ('Batidora de mano', 'REF015', 'Batidora de mano con 5 velocidades y accesorios de mezcla.', 35.50, 25, 1, (SELECT id FROM Categoria WHERE nombre = 'Pequeños Electrodomésticos de Cocina'), 5, 10),
+    ('Aspiradora ciclónica', 'REF016', 'Aspiradora sin bolsa, potente y fácil de manejar.', 89.99, 15, 1, (SELECT id FROM Categoria WHERE nombre = 'Aspiración y Limpieza'), 5, 10),
+    ('Plancha de vapor', 'REF017', 'Plancha de vapor con suela de cerámica y sistema anti-goteo.', 39.95, 40, 1, (SELECT id FROM Categoria WHERE nombre = 'Electrodomésticos de Cuidado Personal'), 5, 10),
+    ('Televisor LED 50"', 'REF018', 'Televisor LED de 50 pulgadas, 4K UHD, Smart TV.', 499.99, 10, 1, (SELECT id FROM Categoria WHERE nombre = 'Televisores'), 5, 10),
+    ('Laptop portátil', 'REF019', 'Laptop 15.6" con procesador i5, 8GB RAM, 256GB SSD.', 699.99, 20, 1, (SELECT id FROM Categoria WHERE nombre = 'Portátiles'), 5, 10),
+    ('Smartphone Android', 'REF020', 'Smartphone de 6.5", 128GB almacenamiento, cámara triple.', 299.99, 100, 1, (SELECT id FROM Categoria WHERE nombre = 'Teléfonos Móviles'), 5, 10),
+    ('Silla ergonómica', 'REF021', 'Silla de oficina ergonómica con ajuste de altura y soporte lumbar.', 149.99, 25, 1, (SELECT id FROM Categoria WHERE nombre = 'Muebles de Oficina'), 5, 10),
+    ('Mesa de comedor', 'REF022', 'Mesa de comedor de madera, 6 plazas, diseño moderno.', 399.99, 10, 1, (SELECT id FROM Categoria WHERE nombre = 'Muebles de Hogar'), 5, 10);    
 
     
 INSERT INTO Carrito (dni, referencia, cantidad, precio) VALUES

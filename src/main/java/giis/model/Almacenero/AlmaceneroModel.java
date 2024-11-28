@@ -47,10 +47,12 @@ public class AlmaceneroModel {
 	    String sacaIdOrdenTrabajo = "SELECT MAX(id) AS id FROM OrdenTrabajo;";
 	    List<Object[]> idWoList = db.executeQueryArray(sacaIdOrdenTrabajo);
 	    String ordenTrabajoId = idWoList.get(0)[0].toString();
+
 	    String sacaProductosPedido = "SELECT pp.producto_id, pp.cantidad FROM Pedido ped JOIN ProductosPedido pp ON ped.id = pp.pedido_id WHERE ped.id = ?;";
 	    String insertaOrdenTrabajoProducto = "INSERT INTO OrdenTrabajoProducto (orden_trabajo_id, producto_id, cantidad) VALUES (?, ?, ?);";
 	    String insertaOrdenTrabajoProductoRecogidos = "INSERT INTO OrdenTrabajoProductoRecogido (orden_trabajo_id, producto_id, cantidad) VALUES (?, ?, ?);";
 	    String insertaPaqueteProducto = "INSERT INTO OrdenTrabajoProductoRecogido (orden_trabajo_id, producto_id, cantidad) VALUES (?, ?, ?);";
+
 	    int cargaActual = 0; // Carga actual de la orden de trabajo
 
 	    for (PedidoARecogerRecord par : pars) {
@@ -65,19 +67,19 @@ public class AlmaceneroModel {
 	            while (cantidad > 0) {
 	                int lote = Math.min(cantidad, 5 - cargaActual); // Tamaño del lote restante para completar 5
 	                db.executeUpdate(insertaOrdenTrabajoProducto, ordenTrabajoId, productoId, lote);
-	                //AñadidoParaPermitirLaRecolección
 	                db.executeUpdate(insertaOrdenTrabajoProductoRecogidos, ordenTrabajoId, productoId, 0);
-	                //AñadidoParaPermitiEmpaquetado
 	                db.executeUpdate(insertaPaqueteProducto, ordenTrabajoId, productoId, 0);
-	                // Actualiza el contador de carga actual y la cantidad restante
+
 	                cargaActual += lote;
 	                cantidad -= lote;
 
-	                // Si la carga actual llega a 5, crear nueva orden y restablecer el contador
+	                // Si la carga actual llega a 5, restablecer el contador y evaluar si hay más productos pendientes
 	                if (cargaActual == 5) {
-	                    db.executeUpdate(sqlInsert, LocalDate.now().toString(), almaceneroId);
-	                    idWoList = db.executeQueryArray(sacaIdOrdenTrabajo);
-	                    ordenTrabajoId = idWoList.get(0)[0].toString();
+	                    if (cantidad > 0 || existenMasElementosPendientes(productosIdCantidad, pars, par)) {
+	                        db.executeUpdate(sqlInsert, LocalDate.now().toString(), almaceneroId);
+	                        idWoList = db.executeQueryArray(sacaIdOrdenTrabajo);
+	                        ordenTrabajoId = idWoList.get(0)[0].toString();
+	                    }
 	                    cargaActual = 0; // Reinicia el contador de carga para la nueva orden de trabajo
 	                }
 	            }
@@ -86,6 +88,19 @@ public class AlmaceneroModel {
 	        ponEnRecogidaElPedido(par);
 	    }
 	}
+
+	/**
+	 * Verifica si hay más elementos pendientes de procesar en la lista actual y en las órdenes restantes.
+	 */
+	private boolean existenMasElementosPendientes(List<Object[]> productosIdCantidad, List<PedidoARecogerRecord> pars, PedidoARecogerRecord pedidoActual) {
+	    int indexActual = pars.indexOf(pedidoActual);
+	    if (indexActual < pars.size() - 1) {
+	        return true; // Hay más pedidos en la lista
+	    }
+	    return false; // No quedan elementos pendientes
+	}
+
+
 
 	public List<OrdenTrabajoRecord> getOrdenesDeTrabajoDelAlmaceneroPorId(int almaceneroId) {
 		String sql = "SELECT id, fecha_creacion, estado, incidencia, almacenero_id FROM OrdenTrabajo WHERE almacenero_id=? AND estado='Pendiente de recogida';";

@@ -23,7 +23,7 @@ import com.formdev.flatlaf.intellijthemes.FlatNordIJTheme;
 
 import giis.controller.TiendaController;
 import giis.ui.AlmaceneroView;
-import giis.ui.ClienteBuscador;
+import giis.ui.tienda.util.ClienteBuscador;
 import giis.util.Database;
 
 public class Main extends JFrame {
@@ -33,6 +33,7 @@ public class Main extends JFrame {
     private JButton btAbrirTienda;
 
     private static Database db = new Database();
+    
     private JButton btnAbrirAlmacen;
     private JButton btnResetBD;
 
@@ -51,6 +52,10 @@ public class Main extends JFrame {
 					 * FlatDarculaLaf
                 	 */
                 	//FlatNordIJTheme.setup();
+                	
+                	db.createDatabase(false);
+                	db.loadDatabase();
+                	
                 	FlatIntelliJLaf.setup();
                     Main frame = new Main();
                     frame.setVisible(true);

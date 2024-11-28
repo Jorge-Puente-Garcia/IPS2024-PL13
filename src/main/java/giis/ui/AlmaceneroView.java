@@ -181,7 +181,7 @@ public class AlmaceneroView {
 
 	private JButton getBtnSeleccionarOrdenesDeTrabajo() {
 		if (btnSeleccionarOrdenesDeTrabajo == null) {
-			btnSeleccionarOrdenesDeTrabajo = new JButton("Seleccionar ordenes de trbajo");
+			btnSeleccionarOrdenesDeTrabajo = new JButton("Seleccionar ordenes de trabajo");
 			btnSeleccionarOrdenesDeTrabajo.addActionListener(controller.getActionListenerParaSeleccionarOrdenesTrabajo());
 		}
 		return btnSeleccionarOrdenesDeTrabajo;

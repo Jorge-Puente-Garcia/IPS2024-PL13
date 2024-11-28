@@ -42,7 +42,7 @@ public class TiendaModel {
     public List<ProductosDto> getProductos(String nombre) {
         String id = getIdCategoria(nombre);
 
-        String sql = "SELECT referencia, datosBasicos, precio FROM Producto "
+        String sql = "SELECT referencia, datosBasicos, precio, unidades, unidadesMinimas FROM Producto "
             + "WHERE id_categoria = ? ORDER BY referencia;";
 
         List<Object[]> lista = db.executeQueryArray(sql, id);
@@ -54,6 +54,8 @@ public class TiendaModel {
             dto.setReferencia(d[0].toString());
             dto.setDatosbasicos(d[1].toString());
             dto.setPrecioUnitario(d[2].toString());
+            dto.setUnidades(Integer.parseInt(d[3].toString()));
+            dto.setUnidadesMinimas(Integer.parseInt(d[4].toString()));
             listaProductos.add(dto);
         }
         return listaProductos;
@@ -82,7 +84,9 @@ public class TiendaModel {
             return db.executeQueryPojo(Categorias.class, sql, o.toString());
         }catch(NullPointerException e) {
         	return getCategoriasPrincipales();
-        }
-                
-    }   
+        }                
+    }
+    
+    
+    
 }
