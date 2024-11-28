@@ -17,7 +17,8 @@ drop table AlbaranPedido;
 drop table PaqueteProducto;
 drop table VehiculoPaquete;
 drop table Vehiculo;
-
+drop table OrdenTrabajoRecogidaEmpleadoDia;
+drop table ProductoRecogidoEmpleadoDia;
 
 CREATE TABLE Categoria (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,6 +32,8 @@ CREATE TABLE Carrito (id INTEGER PRIMARY KEY AUTOINCREMENT, dni TEXT NOT NULL, r
 CREATE TABLE ProductosPedido (id INTEGER PRIMARY KEY AUTOINCREMENT, pedido_id INTEGER NOT NULL, producto_id INTEGER NOT NULL, cantidad INTEGER NOT NULL, FOREIGN KEY (pedido_id) REFERENCES Pedido(id), FOREIGN KEY (producto_id) REFERENCES Producto(id));
 CREATE TABLE Pedido (id INTEGER PRIMARY KEY AUTOINCREMENT, cliente_id int NOT NULL, fecha DATE NOT NULL, total DECIMAL(10, 2) NOT NULL, estado TEXT CHECK (estado IN ('Pendiente de recogida', 'Recogido','PendienteDePago','En empaquetado')) NOT NULL, orden_trabajo_id INTEGER, FOREIGN KEY (cliente_id) REFERENCES Cliente(id), FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id));
 CREATE TABLE Almacenero (id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT NOT NULL, apellido TEXT NOT NULL);
+CREATE TABLE OrdenTrabajoRecogidaEmpleadoDia (id INTEGER PRIMARY KEY AUTOINCREMENT, almacenero_id INTEGER, dia DATE NOT NULL, ordenTrabajo_id INTEGER NOT NULL,FOREIGN KEY (ordenTrabajo_id) REFERENCES OrdenTrabajo(id),FOREIGN KEY (almacenero_id) REFERENCES Almacenero(id));
+CREATE TABLE ProductoRecogidoEmpleadoDia (id INTEGER PRIMARY KEY AUTOINCREMENT,cantidad INTEGER, almacenero_id INTEGER, dia DATE NOT NULL, producto_id INTEGER NOT NULL,FOREIGN KEY (producto_id) REFERENCES Producto(id),FOREIGN KEY (almacenero_id) REFERENCES Almacenero(id));
 CREATE TABLE OrdenTrabajo (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha_creacion DATE NOT NULL, estado TEXT CHECK(estado IN ('Pendiente de recogida','En recogida', 'Pendiente de empaquetado','En empaquetado','Empaquetado')),almacenero_id INTEGER NOT NULL, incidencia TEXT, FOREIGN KEY (almacenero_id) REFERENCES Almacenero(id));
 CREATE TABLE OrdenTrabajoProducto (id INTEGER PRIMARY KEY AUTOINCREMENT, orden_trabajo_id INTEGER NOT NULL, producto_id INTEGER NOT NULL, cantidad INTEGER NOT NULL, FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id), FOREIGN KEY (producto_id) REFERENCES Producto(id));
 CREATE TABLE OrdenTrabajoProductoRecogido (id INTEGER PRIMARY KEY AUTOINCREMENT, orden_trabajo_id INTEGER NOT NULL, producto_id INTEGER NOT NULL, cantidad INTEGER NOT NULL, FOREIGN KEY (orden_trabajo_id) REFERENCES OrdenTrabajo(id), FOREIGN KEY (producto_id) REFERENCES Producto(id));

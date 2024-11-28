@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import giis.util.Database;
 
@@ -411,7 +412,6 @@ public class AlmaceneroModel {
 	    Set<String> empresasOrdenadas = new TreeSet<>();
 	    for (Map<String, Double> diaData : data.values()) {
 	    	empresasOrdenadas.addAll(diaData.keySet());
-	    	System.out.println(diaData.keySet());
 	    }
 	    
 	    // Asegurarse de agregar la columna Total y Día
@@ -468,6 +468,230 @@ public class AlmaceneroModel {
 	    return new DefaultTableModel(rows.toArray(new Object[0][0]), columnNames.toArray());
 		
 	}
+	
+	public List<String> getEmpleados() {
+		String sacaEmpleados="Select id from Almacenero";
+		List<String> columnNames = new ArrayList<>();
+		List<Object[]> nombres=db.executeQueryArray(sacaEmpleados);
+		for(Object[] o: nombres) {
+			columnNames.add(o[0].toString());
+		}
+		return columnNames;
+	}
+
+	public TableModel getInformeOTEmpleadoDia(List<String> empleados) {
+		String infoPorDiaEmpleadoEspecifico = "SELECT DATE(O.dia) AS dia, "
+	            + "A.id AS empleado, "
+	            + "COUNT(DISTINCT OT.id) AS ordenes_recogidas "
+	            + "FROM OrdenTrabajoRecogidaEmpleadoDia O "
+	            + "JOIN Almacenero A ON O.almacenero_id = A.id "
+	            + "JOIN OrdenTrabajo OT ON O.ordenTrabajo_id = OT.id "
+	            + "WHERE A.id IN (?) "  
+	            + "GROUP BY O.dia "
+	            + "ORDER BY O.dia desc;";
+
+		// Mapa para los resultados
+		Map<String, Map<String, Integer>> data = new LinkedHashMap<>();
+		// Inicializar un mapa para los totales por empleado
+		Map<String, Integer> totalPorEmpleado = new HashMap<>();
+		for (String empleado : empleados) {
+		    totalPorEmpleado.put(empleado, 0);
+		}
+
+		for (String empleado : empleados) {
+		    List<Object[]> infoPorDiaEmpleado = db.executeQueryArray(infoPorDiaEmpleadoEspecifico, empleado);
+		    if (!infoPorDiaEmpleado.isEmpty()) {
+		        // Para cada día y empleado, contamos el número de OTs
+		        for (Object[] row : infoPorDiaEmpleado) {
+		            String dia = row[0].toString();
+		            String nombreEmpleado = row[1].toString();
+		            int ordenesRecogidas = Integer.parseInt(row[2].toString());
+
+		            // Inicializar el mapa para el día si no existe
+		            data.putIfAbsent(dia, new HashMap<>());
+		            // Agregar el número de OTs recogidas por ese empleado en ese día
+		            data.get(dia).put(nombreEmpleado, ordenesRecogidas);
+
+		            // Acumular el total de OTs recogidas por el empleado
+		            totalPorEmpleado.put(nombreEmpleado, totalPorEmpleado.get(nombreEmpleado) + ordenesRecogidas);
+		        }
+		    }
+		}
+
+		// Obtener las columnas (empleados + total)
+		Set<String> empleadosOrdenados = new TreeSet<>();
+		for (Map<String, Integer> diaData : data.values()) {
+		    empleadosOrdenados.addAll(diaData.keySet());
+		}
+
+		// Asegurarse de agregar la columna Total y Día
+		List<String> columnNames = new ArrayList<>();
+		columnNames.add("Dia");
+		columnNames.addAll(empleadosOrdenados);  
+		columnNames.add("Total");
+
+		// Paso 2: Crear las filas
+		List<Object[]> rows = new ArrayList<>();
+		for (String dia : data.keySet()) {
+		    Map<String, Integer> diaData = data.get(dia);
+		    Object[] row = new Object[columnNames.size()];
+
+		    // Primer valor es el día
+		    row[0] = dia;
+
+		    // Agregar los valores de cada empleado
+		    int totalDia = 0;
+		    for (int i = 1; i <= empleadosOrdenados.size(); i++) {
+		        String empleado = columnNames.get(i);
+		        int ordenes = diaData.getOrDefault(empleado, 0);
+		        row[i] = ordenes;
+		        totalDia += ordenes;
+		    }
+
+		    // Colocar el total acumulado en la última columna
+		    row[columnNames.size() - 1] = totalDia;
+
+		    // Añadir la fila a la lista de filas
+		    rows.add(row);
+		}
+
+		// Fila con los totales por empleado (total por columna)
+		Object[] totalRow = new Object[columnNames.size()];
+		totalRow[0] = "Total";
+
+		// Agregar los totales por empleado a las columnas correspondientes
+		int totalGlobal = 0;
+		for (int i = 1; i <= empleadosOrdenados.size(); i++) {
+		    String empleado = columnNames.get(i);
+		    int totalEmpleado = totalPorEmpleado.get(empleado);
+		    totalRow[i] = totalEmpleado;
+		    totalGlobal += totalEmpleado;
+		}
+
+		// Colocar el total global al final
+		totalRow[columnNames.size() - 1] = totalGlobal;
+
+		// Añadir la fila de totales por columna
+		rows.add(totalRow);
+
+		// Crear el DefaultTableModel con los datos
+		return new DefaultTableModel(rows.toArray(new Object[0][0]), columnNames.toArray());
+
+	}
+
+	public void guardaOTRecogidaConFechaAlmacenero(int almaceneroId, OrdenTrabajoRecord ordenTrabajoEnRecogida) {
+		String guardaOrdenTrabajoRecogida="INSERT INTO OrdenTrabajoRecogidaEmpleadoDia (almacenero_id, dia, ordenTrabajo_id) VALUES (?, ?, ?); ";
+		db.executeUpdate(guardaOrdenTrabajoRecogida, almaceneroId,LocalDate.now().toString(),ordenTrabajoEnRecogida.getId());
+	}
+	
+	public void guardaProductoRecogidoConFechaAlmacenero(int almaceneroId, ElementoARecogerDto elemento, int recogido) {
+		String guardaOrdenTrabajoRecogida="INSERT INTO ProductoRecogidoEmpleadoDia (almacenero_id, dia, producto_id, cantidad) VALUES (?, ?, ?, ?);";
+		db.executeUpdate(guardaOrdenTrabajoRecogida, almaceneroId,LocalDate.now().toString(),elemento.getCodigoBarras(),recogido);
+	}
+
+	public TableModel getInformeProductosEmpleadoDia(List<String> empleados) {
+		String infoPorDiaEmpleadoEspecifico = "SELECT DATE(PR.dia) AS dia, "
+		        + "A.id AS empleado, "
+		        + "SUM(PR.cantidad) AS cantidad_recogida "
+		        + "FROM ProductoRecogidoEmpleadoDia PR "
+		        + "JOIN Almacenero A ON PR.almacenero_id = A.id "
+		        + "WHERE A.id IN (?) "  // Filtrando por empleados específicos
+		        + "GROUP BY PR.dia, A.id "
+		        + "ORDER BY PR.dia DESC;";
+
+		// Mapa para los resultados
+		Map<String, Map<String, Integer>> data = new LinkedHashMap<>();
+		// Inicializar un mapa para los totales por empleado
+		Map<String, Integer> totalPorEmpleado = new HashMap<>();
+		for (String empleado : empleados) {
+		    totalPorEmpleado.put(empleado, 0);  // Inicializamos el total para cada empleado
+		}
+
+		// Recoger la información por empleado y día
+		for (String empleado : empleados) {
+		    List<Object[]> infoPorDiaEmpleado = db.executeQueryArray(infoPorDiaEmpleadoEspecifico, empleado);
+		    if (!infoPorDiaEmpleado.isEmpty()) {
+		        // Para cada día y empleado, sumamos la cantidad total de productos recogidos
+		        for (Object[] row : infoPorDiaEmpleado) {
+		            String dia = row[0].toString();
+		            String nombreEmpleado = row[1].toString();
+		            if(row[2]!=null) {
+		            	int cantidadRecogida = Integer.parseInt(row[2].toString());
+
+			            // Inicializar el mapa para el día si no existe
+			            data.putIfAbsent(dia, new HashMap<>());
+			            // Agregar la cantidad total de productos recogidos por ese empleado en ese día
+			            data.get(dia).put(nombreEmpleado, cantidadRecogida);
+
+			            // Acumular el total de productos recogidos por el empleado
+			            totalPorEmpleado.put(nombreEmpleado, totalPorEmpleado.get(nombreEmpleado) + cantidadRecogida);
+		            }
+		            
+		        }
+		    }
+		}
+
+		// Obtener las columnas (empleados + total)
+		Set<String> empleadosOrdenados = new TreeSet<>();
+		for (Map<String, Integer> diaData : data.values()) {
+		    empleadosOrdenados.addAll(diaData.keySet());
+		}
+
+		// Asegurarse de agregar la columna Total y Día
+		List<String> columnNames = new ArrayList<>();
+		columnNames.add("Dia");
+		columnNames.addAll(empleadosOrdenados);  
+		columnNames.add("Total");
+
+		// Crear las filas
+		List<Object[]> rows = new ArrayList<>();
+		for (String dia : data.keySet()) {
+		    Map<String, Integer> diaData = data.get(dia);
+		    Object[] row = new Object[columnNames.size()];
+
+		    // Primer valor es el día
+		    row[0] = dia;
+
+		    // Agregar los valores de cada empleado
+		    int totalDia = 0;
+		    for (int i = 1; i <= empleadosOrdenados.size(); i++) {
+		        String empleado = columnNames.get(i);
+		        int cantidad = diaData.getOrDefault(empleado, 0);
+		        row[i] = cantidad;
+		        totalDia += cantidad;
+		    }
+
+		    // Colocar el total acumulado en la última columna
+		    row[columnNames.size() - 1] = totalDia;
+
+		    // Añadir la fila a la lista de filas
+		    rows.add(row);
+		}
+
+		// Fila con los totales por empleado (total por columna)
+		Object[] totalRow = new Object[columnNames.size()];
+		totalRow[0] = "Total"; // La primera columna en vez de la fecha será "Total"
+
+		// Agregar los totales por empleado a las columnas correspondientes
+		int totalGlobal = 0;
+		for (int i = 1; i <= empleadosOrdenados.size(); i++) {
+		    String empleado = columnNames.get(i);
+		    int totalEmpleado = totalPorEmpleado.get(empleado);
+		    totalRow[i] = totalEmpleado;
+		    totalGlobal += totalEmpleado;
+		}
+
+		// Colocar el total global al final
+		totalRow[columnNames.size() - 1] = totalGlobal;
+
+		// Añadir la fila de totales por columna
+		rows.add(totalRow);
+
+		// Crear el DefaultTableModel con los datos
+		return new DefaultTableModel(rows.toArray(new Object[0][0]), columnNames.toArray());
+	}
+
+	
 	
 
 	

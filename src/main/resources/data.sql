@@ -13,6 +13,8 @@ delete from PaqueteProducto;
 delete from OrdenTrabajoProductoRecogido;
 delete from Vehiculo;
 delete from VehiculoPaquete;
+delete from OrdenTrabajoRecogidaEmpleadoDia;
+delete from ProductoRecogidoEmpleadoDia;
 
 INSERT INTO Localizacion (pasillo, estanteria, posicion, altura) VALUES
     (1, 'Izquierda', 5, 2),
@@ -184,3 +186,27 @@ INSERT INTO Paquete (caja_id, ordentrabajo_id, tipo) VALUES
 (11, 11, 'Nacional'), (12, 12, 'Regional'),
 (13, 13, 'Nacional'), (14, 14, 'Regional'),
 (15, 15, 'Nacional'); 
+
+INSERT INTO OrdenTrabajoRecogidaEmpleadoDia (almacenero_id, dia, ordenTrabajo_id) VALUES
+(1, '2024-01-01', 1),
+(2, '2024-01-02', 2),
+(3, '2024-01-03', 3),
+(4, '2024-01-04', 4),
+(5, '2024-01-05', 5),
+(6, '2024-01-06', 6),
+(7, '2024-01-07', 7),
+(8, '2024-01-08', 8),
+(9, '2024-01-09', 9),
+(10, '2024-01-10', 10);
+
+INSERT INTO ProductoRecogidoEmpleadoDia (almacenero_id, dia, producto_id,cantidad) VALUES
+(1, '2024-01-01', 1,3),
+(2, '2024-01-02', 2,6),
+(3, '2024-01-03', 3,2),
+(4, '2024-01-04', 4,1),
+(5, '2024-01-05', 5,9),
+(6, '2024-01-06', 6,12),
+(7, '2024-01-07', 7,21),
+(8, '2024-01-08', 8,6),
+(9, '2024-01-09', 9,88),
+(10, '2024-01-10', 10,20);
