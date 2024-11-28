@@ -233,7 +233,6 @@ public class AlmaceneroView {
 			tablaOrdenesTrabajoDisponibles.setModel(tmodel);
 			tablaOrdenesTrabajoDisponibles.revalidate();
 			tablaOrdenesTrabajoDisponibles.repaint();
-			//SwingUtil.autoAdjustColumns(tablaOrdenesTrabajoDisponibles);
 			tablaOrdenesTrabajoDisponibles.addMouseListener(controller.getMouseListenerSeleccionarEnLaTablaOrdenesTrabajoDisponibles());
 		}
 		return tablaOrdenesTrabajoDisponibles;
@@ -718,10 +717,7 @@ public class AlmaceneroView {
 	private JButton getBtnInformePorEmpresaYDia() {
 		if (btnInformePorEmpresaYDia == null) {
 			btnInformePorEmpresaYDia = new JButton("Informe de ventas por empresa y día");
-			btnInformePorEmpresaYDia.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-				}
-			});
+			btnInformePorEmpresaYDia.addActionListener(controller.getActionListenerMostrarInformeVentasPorEmpresas());
 		}
 		return btnInformePorEmpresaYDia;
 	}
@@ -750,6 +746,7 @@ public class AlmaceneroView {
 	private JButton getBtnVolverALaPantallaDeInformes() {
 		if (btnVolverALaPantallaDeInformes == null) {
 			btnVolverALaPantallaDeInformes = new JButton("Volver");
+			btnVolverALaPantallaDeInformes.addActionListener(controller.getActionListenerVolverALosTiposDeInformes());
 			btnVolverALaPantallaDeInformes.setFont(new Font("Tahoma", Font.PLAIN, 20));
 			btnVolverALaPantallaDeInformes.setBounds(86, 370, 241, 46);
 		}
@@ -758,15 +755,14 @@ public class AlmaceneroView {
 	private JScrollPane getScrpInfoInformes() {
 		if (scrpInfoInformes == null) {
 			scrpInfoInformes = new JScrollPane();
-			scrpInfoInformes.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 			scrpInfoInformes.setBounds(10, 86, 395, 274);
 			scrpInfoInformes.setViewportView(getTbInfoInformes());
 		}
 		return scrpInfoInformes;
 	}
-	private JLabel getLblTituloPanelMostrarInfoInformes() {
+	public JLabel getLblTituloPanelMostrarInfoInformes() {
 		if (lblTituloPanelMostrarInfoInformes == null) {
-			lblTituloPanelMostrarInfoInformes = new JLabel("New label");
+			lblTituloPanelMostrarInfoInformes = new JLabel("");
 			lblTituloPanelMostrarInfoInformes.setHorizontalAlignment(SwingConstants.CENTER);
 			lblTituloPanelMostrarInfoInformes.setFont(new Font("Arial Black", Font.PLAIN, 20));
 			lblTituloPanelMostrarInfoInformes.setBounds(10, 10, 395, 61);

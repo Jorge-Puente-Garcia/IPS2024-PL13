@@ -1,7 +1,15 @@
 package giis.model.Almacenero;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.swing.table.DefaultTableModel;
 
 import giis.util.Database;
 
@@ -117,8 +125,6 @@ public class AlmaceneroModel {
 	}
 
 	public String creaAlbaran(OrdenTrabajoRecord otr) {
-		//Mirar porque se va a generar mal¡¡¡¡
-		//TODO
 		String sacarInfoParaElAlbaran = "SELECT Producto.datosBasicos AS nombre, Producto.referencia, PaqueteProducto.cantidad "
 				+ "FROM OrdenTrabajo JOIN PaqueteProducto ON OrdenTrabajo.id = PaqueteProducto.orden_trabajo_id "
 				+ "JOIN Producto ON PaqueteProducto.producto_id = Producto.id WHERE OrdenTrabajo.id =?;";
@@ -190,18 +196,6 @@ public class AlmaceneroModel {
 		db.executeUpdate(updateAPendienteEmpaquetado, ordenTrabajoEnRecogida.getId());
 		
 	}
-	
-	
-//	public static void main(String[] args) {
-//		OrdenTrabajoRecord otr = new OrdenTrabajoRecord();
-//		db=new Database();
-//		db.createDatabase(false);
-//		db.loadDatabase();
-//		List<PedidoARecogerRecord> l=getPedidosPendientesRecogida();
-//		for(PedidoARecogerRecord p:l) {
-//			System.out.println(p.getId());
-//		}
-//	}
 
 	public void actualizaIncidenciaOT(String incidencia, OrdenTrabajoRecord ordenTrabajoEnRecogida) {
 		String actualizarIncidenciaWO="UPDATE OrdenTrabajo SET incidencia=? WHERE id=?;";
@@ -289,11 +283,6 @@ public class AlmaceneroModel {
 		
 	}
 
-	public List<FilaInformeVentasUsuarioDia> getInformeVentasPorUsuarioYDia() {
-		//TODO lo dejo antes de sacar de la bd.
-		return null;
-	}
-
 	public void reciveVehiculo(String matricula, String tipo) {
 		String creaVehiculo="INSERT INTO Vehiculo (matricula, tipo) VALUES (?, ?);";
 		db.executeUpdate(creaVehiculo, matricula,tipo);
@@ -330,6 +319,140 @@ public class AlmaceneroModel {
 		db.executeUpdate(eliminaVehiculo, tipoVehiculo);
 	}
 
+	public List<FilaInformeVentasUsuarioDia> getInformeVentasPorUsuarioYDia() {
+		String infoInformeVentas="SELECT p.fecha AS dia, SUM(CASE WHEN c.empresa = 0 "
+				+ "THEN p.total ELSE 0 END) AS particular, SUM(CASE WHEN c.empresa = 1 "
+				+ "THEN p.total ELSE 0 END) AS empresa, SUM(p.total) AS total FROM Pedido p "
+				+ "JOIN Cliente c ON p.cliente_id = c.id GROUP BY p.fecha;";
+		
+		List<FilaInformeVentasUsuarioDia> tabla=db.executeQueryPojo(FilaInformeVentasUsuarioDia.class, infoInformeVentas);
+		double totalParticular = 0;
+		double totalEmpresa = 0;
+		double totalTotal = 0;
+		for (FilaInformeVentasUsuarioDia fila : tabla) {
+		    totalParticular += fila.getParticular();
+		    totalEmpresa += fila.getEmpresa();
+		    totalTotal +=fila.getTotal();
+		}
+		FilaInformeVentasUsuarioDia totalesColumnas=new FilaInformeVentasUsuarioDia();
+		totalesColumnas.setDia("Total");
+		totalesColumnas.setParticular(totalParticular);
+		totalesColumnas.setEmpresa(totalEmpresa);
+		totalesColumnas.setTotal(totalTotal);
+		tabla.add(totalesColumnas);
+		
+		return tabla;
+	}
+
+	public List<String> getTodasEmpresasYTotalPalModel() {
+		String sacaNombresTodasEmpresas=" SELECT DISTINCT c.nombre AS empresa FROM Pedido p"
+				+ " JOIN Cliente c ON p.cliente_id = c.id"
+				+ " WHERE c.empresa = 1"
+				+ " ORDER BY c.nombre;";
+		List<String> columnNames = new ArrayList<>();
+		List<Object[]> nombres=db.executeQueryArray(sacaNombresTodasEmpresas);
+		for(Object[] o: nombres) {
+			columnNames.add(o[0].toString());
+		}
+		return columnNames;
+	}
+
+	public DefaultTableModel getInformeVentasSegunEmpresas(List<String> empresas) {
+		String infoPorDiaEmpresaEspecifica ="SELECT DATE(p.fecha) AS dia,"
+				+ " COALESCE(SUM(p.total), 0) AS total_gastado"
+				+ "	FROM Pedido p"
+				+ "	JOIN Cliente c ON p.cliente_id = c.id"
+				+ "	WHERE c.empresa = 1 AND c.nombre = ?"
+				+ "	GROUP BY DATE(p.fecha)"
+				+ "	ORDER BY dia;";
+		
+		
+		// Mapa para los resultados
+		Map<String, Map<String, Double>> data = new LinkedHashMap<>();
+
+		// Inicializar un mapa para los totales por empresa
+	    Map<String, Double> totalPorEmpresa = new HashMap<>();
+	    for (String empresa : empresas) {
+	        totalPorEmpresa.put(empresa, 0.0); // Inicializamos el total para cada empresa
+	    }
+		
+		for (String empresa : empresas) { // empresas: lista de nombres de empresas
+			List<Object[]> infoPorDiaEmpresa=db.executeQueryArray(infoPorDiaEmpresaEspecifica, empresa);
+			if(!infoPorDiaEmpresa.isEmpty()) {
+				String dia = infoPorDiaEmpresa.get(0)[0].toString();
+				double total = Double.parseDouble(infoPorDiaEmpresa.get(0)[1].toString());
+
+				// Inicializar el mapa para el día si no existe
+				data.putIfAbsent(dia, new HashMap<>());
+				// Agregar el total de la empresa
+				data.get(dia).put(empresa, total); 
+				// Acumular el total de cada empresa(la columna)
+                totalPorEmpresa.put(empresa, totalPorEmpresa.get(empresa) + total);
+			}
+		}
+		
+		 // Obtener las columnas (empresas + total)
+		// Usar TreeSet para asegurar el orden
+	    Set<String> empresasOrdenadas = new TreeSet<>();
+	    for (Map<String, Double> diaData : data.values()) {
+	    	empresasOrdenadas.addAll(diaData.keySet());
+	    	System.out.println(diaData.keySet());
+	    }
+	    
+	    // Asegurarse de agregar la columna Total y Día
+	    List<String> columnNames = new ArrayList<>();
+	    columnNames.add("Dia");
+	    columnNames.addAll(empresasOrdenadas);  
+	    columnNames.add("Total");
+	    // Paso 2: Crear las filas
+	    List<Object[]> rows = new ArrayList<>();
+	    for (String dia : data.keySet()) {
+	        Map<String, Double> diaData = data.get(dia);
+	        Object[] row = new Object[columnNames.size()];
+
+	        // Primer valor es el día
+	        row[0] = dia;
+
+	        // Agregar los valores de cada empresa
+	        double totalDia = 0.0;
+	        for (int i = 1; i <= empresasOrdenadas.size(); i++) {
+	            String empresa = columnNames.get(i);
+	            double total = diaData.getOrDefault(empresa, 0.0);
+	            row[i] = total;
+	            totalDia += total;
+	        }
+
+	        // Colocar el total acumulado en la última columna
+	        row[columnNames.size() - 1] = totalDia;
+
+	        // Añadir la fila a la lista de filas
+	        rows.add(row);
+	    }
+
+	 // Fila con los totales por empresa (total por columna)
+	    Object[] totalRow = new Object[columnNames.size()];
+	    totalRow[0] = "Total"; // La primera columna en vez de la fecha será "Total"
+
+	    // Agregar los totales por empresa a las columnas correspondientes
+	    double totalGlobal = 0.0;
+	    for (int i = 1; i <= empresasOrdenadas.size(); i++) {
+	        String empresa = columnNames.get(i);
+	        double totalEmpresa = totalPorEmpresa.get(empresa);
+	        totalRow[i] = totalEmpresa;
+	        totalGlobal += totalEmpresa;
+	    }
+
+	    // Colocar el total global al final
+	    totalRow[columnNames.size() - 1] = totalGlobal;
+
+	    // Añadir la fila de totales por columna
+	    rows.add(totalRow);
+
+	    
+	    // Crear el DefaultTableModel con los datos
+	    return new DefaultTableModel(rows.toArray(new Object[0][0]), columnNames.toArray());
+		
+	}
 	
 
 	
