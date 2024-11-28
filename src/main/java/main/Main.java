@@ -52,11 +52,8 @@ public class Main extends JFrame {
 					 * FlatDarculaLaf
                 	 */
                 	//FlatNordIJTheme.setup();
-                	
-                	db.createDatabase(false);
-                	db.loadDatabase();
-                	
-                	FlatIntelliJLaf.setup();
+
+                	//FlatIntelliJLaf.setup();
                     Main frame = new Main();
                     frame.setVisible(true);
                 } catch (Exception e) {

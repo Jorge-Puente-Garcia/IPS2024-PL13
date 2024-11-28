@@ -10,12 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import giis.model.Almacenero.AlmaceneroModel;
 import giis.model.Almacenero.ElementoARecogerDto;
 import giis.model.Almacenero.Estado;
 import giis.model.Almacenero.FilaInformeVentasUsuarioDia;
+import giis.model.Almacenero.InformeVentasSegunEmpresasDto;
 import giis.model.Almacenero.OrdenTrabajoDto;
 import giis.model.Almacenero.OrdenTrabajoRecord;
 import giis.model.Almacenero.PaqueteAExpedirDto;
@@ -266,8 +268,8 @@ public class AlmaceneroController {
 	
 	protected TableModel getTableModelInformeVentasUsuarioDia() {
 		TableModel tmodel =SwingUtil.getTableModelFromPojos(getImportesVestasPorTipoUsuarioYDía(),
-				new String[] { "dia, particular", "empresa, total de los dias"});
-		return null;
+				new String[] { "dia", "particular", "empresa","total"});
+		return tmodel;
 	}
 	
 	protected TableModel getTableModelPaquetesSegunTipoDeVehiculo(String tipo) {
@@ -276,6 +278,15 @@ public class AlmaceneroController {
 		return tmodel;
 	}
 	
+	protected TableModel getTableModelInformeVentasEmpresaDia() {
+		List<String> empresas= model.getTodasEmpresasYTotalPalModel();
+		TableModel tmodel =getInformeEmpresasSegunEmpresas(empresas);
+		return tmodel;
+	}
+	
+	private DefaultTableModel getInformeEmpresasSegunEmpresas(List<String> empresas) {		
+		return model.getInformeVentasSegunEmpresas(empresas);
+	}
 	
 	public ActionListener getActionListenerVolverAtrasHaciaOrdenesTrabajo() {
 		return new ActionListener() {
@@ -305,12 +316,6 @@ public class AlmaceneroController {
 	public ActionListener getActionListenerEmpezarARecoger() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//int fila=vista.getTablaOrdenesTrabajoSeleccionadas().getSelectedRow();
-				//Lo comento porque no quiero que desaparezca de la ventaa de OTs para recoger(funcionalida de poner en pausa)
-				//model.updateWorkOrderParaQuePaseAEnProcesoDeRecogida(pedidosAsignados.get(fila));
-				
-				//No quiero que se impida que se puedan seleccionar otras 
-				//vista.getTablaOrdenesTrabajoSeleccionadas().setEnabled(false);
 				TableModel tmodel = getTableModelElemetosParaRecoger();
 				vista.getTablaOrdenesElementParaRecoger().setModel(tmodel);
 				vista.getTablaOrdenesElementParaRecoger().revalidate();
@@ -333,7 +338,6 @@ public class AlmaceneroController {
 	public ActionListener getActionListenerCrearOrdenTrabajo() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//vista.getTablaOrdenesTrabajoDisponibles().setEnabled(false);
 				vista.getBtnCrearOT().setEnabled(false);
 				
 				
@@ -559,7 +563,6 @@ public class AlmaceneroController {
 				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnEmpaquetadoProductos");
 				vista.getBtnIniciarEmpaquetado().setEnabled(false);
 				codigoBarrasCaja= model.creaPaqueteParaElProcesoEmpaquetado();
-				//model.PonEnProcesoEmpaquetadoLaOt(ordenTrabajoEnEmpaquetado);
 				TableModel tmodel2 = getTableModelPrdenesTrabajoPendientesEmpaquetado();
 				vista.getTablaOrdenesTrabajoPendientesEmpaquetado().setModel(tmodel2);
 				SwingUtil.autoAdjustColumns(vista.getTablaOrdenesTrabajoPendientesEmpaquetado());
@@ -595,6 +598,7 @@ public class AlmaceneroController {
 	public ActionListener getActionListnerMostrarInformeVentasUsuariDia() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				vista.getLblTituloPanelMostrarInfoInformes().setText("Ventas por usuario y día");
 				TableModel tmodel = getTableModelInformeVentasUsuarioDia();
 				vista.getTbInfoInformes().setModel(tmodel);
 				SwingUtil.autoAdjustColumns(vista.getTbInfoInformes());
@@ -603,6 +607,21 @@ public class AlmaceneroController {
 			}
 		};
 	}
+	
+	public ActionListener getActionListenerMostrarInformeVentasPorEmpresas() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				vista.getLblTituloPanelMostrarInfoInformes().setText("Ventas por empresa y día");
+				TableModel tmodel = getTableModelInformeVentasEmpresaDia();
+				vista.getTbInfoInformes().setModel(tmodel);
+				//SwingUtil.autoAdjustColumns(vista.getTbInfoInformes());
+				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnInfoInformes");
+			}
+		};
+	}
+	
+	
 	public ActionListener getActionListenerEntrarVentanaDeRecivirVehiculo() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -672,6 +691,15 @@ public class AlmaceneroController {
 			}
 		};
 	}
+	public ActionListener getActionListenerVolverALosTiposDeInformes() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnInformesDisponibles");
+			}
+		};
+	}
+	
 	
 	
 	
