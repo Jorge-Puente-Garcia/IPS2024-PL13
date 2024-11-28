@@ -4,12 +4,17 @@ public class CarritoProductos {
 
     private String referencia;
     private int cantidad;
+    private double precioBase;
+    private String iva;
     private double precio;
-
-    public CarritoProductos(String referencia, int cantidad, double precio) {
+    
+    
+    public CarritoProductos(String referencia, int cantidad,double precioBase, String iva, double precio) {
         this.referencia = referencia;
         this.cantidad = cantidad;
         this.precio = precio;
+        this.precioBase = precioBase;
+        this.iva = iva;
     }
 
     public CarritoProductos() {
@@ -38,5 +43,21 @@ public class CarritoProductos {
     public void setPrecio(double precio) {
         this.precio = precio;
     }
+
+	public double getPrecioBase() {
+		return precioBase;
+	}
+
+	public void setPrecioBase(double precioBase) {
+		this.precioBase = precioBase;
+	}
+
+	public String getIva() {
+		return iva +"%";
+	}
+
+	public void setIva(String iva) {
+		this.iva = iva;
+	}
 
 }

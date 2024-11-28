@@ -23,7 +23,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 import giis.controller.TiendaController;
 import giis.model.Tienda.CarritoProductos;
@@ -165,7 +164,7 @@ public class Tienda extends JFrame {
                 .setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
             panelControltienda.setAlignmentX(Component.RIGHT_ALIGNMENT);
             panelControltienda.setLayout(new BorderLayout(0, 0));
-            panelControltienda.add(getPanel_1(), BorderLayout.EAST);
+            panelControltienda.add(getPanelAñadirCarrito(), BorderLayout.EAST);
             panelControltienda.add(getPanel(), BorderLayout.WEST);
         }
         return panelControltienda;
@@ -289,7 +288,7 @@ public class Tienda extends JFrame {
 
     private DefaultTableModel ActualizarCarrito() {
         DefaultTableModel tableModel = new DefaultTableModel(
-            new Object[] { "Referencia", "Cantidad", "Precio" }, 0) {
+            new Object[] { "Referencia", "Cantidad","Precio", "Iva", "Total" }, 0) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -299,7 +298,7 @@ public class Tienda extends JFrame {
         };
         for (CarritoProductos cp : tdc.devolverCarrito()) {
             tableModel.addRow(new Object[] { cp.getReferencia(),
-                cp.getCantidad(), cp.getPrecio() });
+                cp.getCantidad(),cp.getPrecioBase(),cp.getIva(), cp.getPrecio() });
         }
         return tableModel;
     }
@@ -419,7 +418,7 @@ public class Tienda extends JFrame {
         return spCantidadEditar;
     }
 
-    private JPanel getPanel_1() {
+    private JPanel getPanelAñadirCarrito() {
         if (panelAñadirCarrito == null) {
             panelAñadirCarrito = new JPanel();
             panelAñadirCarrito.add(getLbUnidadesProductos());
@@ -533,13 +532,13 @@ public class Tienda extends JFrame {
     }
 
     private void ActualizarTablaProductos() {
-        if (tbProductos.getModel().getColumnCount() == 1) {
+        if (tbProductos.getModel().getColumnCount() == 1) {//COMPRUEBA SI SON CATEGORIAS
             DefaultTableModel tableModel;
             int row = tbProductos.getSelectedRow();
             List<Categorias> categorias = tdc
                 .getSubCategorias(tbProductos.getValueAt(row, 0).toString());
 
-            if (categorias.size() != 0 && tbProductos.getModel().getColumnCount() == 1) {
+            if (categorias.size() != 0) { //MIRA SI HAY MAS CATEGORIAS
                 tableModel = new DefaultTableModel(
                     new Object[] { "Categorias" }, 0) {
                     private static final long serialVersionUID = 1L;
@@ -555,7 +554,7 @@ public class Tienda extends JFrame {
                 }
                 tbProductos.setModel(tableModel);
             
-            } else {
+            } else { // SI NO HAY MAS CATEGORIAS INSERTA LOS PRODUCTOS
             	actualizarProductosUI(row);
             }
             tbProductos.revalidate();

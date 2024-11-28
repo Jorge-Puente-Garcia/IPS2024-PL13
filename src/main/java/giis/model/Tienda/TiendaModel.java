@@ -2,18 +2,16 @@ package giis.model.Tienda;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-
 import giis.util.Database;
 
 public class TiendaModel {
 
     private Database db;
-
-    public TiendaModel(Database db) {
+    private Cliente cliente;
+    
+    public TiendaModel(Database db, Cliente cliente) {
         this.db = db;
+        this.cliente = cliente;
     }
 
     public List<Categorias> getCategoriasPrincipales() {
@@ -41,11 +39,18 @@ public class TiendaModel {
 
     public List<ProductosDto> getProductos(String nombre) {
         String id = getIdCategoria(nombre);
-
-        String sql = "SELECT referencia, datosBasicos, precio, unidades, unidadesMinimas FROM Producto "
+        String precio;
+        if(cliente.isEmpresa()) {
+        	precio = "precioEmpresa";
+        }
+        else {
+        	precio = "precioPersona";
+        }
+        
+        String sql = "SELECT referencia, datosBasicos,"+ precio + ", iva , unidades, unidadesMinimas FROM Producto "
             + "WHERE id_categoria = ? ORDER BY referencia;";
 
-        List<Object[]> lista = db.executeQueryArray(sql, id);
+        List<Object[]> lista = db.executeQueryArray(sql,id);
         List<ProductosDto> listaProductos = new ArrayList<ProductosDto>();
         ProductosDto dto;
 
@@ -53,9 +58,16 @@ public class TiendaModel {
             dto = new ProductosDto();
             dto.setReferencia(d[0].toString());
             dto.setDatosbasicos(d[1].toString());
-            dto.setPrecioUnitario(d[2].toString());
-            dto.setUnidades(Integer.parseInt(d[3].toString()));
-            dto.setUnidadesMinimas(Integer.parseInt(d[4].toString()));
+            if(cliente.isEmpresa()) 
+            	dto.setPrecioUnitario(d[2].toString());
+            else {
+            	double precioP = Double.parseDouble(d[2].toString());
+            	double iva = Double.parseDouble(d[3].toString()) + 1;
+            	double total = precioP * iva;
+            	dto.setPrecioUnitario(String.format("%.2f", total));
+            }            	
+            dto.setUnidades(Integer.parseInt(d[4].toString()));
+            dto.setUnidadesMinimas(Integer.parseInt(d[5].toString()));
             listaProductos.add(dto);
         }
         return listaProductos;
