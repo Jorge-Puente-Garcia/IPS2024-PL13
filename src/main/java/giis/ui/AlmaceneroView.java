@@ -724,12 +724,14 @@ public class AlmaceneroView {
 	private JButton getBtnInformeNumeroOTsEmpleadoYDia() {
 		if (btnInformeNumeroOTsEmpleadoYDia == null) {
 			btnInformeNumeroOTsEmpleadoYDia = new JButton("Informe de OT's recogidas por empleado y día");
+			btnInformeNumeroOTsEmpleadoYDia.addActionListener(controller.getActionListenerMostrarInformeOTRecogidasEmpleado());
 		}
 		return btnInformeNumeroOTsEmpleadoYDia;
 	}
 	private JButton getBtnInformeCantidaProductosEmpleadoYDia() {
 		if (btnInformeCantidaProductosEmpleadoYDia == null) {
 			btnInformeCantidaProductosEmpleadoYDia = new JButton("Informe de productos recogidos por empleado y día");
+			btnInformeCantidaProductosEmpleadoYDia.addActionListener(controller.getActionListenerInformeProductosEmpleadoDia());
 		}
 		return btnInformeCantidaProductosEmpleadoYDia;
 	}

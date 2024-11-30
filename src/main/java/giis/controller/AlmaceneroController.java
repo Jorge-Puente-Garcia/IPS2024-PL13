@@ -407,7 +407,10 @@ public class AlmaceneroController {
 							int recogido=(int)vista.getSpinner().getValue();
 							if(elemento.cantidad==recogido) {
 								model.eliminaElOrdenTrabajoProductoYActualizaOrdenTrabajoProductoRecogido(ordenTrabajoEnRecogida,elemento,recogido);
+								model.guardaOTRecogidaConFechaAlmacenero(almaceneroId,ordenTrabajoEnRecogida);
+								model.guardaProductoRecogidoConFechaAlmacenero(almaceneroId,elemento,recogido);
 							}else{
+								model.guardaProductoRecogidoConFechaAlmacenero(almaceneroId,elemento,recogido);
 								elemento.cantidad-=recogido;
 								model.actualizaCantidadYaRecogidaDeUnProducto(ordenTrabajoEnRecogida,elemento,recogido);
 								elementosNoEliminados.add(elemento);
@@ -621,6 +624,41 @@ public class AlmaceneroController {
 		};
 	}
 	
+	public ActionListener getActionListenerMostrarInformeOTRecogidasEmpleado() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				vista.getLblTituloPanelMostrarInfoInformes().setText("OT's recogidas por empleado y día");
+				TableModel tmodel = getTableModelInformeOTEmpleadoDia();
+				vista.getTbInfoInformes().setModel(tmodel);
+				SwingUtil.autoAdjustColumns(vista.getTbInfoInformes());
+				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnInfoInformes");
+			}
+		};
+	}
+	
+	protected TableModel getTableModelInformeOTEmpleadoDia() {
+		List<String> empleados=model.getEmpleados();
+		return model.getInformeOTEmpleadoDia(empleados);
+	}
+	
+	public ActionListener getActionListenerInformeProductosEmpleadoDia() {
+		return new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				vista.getLblTituloPanelMostrarInfoInformes().setText("Productoss recogidos por empleado y día");
+				TableModel tmodel = getTableModelInformeProductosEmpleadoDia();
+				vista.getTbInfoInformes().setModel(tmodel);
+				SwingUtil.autoAdjustColumns(vista.getTbInfoInformes());
+				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
+				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnInfoInformes");
+			}
+		};
+	}
+	protected TableModel getTableModelInformeProductosEmpleadoDia() {
+		List<String> empleados=model.getEmpleados();
+		return model.getInformeProductosEmpleadoDia(empleados);
+	}
+	
 	
 	public ActionListener getActionListenerEntrarVentanaDeRecivirVehiculo() {
 		return new ActionListener() {
@@ -699,6 +737,8 @@ public class AlmaceneroController {
 			}
 		};
 	}
+	
+	
 	
 	
 	
