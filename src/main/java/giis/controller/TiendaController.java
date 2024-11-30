@@ -21,16 +21,17 @@ public class TiendaController {
     private Database db;
 
     private Tienda tienda;
-
+    private Cliente cliente;
     private TiendaModel model;
     private CarritoModel carrito;
 
     public TiendaController(Database db, String[] clienteData) {
-        this.db = new Database();
+    	this.db = db;
+    	
+    	iniciarCliente(clienteData[0]);    	       
 
-        this.model = new TiendaModel(db);
-        this.carrito = new CarritoModel(db,
-            new Cliente(clienteData[0]));
+        this.model = new TiendaModel(db, cliente);
+        this.carrito = new CarritoModel(db,cliente);
         this.tienda = new Tienda(this);
         initView();
     }
@@ -41,6 +42,17 @@ public class TiendaController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    private void iniciarCliente(String dni) {
+    	String sql = "select * from cliente where dni = ?";    	
+    	List<Cliente> a = db.executeQueryPojo(Cliente.class, sql,dni);
+    	for (Cliente cliente : a) {
+			this.cliente = cliente;
+		}
+    	if(this.cliente == null) {
+    		this.cliente = new Cliente(dni);
+    	}
     }
 
     public List<ProductosDto> getProductos(String CategoriaName) {

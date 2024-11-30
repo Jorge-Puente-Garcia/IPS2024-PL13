@@ -9,18 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
-import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes;
-import com.formdev.flatlaf.intellijthemes.FlatArcDarkOrangeIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatCarbonIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatGradiantoDarkFuchsiaIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatGradiantoDeepOceanIJTheme;
-import com.formdev.flatlaf.intellijthemes.FlatNordIJTheme;
-
 import giis.controller.TiendaController;
 import giis.ui.AlmaceneroView;
 import giis.ui.tienda.util.ClienteBuscador;
@@ -43,17 +32,8 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             @Override
-            public void run() {
-                try {                	
-                	/*
-                	 * FlatLightLaf
-					 * FlatDarkLaf
-					 * FlatIntelliJLaf
-					 * FlatDarculaLaf
-                	 */
-                	//FlatNordIJTheme.setup();
-
-                	//FlatIntelliJLaf.setup();
+            public void run() {             	
+                	  FlatIntelliJLaf.setup();
                     Main frame = new Main();
                     frame.setVisible(true);
                 } catch (Exception e) {

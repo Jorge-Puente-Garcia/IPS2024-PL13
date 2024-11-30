@@ -4,18 +4,29 @@ public class Cliente {
     private String dni;
     private String nombre;
     private String apellidos;
-
-    public Cliente(String dni, String nombre, String apellidos) {
-        this.dni = dni;
-        this.nombre = nombre;
-        this.apellidos = apellidos;
+    private String direccion;
+    private int numeroTelefono;
+    private boolean empresa;
+    
+    public Cliente(String dni, String nombre, String apellidos, String direccion, int numeroTelefono, boolean empresa) {
+		super();
+		this.dni = dni;
+		this.nombre = nombre;
+		this.apellidos = apellidos;
+		this.direccion = direccion;
+		this.numeroTelefono = numeroTelefono;
+		this.empresa = empresa;
+	}
+    
+    public Cliente() {
+    	
     }
 
-    public Cliente(String dni) {
-		this(dni,"noName","noSurname");
-	}
+	public Cliente (String dni) {
+    	this(dni, "no-name","no-surname","no-direction", 0, false);
+    }
 
-	// Getters y Setters
+    // Getters y Setters
     public String getDni() {
         return dni;
     }
@@ -39,4 +50,30 @@ public class Cliente {
     public void setApellidos(String apellidos) {
         this.apellidos = apellidos;
     }
+
+	public String getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+
+	public int getNumeroTelefono() {
+		return numeroTelefono;
+	}
+
+	public void setNumeroTelefono(int numeroTelefono) {
+		this.numeroTelefono = numeroTelefono;
+	}
+
+	public boolean isEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(boolean empresa) {
+		this.empresa = empresa;
+	}
+    
+    
 }
