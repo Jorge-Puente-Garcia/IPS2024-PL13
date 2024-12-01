@@ -639,8 +639,7 @@ public class AlmaceneroView {
 	}
 	public JButton getBtnVisualizarAlbaran() {
 		if (btnVisualizarAlbaran == null) {
-			btnVisualizarAlbaran = new JButton("Visualizar albaran");
-			btnVisualizarAlbaran.setEnabled(false);
+			btnVisualizarAlbaran = new JButton("Visualizar albaranes");
 			btnVisualizarAlbaran.addActionListener(controller.getActionListenerMostrarAlbaran());
 			btnVisualizarAlbaran.setBounds(29, 375, 188, 41);
 		}
@@ -712,7 +711,7 @@ public class AlmaceneroView {
 	}
 	private JButton getBtnVisualizarInformeVentasPorUsuarioYDia() {
 		if (btnVisualizarInformeVentasPorUsuarioYDia == null) {
-			btnVisualizarInformeVentasPorUsuarioYDia = new JButton("Informe de ventas porusuario y dia");
+			btnVisualizarInformeVentasPorUsuarioYDia = new JButton("Informe de ventas por usuario y dia");
 			btnVisualizarInformeVentasPorUsuarioYDia.addActionListener(controller.getActionListnerMostrarInformeVentasUsuariDia());
 		}
 		return btnVisualizarInformeVentasPorUsuarioYDia;

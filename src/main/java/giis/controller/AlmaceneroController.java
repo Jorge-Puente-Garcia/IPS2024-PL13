@@ -1,6 +1,8 @@
 package giis.controller;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -9,7 +11,10 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -585,7 +590,16 @@ public class AlmaceneroController {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				vista.getTaAlbaran().setText(model.creaAlbaran(ordenTrabajoEnEmpaquetado));
-				JOptionPane.showMessageDialog(null, vista.getTaAlbaran(),"Albaran", JOptionPane.INFORMATION_MESSAGE);
+				JScrollPane auxiliar = new JScrollPane(vista.getTaAlbaran());
+				auxiliar.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+				auxiliar.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				JDialog dialog = new JDialog();
+		        dialog.setTitle("Albarán");
+		        dialog.setSize(1200, 800); 
+		        dialog.setLocationRelativeTo(null);
+		        dialog.add(auxiliar, BorderLayout.CENTER);
+		        dialog.setModal(true); 
+		        dialog.setVisible(true);
 			}
 		};
 	}
@@ -616,9 +630,6 @@ public class AlmaceneroController {
 				vista.getLblTituloPanelMostrarInfoInformes().setText("Ventas por empresa y día");
 				TableModel tmodel = getTableModelInformeVentasEmpresaDia();
 				vista.getTbInfoInformes().setModel(tmodel);
-				//vista.getTbInfoInformes().revalidate();
-				//vista.getTbInfoInformes().repaint();
-				//SwingUtil.autoAdjustColumns(vista.getTbInfoInformes());
 				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
 				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnInfoInformes");
 			}
@@ -631,7 +642,6 @@ public class AlmaceneroController {
 				vista.getLblTituloPanelMostrarInfoInformes().setText("OT's recogidas por empleado y día");
 				TableModel tmodel = getTableModelInformeOTEmpleadoDia();
 				vista.getTbInfoInformes().setModel(tmodel);
-				SwingUtil.autoAdjustColumns(vista.getTbInfoInformes());
 				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
 				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnInfoInformes");
 			}
@@ -646,10 +656,9 @@ public class AlmaceneroController {
 	public ActionListener getActionListenerInformeProductosEmpleadoDia() {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				vista.getLblTituloPanelMostrarInfoInformes().setText("Productoss recogidos por empleado y día");
+				vista.getLblTituloPanelMostrarInfoInformes().setText("Productos por empleado y día");
 				TableModel tmodel = getTableModelInformeProductosEmpleadoDia();
 				vista.getTbInfoInformes().setModel(tmodel);
-				SwingUtil.autoAdjustColumns(vista.getTbInfoInformes());
 				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
 				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnInfoInformes");
 			}

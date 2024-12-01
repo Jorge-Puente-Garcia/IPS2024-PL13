@@ -140,55 +140,81 @@ public class AlmaceneroModel {
 	}
 
 	public String creaAlbaran(OrdenTrabajoRecord otr) {
-		String sacarInfoParaElAlbaran = "SELECT Producto.datosBasicos AS nombre, Producto.referencia, PaqueteProducto.cantidad "
-				+ "FROM OrdenTrabajo JOIN PaqueteProducto ON OrdenTrabajo.id = PaqueteProducto.orden_trabajo_id "
-				+ "JOIN Producto ON PaqueteProducto.producto_id = Producto.id WHERE OrdenTrabajo.id =?;";
+		String sacarInfoParaElAlbaran = "SELECT Producto.datosBasicos AS nombre, Producto.referencia, ProductosPedido.cantidad, "
+		        + "Cliente.nombre AS cliente_nombre, Cliente.apellidos, Cliente.direccion, Cliente.numeroTelefono "
+		        + "FROM Pedido "
+		        + "JOIN ProductosPedido ON Pedido.id = ProductosPedido.pedido_id "
+		        + "JOIN Producto ON ProductosPedido.producto_id = Producto.id "
+		        + "JOIN Cliente ON Pedido.cliente_id = Cliente.id "
+		        + "WHERE Pedido.id = ?;";
 
-		List<Object[]> lista = db.executeQueryArray(sacarInfoParaElAlbaran,otr.getId()); //CAMBIO
-		
-		// Cálculo del ancho máximo de las columnas
-		int maxNombreLength = 0;
-		int maxReferenciaLength = 0;
-		int maxCantidadLength = 0;
-		for (Object[] d : lista) {
-			String nombre = d[0].toString();
-			String referencia = d[1].toString();
-			String cantidad = d[2].toString();
+		// Obtener todos los IDs de los pedidos
+		List<Object[]> pedidosIds = db.executeQueryArray("SELECT id FROM Pedido");
 
-			maxNombreLength = Math.max(maxNombreLength, nombre.length());
-			maxReferenciaLength = Math.max(maxReferenciaLength, referencia.length());
-			maxCantidadLength = Math.max(maxCantidadLength, cantidad.length());
+		// Crear un acumulador para el texto del albarán
+		StringBuilder albaranes = new StringBuilder();
+
+		// Recorrer todos los pedidos
+		for (Object[] pedidoId : pedidosIds) {
+		    // Obtener los productos de cada pedido
+		    List<Object[]> lista = db.executeQueryArray(sacarInfoParaElAlbaran, (int)pedidoId[0]);
+
+		    if (!lista.isEmpty()) {
+		        // Obtener la información del cliente desde el primer resultado (la misma para todos los productos)
+		        String clienteNombre = lista.get(0)[3].toString();
+		        String clienteApellidos = lista.get(0)[4].toString();
+		        String clienteDireccion = lista.get(0)[5].toString();
+		        String clienteTelefono = lista.get(0)[6].toString();
+
+		        // Cálculo del ancho máximo de las columnas para productos
+		        int maxNombreLength = 0;
+		        int maxReferenciaLength = 0;
+		        int maxCantidadLength = 0;
+
+		        for (Object[] d : lista) {
+		            String nombre = d[0].toString();
+		            String referencia = d[1].toString();
+		            String cantidad = d[2].toString();
+
+		            maxNombreLength = Math.max(maxNombreLength, nombre.length());
+		            maxReferenciaLength = Math.max(maxReferenciaLength, referencia.length());
+		            maxCantidadLength = Math.max(maxCantidadLength, cantidad.length());
+		        }
+
+		        // Se mantiene un mínimo de ancho para mantener el formato de 1 hoja
+		        maxNombreLength = Math.max(maxNombreLength, 31); // Mínimo 31
+		        maxReferenciaLength = Math.max(maxReferenciaLength, 31); // Mínimo 31
+		        maxCantidadLength = Math.max(maxCantidadLength, 20); // Mínimo 20
+
+		        // Añadir los datos del cliente al principio del albarán
+		        albaranes.append("Nombre del cliente: ").append(clienteNombre).append("\n")
+		        		.append("Apellidos del cliente").append(clienteApellidos).append("\n")
+		                .append("Dirección cliente: ").append(clienteDireccion).append("\n")
+		                .append("Teléfono cliente: ").append(clienteTelefono).append("\n");
+
+		        // Añadir el título de los productos y los productos del pedido
+		        albaranes.append("Albarán para el pedido ID: ").append((int)pedidoId[0]).append("\n")
+		                .append(String.format("|%-" + maxNombreLength + "s |%-" + maxReferenciaLength + "s  |%-" + maxCantidadLength + "s  |\n",
+		                        "Nombre producto", "Referencia producto", "Cantidad"))
+		                .append(String.format("|%-" + maxNombreLength + "s |%-" + maxReferenciaLength + "s  |%-" + maxCantidadLength + "s  |\n",
+		                        "-".repeat(maxNombreLength), "-".repeat(maxReferenciaLength), "-".repeat(maxCantidadLength)));
+
+		        // Agregar los productos del pedido
+		        for (Object[] d : lista) {
+		            String nombre = d[0].toString();
+		            String referencia = d[1].toString();
+		            String cantidad = d[2].toString();
+		            albaranes.append(String.format("|%-" + maxNombreLength + "s | %-" + maxReferenciaLength + "s | %-" + maxCantidadLength + "s |\n",
+		                    nombre, referencia, cantidad));
+		        }
+
+		    // Separar los albaranes por tres líneas
+		    albaranes.append("\n");
 		}
-
-		// Se mantiene un mínimo de ancho para mantener el formato de 1 hoja
-		maxNombreLength = Math.max(maxNombreLength, 31); // Mínimo 31
-		maxReferenciaLength = Math.max(maxReferenciaLength, 31); // Mínimo 31
-		maxCantidadLength = Math.max(maxCantidadLength, 20); // Mínimo 20
-		
-		String albaran = "Datos del cliente y del paquete:"+creaEtiqueta(otr).substring(20)+"\n";
-		//String albaran ="";
-		albaran += " Albarán:\n"
-	                + String.format("|%-" + maxNombreLength + "s |%-" + maxReferenciaLength + "s  |%-" + maxCantidadLength + "s  |\n",
-	                " Nombre producto ", " Referencia producto ", " Cantidad ")
-	                + String.format("|%-" + maxNombreLength + "s |%-" + maxReferenciaLength + "s  |%-" + maxCantidadLength + "s  |\n",
-	                "-".repeat(maxNombreLength), "-".repeat(maxReferenciaLength), "-".repeat(maxCantidadLength));
-		 
-		// Ahora, crear el albarán con el formato correcto
-		for (Object[] d : lista) {
-			String nombre = d[0].toString();
-			String referencia = d[1].toString();
-			String cantidad = d[2].toString();
-			albaran += String.format(
-					"|%-" + maxNombreLength + "s | %-" + maxReferenciaLength + "s | %-" + maxCantidadLength + "s |\n",
-					nombre, referencia, cantidad)+ String.format("|%-" + maxNombreLength + "s |%-" + maxReferenciaLength + "s  |%-" + maxCantidadLength + "s  |\n",
-			                "-".repeat(maxNombreLength), "-".repeat(maxReferenciaLength), "-".repeat(maxCantidadLength));;
 		}
-		
-		String.format("|%-" + maxNombreLength + "s|%-" + maxReferenciaLength + "s|%-" + maxCantidadLength + "s|\n",
-                " Nombre producto ", " Referencia producto ", " Cantidad ");
-		
+		// Retornar todos los albaranes generados
+		return albaranes.toString();
 
-		return albaran;
 
 	}
 	
