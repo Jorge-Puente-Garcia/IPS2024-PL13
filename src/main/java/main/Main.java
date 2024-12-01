@@ -32,8 +32,9 @@ public class Main extends JFrame {
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             @Override
-            public void run() {             	
-                	  FlatIntelliJLaf.setup();
+            public void run() { 
+            	try {
+                	FlatIntelliJLaf.setup();
                     Main frame = new Main();
                     frame.setVisible(true);
                 } catch (Exception e) {
