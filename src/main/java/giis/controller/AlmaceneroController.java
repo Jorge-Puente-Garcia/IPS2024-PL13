@@ -616,7 +616,9 @@ public class AlmaceneroController {
 				vista.getLblTituloPanelMostrarInfoInformes().setText("Ventas por empresa y día");
 				TableModel tmodel = getTableModelInformeVentasEmpresaDia();
 				vista.getTbInfoInformes().setModel(tmodel);
-				SwingUtil.autoAdjustColumns(vista.getTbInfoInformes());
+				//vista.getTbInfoInformes().revalidate();
+				//vista.getTbInfoInformes().repaint();
+				//SwingUtil.autoAdjustColumns(vista.getTbInfoInformes());
 				CardLayout cl = (CardLayout) (vista.getFrameTerminalPortatil().getContentPane().getLayout());
 				cl.show(vista.getFrameTerminalPortatil().getContentPane(), "pnInfoInformes");
 			}

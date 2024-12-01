@@ -760,6 +760,7 @@ public class AlmaceneroView {
 	private JScrollPane getScrpInfoInformes() {
 		if (scrpInfoInformes == null) {
 			scrpInfoInformes = new JScrollPane();
+			scrpInfoInformes.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 			scrpInfoInformes.setBounds(0, 86, 415, 274);
 			scrpInfoInformes.setViewportView(getTbInfoInformes());
 		}
@@ -781,6 +782,7 @@ public class AlmaceneroView {
 			tbInfoInformes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			tbInfoInformes.setName("tabElementosEnProcesoEmpaquetado");
 			tbInfoInformes.setFillsViewportHeight(true);
+			tbInfoInformes.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		}
 		return tbInfoInformes;
 	}
