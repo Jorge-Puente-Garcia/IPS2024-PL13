@@ -147,7 +147,7 @@ INSERT INTO Pedido (cliente_id, fecha, total, estado, orden_trabajo_id) VALUES
 (7, '2024-01-07', 180.00, 'Pendiente de recogida', 7), (8, '2024-01-08', 220.00, 'Recogido', 8), 
 (9, '2024-01-09', 270.00, 'Pendiente de recogida', 9), (10, '2024-01-10', 350.00, 'Recogido', 10), 
 (11, '2024-01-11', 110.00, 'Pendiente de recogida', 11), (12, '2024-01-12', 175.00, 'Recogido', 12), 
-(13, '2024-01-13', 210.00, 'Pendiente de recogida', 13), (14, '2024-01-14', 310.00, 'Recogido', 14), 
+(13, '2024-01-13', 210.00, 'Pendiente de recogida', 13), (14, '2024-01-14', 310.00, 'Recogido', 14),
 (15, '2024-01-15', 400.00, 'Pendiente de recogida', 15);
 
 -- Tabla ProductosPedido

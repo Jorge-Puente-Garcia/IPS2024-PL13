@@ -83,7 +83,7 @@ public class PedidoCarrito {
     public void cargarPedidoDb() {
         int id = obtenerSiguienteIdPedido() + 1;
         String sql = "INSERT INTO pedido (id, cliente_id, fecha, total, estado) VALUES ('"
-            + id + "', '" + cliente.getDni() + "', '" + fecha + "', " + total + ", '"
+            + id + "', '" + getClienteId(cliente.getDni())	 + "', '" + fecha + "', " + total + ", '"
             + (estado == Estado.PendienteDeRecogida ? "Pendiente de recogida"
                 : "Recogido")
             + "');";
@@ -98,6 +98,13 @@ public class PedidoCarrito {
 		db.executeUpdate(sqlD, cliente.getDni());
 		
         ConfirmacionConsola(id);
+    }
+
+    private String getClienteId(String dni) {
+    	String sql = "SELECT id FROM cliente WHERE dni = ?";
+    	List<Object[]> rs = db.executeQueryArray(sql, dni);
+    	Object[] ob = rs.get(0);
+    	return ob[0].toString();
     }
 
     private int obtenerSiguienteIdPedido() {

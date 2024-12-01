@@ -83,7 +83,7 @@ public class AlmaceneroView {
 	private JSpinner spnCantidadElementosAEmpaquetar;
 	private JButton btnEscanearYeEmpaquetar;
 	private JButton btnFinalizarEmpaquetadoDeLaOt;
-	private JButton btnNewButton;
+	private JButton btnVisualizarAlbaran;
 	private JLabel lblNewLabel;
 	private JLabel lblTítuloPanelOpcionesAlmacenero;
 	private JLabel lblPedidosDisponiblesParaCrearOts;
@@ -124,6 +124,7 @@ public class AlmaceneroView {
 	private JButton btnFinalizarExpedicion;
 	private JButton btnVolverPantallaPrincipalDesdeInformes;
 	private JButton btnVerPantallaExpedicionDePaquetes;
+	private JLabel lblTituloTiposInformes;
 
 	/**
 	 * Create the application.
@@ -581,7 +582,7 @@ public class AlmaceneroView {
 			pnEmpaquetadoOrden.add(getSpnCantidadElementosAEmpaquetar());
 			pnEmpaquetadoOrden.add(getBtnEscanearYeEmpaquetar());
 			pnEmpaquetadoOrden.add(getBtnFinalizarEmpaquetadoDeLaOt());
-			pnEmpaquetadoOrden.add(getBtnNewButton());
+			pnEmpaquetadoOrden.add(getBtnVisualizarAlbaran());
 		}
 		return pnEmpaquetadoOrden;
 	}
@@ -636,13 +637,14 @@ public class AlmaceneroView {
 		}
 		return btnFinalizarEmpaquetadoDeLaOt;
 	}
-	private JButton getBtnNewButton() {
-		if (btnNewButton == null) {
-			btnNewButton = new JButton("Visualizar albaran");
-			btnNewButton.addActionListener(controller.getActionListenerMostrarAlbaran());
-			btnNewButton.setBounds(29, 375, 188, 41);
+	public JButton getBtnVisualizarAlbaran() {
+		if (btnVisualizarAlbaran == null) {
+			btnVisualizarAlbaran = new JButton("Visualizar albaran");
+			btnVisualizarAlbaran.setEnabled(false);
+			btnVisualizarAlbaran.addActionListener(controller.getActionListenerMostrarAlbaran());
+			btnVisualizarAlbaran.setBounds(29, 375, 188, 41);
 		}
-		return btnNewButton;
+		return btnVisualizarAlbaran;
 	}
 	private JLabel getLblNewLabel() {
 		if (lblNewLabel == null) {
@@ -699,6 +701,7 @@ public class AlmaceneroView {
 		if (pnInformesDisponibles == null) {
 			pnInformesDisponibles = new JPanel();
 			pnInformesDisponibles.setLayout(new GridLayout(0, 1, 0, 0));
+			pnInformesDisponibles.add(getLblTituloTiposInformes());
 			pnInformesDisponibles.add(getBtnVolverPantallaPrincipalDesdeInformes());
 			pnInformesDisponibles.add(getBtnVisualizarInformeVentasPorUsuarioYDia());
 			pnInformesDisponibles.add(getBtnInformePorEmpresaYDia());
@@ -972,5 +975,13 @@ public class AlmaceneroView {
 			btnVerPantallaExpedicionDePaquetes.addActionListener(controller.getActionListenerVerVentanaExpedicion());
 		}
 		return btnVerPantallaExpedicionDePaquetes;
+	}
+	private JLabel getLblTituloTiposInformes() {
+		if (lblTituloTiposInformes == null) {
+			lblTituloTiposInformes = new JLabel("Tipos de informes");
+			lblTituloTiposInformes.setFont(new Font("Arial Black", Font.PLAIN, 20));
+			lblTituloTiposInformes.setHorizontalAlignment(SwingConstants.CENTER);
+		}
+		return lblTituloTiposInformes;
 	}
 }

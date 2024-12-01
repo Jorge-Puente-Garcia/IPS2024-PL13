@@ -60,8 +60,7 @@ public class AlmaceneroModel {
 	    String sacaProductosPedido = "SELECT pp.producto_id, pp.cantidad FROM Pedido ped JOIN ProductosPedido pp ON ped.id = pp.pedido_id WHERE ped.id = ?;";
 	    String insertaOrdenTrabajoProducto = "INSERT INTO OrdenTrabajoProducto (orden_trabajo_id, producto_id, cantidad) VALUES (?, ?, ?);";
 	    String insertaOrdenTrabajoProductoRecogidos = "INSERT INTO OrdenTrabajoProductoRecogido (orden_trabajo_id, producto_id, cantidad) VALUES (?, ?, ?);";
-	    String insertaPaqueteProducto = "INSERT INTO OrdenTrabajoProductoRecogido (orden_trabajo_id, producto_id, cantidad) VALUES (?, ?, ?);";
-
+	    String insertaPaqueteProducto = "INSERT INTO PaqueteProducto (orden_trabajo_id, producto_id, cantidad) VALUES (?, ?, ?);";
 	    int cargaActual = 0; // Carga actual de la orden de trabajo
 
 	    for (PedidoARecogerRecord par : pars) {
@@ -76,8 +75,8 @@ public class AlmaceneroModel {
 	            while (cantidad > 0) {
 	                int lote = Math.min(cantidad, 5 - cargaActual); // Tamaño del lote restante para completar 5
 	                db.executeUpdate(insertaOrdenTrabajoProducto, ordenTrabajoId, productoId, lote);
-	                db.executeUpdate(insertaOrdenTrabajoProductoRecogidos, ordenTrabajoId, productoId, 0);
-	                db.executeUpdate(insertaPaqueteProducto, ordenTrabajoId, productoId, 0);
+	                db.executeUpdate(insertaOrdenTrabajoProductoRecogidos, ordenTrabajoId, productoId, 0);	         
+	                db.executeUpdate(insertaPaqueteProducto, ordenTrabajoId, productoId, 0);	
 
 	                cargaActual += lote;
 	                cantidad -= lote;
@@ -119,8 +118,8 @@ public class AlmaceneroModel {
 
 	public String creaEtiqueta(OrdenTrabajoRecord otr) {
 		String sacarInfoEtiquetaEnvio = "SELECT Cliente.nombre, Cliente.apellidos, Cliente.direccion, Cliente.numeroTelefono "
-				+ "FROM OrdenTrabajo JOIN Pedido ON Pedido.orden_trabajo_id = OrdenTrabajo.id JOIN Cliente "
-				+ "ON Pedido.cliente_id = Cliente.id WHERE OrdenTrabajo.id = ?;";
+				+ "FROM PaqueteProducto JOIN Pedido ON Pedido.orden_trabajo_id = PaqueteProducto.orden_trabajo_id JOIN Cliente "
+				+ "ON Pedido.cliente_id = Cliente.id WHERE PaqueteProducto.orden_trabajo_id = ?;";
 		String sacaCodigoBarras="SELECT MAX(id) FROM Paquete";
 		List<Object[]> codigoBarrasl=db.executeQueryArray(sacaCodigoBarras);
 		String codigoBarras=codigoBarrasl.get(0)[0].toString();
@@ -339,7 +338,7 @@ public class AlmaceneroModel {
 		String infoInformeVentas="SELECT p.fecha AS dia, SUM(CASE WHEN c.empresa = 0 "
 				+ "THEN p.total ELSE 0 END) AS particular, SUM(CASE WHEN c.empresa = 1 "
 				+ "THEN p.total ELSE 0 END) AS empresa, SUM(p.total) AS total FROM Pedido p "
-				+ "JOIN Cliente c ON p.cliente_id = c.id GROUP BY p.fecha;";
+				+ "JOIN Cliente c ON p.cliente_id = c.id GROUP BY p.fecha Order by p.fecha;";
 		
 		List<FilaInformeVentasUsuarioDia> tabla=db.executeQueryPojo(FilaInformeVentasUsuarioDia.class, infoInformeVentas);
 		double totalParticular = 0;
@@ -372,13 +371,31 @@ public class AlmaceneroModel {
 		}
 		return columnNames;
 	}
+	
+	public List<String> getIdsEmpresas() {
+		String sacaNombresTodasEmpresas=" SELECT c.id AS empresa FROM Pedido p"
+				+ " JOIN Cliente c ON p.cliente_id = c.id"
+				+ " WHERE c.empresa = 1"
+				+ " ORDER BY c.nombre;";
+		List<String> columnNames = new ArrayList<>();
+		List<Object[]> nombres=db.executeQueryArray(sacaNombresTodasEmpresas);
+		for(Object[] o: nombres) {
+			columnNames.add(o[0].toString());
+		}
+		return columnNames;
+	}
+	
+	public String sacaNombreEmpresaPorId(String id) {
+		String sacaNombreEmpresa="SELECT nombre From Cliente Where id=?";
+		return db.executeQueryArray(sacaNombreEmpresa, id).get(0)[0].toString() ;
+	}
 
-	public DefaultTableModel getInformeVentasSegunEmpresas(List<String> empresas) {
+	public DefaultTableModel getInformeVentasSegunEmpresas(List<String> ids) {
 		String infoPorDiaEmpresaEspecifica ="SELECT DATE(p.fecha) AS dia,"
-				+ " COALESCE(SUM(p.total), 0) AS total_gastado"
+				+ " COALESCE(SUM(p.total), 0) AS total_gastado, c.nombre"
 				+ "	FROM Pedido p"
 				+ "	JOIN Cliente c ON p.cliente_id = c.id"
-				+ "	WHERE c.empresa = 1 AND c.nombre = ?"
+				+ "	WHERE c.id = ?"
 				+ "	GROUP BY DATE(p.fecha)"
 				+ "	ORDER BY dia;";
 		
@@ -388,22 +405,31 @@ public class AlmaceneroModel {
 
 		// Inicializar un mapa para los totales por empresa
 	    Map<String, Double> totalPorEmpresa = new HashMap<>();
-	    for (String empresa : empresas) {
-	        totalPorEmpresa.put(empresa, 0.0); // Inicializamos el total para cada empresa
+	    for (String empresa : ids) {
+	        totalPorEmpresa.put(sacaNombreEmpresaPorId(empresa), 0.0); // Inicializamos el total para cada empresa
 	    }
-		
-		for (String empresa : empresas) { // empresas: lista de nombres de empresas
+		for (String empresa : ids) { // empresas: lista de nombres de empresas
 			List<Object[]> infoPorDiaEmpresa=db.executeQueryArray(infoPorDiaEmpresaEspecifica, empresa);
 			if(!infoPorDiaEmpresa.isEmpty()) {
-				String dia = infoPorDiaEmpresa.get(0)[0].toString();
-				double total = Double.parseDouble(infoPorDiaEmpresa.get(0)[1].toString());
+			    double totalColumnaEmpresa = 0;
+				double total=0;
+				for (Object[] row : infoPorDiaEmpresa) {
+				    String dia = row[0].toString();
+				    total = Double.parseDouble(row[1].toString());
 
-				// Inicializar el mapa para el día si no existe
-				data.putIfAbsent(dia, new HashMap<>());
-				// Agregar el total de la empresa
-				data.get(dia).put(empresa, total); 
-				// Acumular el total de cada empresa(la columna)
-                totalPorEmpresa.put(empresa, totalPorEmpresa.get(empresa) + total);
+				    // Inicializar el mapa para el día si no existe
+				    data.putIfAbsent(dia, new HashMap<>());
+
+				    // Agregar el total de la empresa al día correspondiente
+				    data.get(dia).put(sacaNombreEmpresaPorId(empresa), total);
+				    totalColumnaEmpresa += total;
+				}
+				totalColumnaEmpresa/=infoPorDiaEmpresa.size();
+				// Acumular el total de cada empresa
+				totalPorEmpresa.put(
+				        sacaNombreEmpresaPorId(empresa),
+				        totalPorEmpresa.get(sacaNombreEmpresaPorId(empresa)) + totalColumnaEmpresa
+				    );
 			}
 		}
 		
@@ -690,6 +716,8 @@ public class AlmaceneroModel {
 		// Crear el DefaultTableModel con los datos
 		return new DefaultTableModel(rows.toArray(new Object[0][0]), columnNames.toArray());
 	}
+
+	
 
 	
 	

@@ -70,12 +70,16 @@ public class AlmaceneroController {
 		return pedidosPendientesEmpaquetadoParaImprimir;
 	}
 	private List<ElementoARecogerDto> getElementosARecogerDeLaWorkorderSeleccionada() {		
-		ordenTrabajoEnRecogida=pedidosAsignados.get(vista.getTablaOrdenesTrabajoSeleccionadas().getSelectedRow());
+		if(vista.getTablaOrdenesTrabajoSeleccionadas().getSelectedRow()!=-1) {
+			ordenTrabajoEnRecogida=pedidosAsignados.get(vista.getTablaOrdenesTrabajoSeleccionadas().getSelectedRow());
+		}
 		this.elementosARecoger =model.getElementosARecogerDeLaOrdenDeTrabajo(ordenTrabajoEnRecogida);
 		return elementosARecoger;
 	}
 	private List<ElementoARecogerDto> getElementosAEmpaquetarDeLaWorkorderSeleccionada() {
-		ordenTrabajoEnEmpaquetado=pedidosAPendientesEmpaquetado.get(vista.getTablaOrdenesTrabajoPendientesEmpaquetado().getSelectedRow());
+		if(vista.getTablaOrdenesTrabajoPendientesEmpaquetado().getSelectedRow()!=-1) {
+			ordenTrabajoEnEmpaquetado=pedidosAPendientesEmpaquetado.get(vista.getTablaOrdenesTrabajoPendientesEmpaquetado().getSelectedRow());
+		}
 		this.elementosAEmpaquetar =model.getElementosAEmpaquetarDeLaOrdenDeTrabajo(ordenTrabajoEnEmpaquetado);
 		return elementosAEmpaquetar;
 	}
@@ -246,14 +250,6 @@ public class AlmaceneroController {
 		return tmodel;
 	}
 	
-
-	public TableModel getTableModerElemetosARecoger() {
-		TableModel tmodel =SwingUtil.getTableModelFromPojos(getElementosARecogerDeLaWorkorderSeleccionada(),
-				new String[] { "codigoBarras", "cantidad"});
-		pedidosAsignados=model.getOrdenesDeTrabajoDelAlmaceneroPorId(almaceneroId);
-		return tmodel;
-	}
-	
 	public TableModel getTableModelElemetosParaRecoger() {
 		TableModel tmodel =SwingUtil.getTableModelFromPojos(getElementosARecogerDeLaWorkorderSeleccionada(),
 				new String[] { "nombre", "cantidad","pasillo","posicion","estanteria","altura"});
@@ -280,12 +276,13 @@ public class AlmaceneroController {
 	
 	protected TableModel getTableModelInformeVentasEmpresaDia() {
 		List<String> empresas= model.getTodasEmpresasYTotalPalModel();
-		TableModel tmodel =getInformeEmpresasSegunEmpresas(empresas);
+		List<String> ids=model.getIdsEmpresas();
+		TableModel tmodel =getInformeEmpresasSegunEmpresas(empresas,ids);
 		return tmodel;
 	}
 	
-	private DefaultTableModel getInformeEmpresasSegunEmpresas(List<String> empresas) {		
-		return model.getInformeVentasSegunEmpresas(empresas);
+	private DefaultTableModel getInformeEmpresasSegunEmpresas(List<String> empresas,List<String> id) {		
+		return model.getInformeVentasSegunEmpresas(id);
 	}
 	
 	public ActionListener getActionListenerVolverAtrasHaciaOrdenesTrabajo() {
@@ -449,7 +446,8 @@ public class AlmaceneroController {
 						if(!String.valueOf(elemento.getCodigoBarras()).equals(codigoBarras)) {
 							elementosNoEliminados.add(elemento);
 						}else {
-							if(elemento.cantidad>=(int)vista.getSpinner().getValue()) {
+							System.out.println((int)vista.getSpnCantidadElementosAEmpaquetar().getValue());
+							if(elemento.cantidad>=(int)vista.getSpnCantidadElementosAEmpaquetar().getValue()) {
 								//Se le resta la cantidad que ya se ha recogido
 								int recogido=(int)vista.getSpnCantidadElementosAEmpaquetar().getValue();
 								if(elemento.cantidad==recogido) {
@@ -473,7 +471,8 @@ public class AlmaceneroController {
 					vista.getTablaElementosProcesoEmpaquetadoDeUnaOt().setModel(tmodel);
 					SwingUtil.autoAdjustColumns(vista.getTablaElementosProcesoEmpaquetadoDeUnaOt());
 					if(elementosAEmpaquetar.size()==0){
-					vista.getBtnFinalizarEmpaquetadoDeLaOt().setEnabled(true); ;
+					vista.getBtnFinalizarEmpaquetadoDeLaOt().setEnabled(true); 
+					vista.getBtnVisualizarAlbaran().setEnabled(true); 
 					}
 				}
 			}
